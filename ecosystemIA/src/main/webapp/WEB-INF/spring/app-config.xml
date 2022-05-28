@@ -10,10 +10,15 @@
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
+		
        <!-- Scans the classpath of this application for @Components to deploy as beans -->
        <context:component-scan base-package="es.ubu.ecosystemIA" />
-
+		
+		<mvc:resources mapping="/js/**" location="/js/"/>
+		<mvc:resources mapping="/css/**" location="/css/"/>
+		<mvc:resources mapping="/img/**" location="/img/" />
+		<mvc:resources mapping="/font/**" location="/font/" />
+		
        <!-- Configures the @Controller programming model -->
        <mvc:annotation-driven/>
 		<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -21,4 +26,7 @@
          <property name="prefix" value="/WEB-INF/views/"></property>
          <property name="suffix" value=".jsp"></property>        
        </bean>
+       <!--  Controlador para el manejo de ficheros multimedia -->
+       <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		</bean>
 </beans>
