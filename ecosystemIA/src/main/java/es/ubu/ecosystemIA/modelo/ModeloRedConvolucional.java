@@ -1,6 +1,7 @@
 package es.ubu.ecosystemIA.modelo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
@@ -26,7 +27,7 @@ public class ModeloRedConvolucional {
 	String PathToModel;
 	MultiLayerNetwork multilayerNetwork;
 	INDArray resultado;
-	
+	ArrayList<String> categorias;
 	// Constructores
 	
 	
@@ -91,6 +92,13 @@ public class ModeloRedConvolucional {
 		return resultado;
 	}
 	
+	
+	public ArrayList<String> getCategorias() {
+		return categorias;
+	}
+	public void setCategorias(ArrayList<String> categorias) {
+		this.categorias = categorias;
+	}
 	// dada la ruta de un fichero HDF5 de Keras lo importa a un objeto del
 	// tipo MultiLayerNetwork
 	private static MultiLayerNetwork importKerasSequentialModelAndWeights(String modelHdf5Filename)

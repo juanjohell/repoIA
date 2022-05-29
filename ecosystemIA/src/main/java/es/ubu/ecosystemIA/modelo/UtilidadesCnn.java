@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 import org.datavec.image.loader.NativeImageLoader;
@@ -99,5 +101,18 @@ public class UtilidadesCnn {
          entrada_a_CNN = cambia_formato_nchw_a_nhwc(entrada_a_CNN,CNN2DFormat.NCHW,workspaceMgr, ArrayType.INPUT);
     	
          return entrada_a_CNN;
+    }
+    
+    public String devuelve_categoria(INDArray resultado, ModeloRedConvolucional modelo) {
+    	String categoria = resultado.toString();
+    	ArrayList<String> categorias = modelo.getCategorias();
+    	INDArray valores = resultado.getRow(0);
+    	Number maximo = valores.maxNumber();
+    	Integer indice = 0;
+    	for (int i=0; i< (int) resultado.length(); i++) {
+    		if (valores.getDouble(i) == maximo.doubleValue())
+    			categoria = categorias.get(i);
+    	}
+    	return categoria;
     }
 }
