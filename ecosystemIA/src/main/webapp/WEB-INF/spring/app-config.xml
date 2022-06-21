@@ -11,6 +11,30 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 		
+		<bean id="modelManager" class="es.ubu.ecosystemIA.logica.SimpleNeuralModelManager">
+         <property name="modelos">
+            <list>
+                <ref bean="modelo1"/>
+                <ref bean="modelo2"/>
+            </list>
+         </property>
+       </bean>
+		
+		<bean id="modelo1" class="es.ubu.ecosystemIA.modelo.ModeloRedConvolucional">
+         <property name="nombreModelo" value="modelo_simple_cifar10"/>
+         <property name="descripcion" value="modelo preentrenado con ciclo corto de 10 epoch para cifar10"/>
+       </bean>
+        
+       <bean id="modelo2" class="es.ubu.ecosystemIA.modelo.ModeloRedConvolucional">
+         <property name="nombreModelo" value="modelo_r-cnn"/>
+         <property name="descripcion" value="modelo preentrenado para detección de objetos en imagen, regional based convolutional neural network"/>
+       </bean>
+
+		<!--  gestión de mensajes en varios idiomas -->
+		<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+         <property name="basename" value="messages"/>
+       </bean>
+       
        <!-- Scans the classpath of this application for @Components to deploy as beans -->
        <context:component-scan base-package="es.ubu.ecosystemIA" />
 		
@@ -21,11 +45,15 @@
 		
        <!-- Configures the @Controller programming model -->
        <mvc:annotation-driven/>
+       
+       <!-- Esta parte nos permite asignar nombres lógicos a los mappings 
+            Sólo el nombre del jsp sin extension                      -->
 		<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
          <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
          <property name="prefix" value="/WEB-INF/views/"></property>
          <property name="suffix" value=".jsp"></property>        
        </bean>
+       
        <!--  Controlador para el manejo de ficheros multimedia -->
        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		</bean>

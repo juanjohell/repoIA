@@ -10,12 +10,16 @@ import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurat
 import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import java.io.Serializable;
 
 public class ModeloRedConvolucional {
 	
+	private static final long serialVersionUID = 1L;
 	// Aunque redimensionemos imágenes en el modelo keras, hay que indicar
 	// las dimensiones que espera el modelo finalmente, una vez redimensionado
 	// ya que estas propiedades se utilizan para definir la composición de las capas
+	String NombreModelo;
+	String Descripcion;
 	Integer ModelImageWidth ;
 	Integer ModelImageHeight;
 	Integer ImageChannels;
@@ -25,7 +29,7 @@ public class ModeloRedConvolucional {
 	CNN2DFormat formatoImagenModelo;
 	Boolean UsaTensorFlow;
 	String PathToModel;
-	MultiLayerNetwork multilayerNetwork;
+	private MultiLayerNetwork multilayerNetwork;
 	INDArray resultado;
 	ArrayList<String> categorias;
 	// Constructores
@@ -33,6 +37,9 @@ public class ModeloRedConvolucional {
 	
 	public Integer getModelImageWidth() {
 		return ModelImageWidth;
+	}
+	public ModeloRedConvolucional() {
+		
 	}
 	public ModeloRedConvolucional(Integer modelImageWidth, Integer modelImageHeight, Integer imageChannels,
 			Boolean usaTensorFlow, String pathToModel) {
@@ -52,6 +59,27 @@ public class ModeloRedConvolucional {
 		}
 	}
 	
+	public void cargarModelo(String path) {
+		try {
+			multilayerNetwork = KerasModelImport.importKerasSequentialModelAndWeights(path,false);
+		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public String getNombreModelo() {
+		return NombreModelo;
+	}
+	public void setNombreModelo(String nombreModelo) {
+		NombreModelo = nombreModelo;
+	}
+	public String getDescripcion() {
+		return Descripcion;
+	}
+	public void setDescripcion(String descripcion) {
+		Descripcion = descripcion;
+	}
 	public void setModelImageWidth(Integer modelImageWidth) {
 		ModelImageWidth = modelImageWidth;
 	}
@@ -80,8 +108,6 @@ public class ModeloRedConvolucional {
 		UsaTensorFlow = usaTensorFlow;
 	}
 	
-	
-
 	public MultiLayerNetwork getMultilayerNetwork() {
 		return multilayerNetwork;
 	}

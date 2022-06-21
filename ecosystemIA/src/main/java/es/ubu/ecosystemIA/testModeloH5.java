@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
-import es.ubu.ecosystemIA.modelo.UtilidadesCnn;
+import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 
 
 public class testModeloH5 {

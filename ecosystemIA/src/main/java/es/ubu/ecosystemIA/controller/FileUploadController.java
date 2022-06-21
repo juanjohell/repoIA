@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.ubu.ecosystemIA.testModeloH5;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
-import es.ubu.ecosystemIA.modelo.UtilidadesCnn;
+import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,8 +27,11 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class FileUploadController extends FileBaseController{
@@ -40,13 +44,20 @@ public class FileUploadController extends FileBaseController{
     
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-    @RequestMapping(value = "/uploadImage", method = RequestMethod.GET)
+	
+	@RequestMapping(value="cargarModelo.do")
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+		return new ModelAndView("uploadSimpleImage");
+	}
+	
+    @RequestMapping(value = "uploadImage.do", method = RequestMethod.GET)
     public String uploadPhotoForm(ModelMap model, HttpServletRequest request){
         model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
         return "uploadSimpleImage";
     }
      
-    @RequestMapping(value = "/uploadimgctlr", method = RequestMethod.POST)
+    @RequestMapping(value = "uploadimgctlr.do", method = RequestMethod.POST)
     public String uploadImageCtlr(ModelMap model,
             HttpServletRequest request, 
             @RequestParam MultipartFile file){
@@ -81,7 +92,7 @@ public class FileUploadController extends FileBaseController{
     }  
     
     // tratar de cargar testear imagen
-    @RequestMapping(value = "/testCnnModel", method = RequestMethod.POST)
+    @RequestMapping(value = "testCnnModel.do", method = RequestMethod.POST)
     public String testCnnModel(ModelMap model,
             HttpServletRequest request, 
             @RequestParam String imagen){
@@ -108,7 +119,7 @@ public class FileUploadController extends FileBaseController{
  	         Arrays.asList("Airplane", "Automobile", "Bird", "Cat", "Deer", "Dog", "Frog", "Horse", "Ship", "Truck"));
  		modeloCnn.setCategorias(categorias);
  		
- 	
+ 		
  		//leemos imagen
  		File file = Paths.get(URI.create(imagen).getPath()).toFile();
  		String rootPath = request.getSession().getServletContext().getRealPath("/") + "img"+File.separator + file.getName();
