@@ -5,19 +5,20 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.ubu.ecosystemIA.controller.HomeController;
+import es.ubu.ecosystemIA.controller.EcosystemIAController;
+import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
 
-public class HomeControllerTest {
+public class EcosystemIAControllerTest {
 
 	@Test
 	public void testHandleRequestView() throws Exception {
-		HomeController homeController = new HomeController();
+		EcosystemIAController homeController = new EcosystemIAController();
+		homeController.setModelManager(new SimpleNeuralModelManager());
 		ModelAndView modelAndView = homeController.handleRequest(null, null);
 		assertEquals("home", modelAndView.getViewName());
         assertNotNull(modelAndView.getModel());
         String nowValue = (String) modelAndView.getModel().get("now");
         assertNotNull(nowValue);
-		
 	}
 
 }

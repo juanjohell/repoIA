@@ -1,4 +1,4 @@
-package es.ubu.ecosystemIA.modelo;
+package es.ubu.ecosystemIA.logica;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -21,6 +21,9 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
+
+import es.ubu.ecosystemIA.modelo.Imagen;
+import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 public class UtilidadesCnn {
 
