@@ -106,9 +106,8 @@ public class UtilidadesCnn {
          return entrada_a_CNN;
     }
     
-    public String devuelve_categoria(INDArray resultado, ModeloRedConvolucional modelo) {
+    public String devuelve_categoria(INDArray resultado, ModeloRedConvolucional modelo, ArrayList<String> categorias) {
     	String categoria = resultado.toString();
-    	ArrayList<String> categorias = modelo.getCategorias();
     	INDArray valores = resultado.getRow(0);
     	Number maximo = valores.maxNumber();
     	Integer indice = 0;

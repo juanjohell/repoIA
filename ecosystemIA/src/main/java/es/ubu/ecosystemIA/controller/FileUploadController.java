@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.ubu.ecosystemIA.testModeloH5;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
+import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
 import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 
 import java.io.BufferedOutputStream;
@@ -96,8 +97,8 @@ public class FileUploadController extends FileBaseController{
     public String testCnnModel(ModelMap model,
             HttpServletRequest request, 
             @RequestParam String imagen){
+        
        
-     
       // cargamos utilidades
  		UtilidadesCnn utils = new UtilidadesCnn();
  		
@@ -111,13 +112,15 @@ public class FileUploadController extends FileBaseController{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
- 		ModeloRedConvolucional modeloCnn = new ModeloRedConvolucional(IMAGE_MODEL_WIDTH, IMAGE_MODEL_HEIGHT,IMAGE_CHANNELS,true,ruta);
+		SimpleNeuralModelManager manager = new SimpleNeuralModelManager();
+		
+ 		ModeloRedConvolucional modeloCnn = new ModeloRedConvolucional();
  	    //TODO: configuramos el modelo, esto debe hacerse por
  		// aplicación
  		// categorias de cifar10
  		ArrayList<String> categorias = new ArrayList<String>(
  	         Arrays.asList("Airplane", "Automobile", "Bird", "Cat", "Deer", "Dog", "Frog", "Horse", "Ship", "Truck"));
- 		modeloCnn.setCategorias(categorias);
+ 		//modeloCnn.setCategorias(categorias);
  		
  		
  		//leemos imagen
@@ -135,9 +138,10 @@ public class FileUploadController extends FileBaseController{
 		// matriz de entrada al modelo
 		INDArray input = utils.devuelve_matriz_de_imagen_normalizada(imagenInput, modeloCnn);
 		// recogemos salida del modelo
-        INDArray output = modeloCnn.getMultilayerNetwork().output(input);
-       
-        String categoria = utils.devuelve_categoria(output, modeloCnn);
+		
+        INDArray output = utils.cargaModeloH5(ruta).output(input);
+        
+        String categoria = utils.devuelve_categoria(output, modeloCnn, categorias);
          
         
     //send result to jsp

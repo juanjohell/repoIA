@@ -7,5 +7,7 @@ public interface ModeloRnDao {
 	public List<ModeloRedConvolucional> getModelosList();
 
     public void saveModelo(ModeloRedConvolucional modelo);
+    
+    public void modifyModelo(ModeloRedConvolucional modelo);
 
 }

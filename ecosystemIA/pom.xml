@@ -79,7 +79,12 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-simple</artifactId>
@@ -108,16 +113,14 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+		
+	
 		<!-- JSTL Dependency -->
 		<dependency>
 			<groupId>javax.servlet.jsp.jstl</groupId>
@@ -143,27 +146,46 @@
 		</dependency>
 		<!-- Base de datos y persistencia -->
 		<dependency>
-    <groupId>org.mariadb.jdbc</groupId>
-    	<artifactId>mariadb-java-client</artifactId>
-    	<version>3.0.5</version>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    	<artifactId>mariadb-java-client</artifactId>
+		    	<version>3.0.5</version>
+			</dependency>
+			<dependency>
+		    	<groupId>org.hibernate.javax.persistence</groupId>
+		    	<artifactId>hibernate-jpa-2.1-api</artifactId>
+		    	<version>1.0.2.Final</version>
+			</dependency>
+			<dependency>
+		    	<groupId>org.hibernate</groupId>
+		    	<artifactId>hibernate-entitymanager</artifactId>
+		    	<version>5.6.9.Final</version>
+			</dependency>
+			<dependency>
+		    	<groupId>org.hibernate.validator</groupId>
+		    	<artifactId>hibernate-validator</artifactId>
+		    	<version>7.0.4.Final</version>
+			</dependency>
+	
+	
+	<!-- validaciones -->
+	<dependency>
+    	<groupId>javax.validation</groupId>
+    	<artifactId>validation-api</artifactId>
+    	<version>2.0.1.Final</version>
 	</dependency>
 	<dependency>
-    	<groupId>org.hibernate.javax.persistence</groupId>
-    	<artifactId>hibernate-jpa-2.0-api</artifactId>
-    	<version>1.0.1.Final</version>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-api</artifactId>
+    	<version>1.7.36</version>
 	</dependency>
 	<dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>hibernate-entitymanager</artifactId>
-    	<version>5.6.9.Final</version>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-log4j12</artifactId>
+    	<version>1.7.36</version>
+    	<type>pom</type>
+    	<scope>test</scope>
 	</dependency>
-	<dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-orm</artifactId>
-    	<version>5.3.20</version>
-	</dependency>
-
-	</dependencies>
+</dependencies>
 
 	<repositories>
 		<repository>

@@ -15,13 +15,21 @@
   <title><h1><h1><fmt:message key="titulo"/></h1></title>
   </head>
   <body>
-  <div class="form-row align-items-center">
-    <h2>Aplicación para uso de redes convolucionales entrenadas</h2>
-    <p>Hora <c:out value="${now}"/></p>
-    
-    <form method="POST" action="modelos.do">
-    	<button type="submit" class="btn btn-success">COMENZAR</button>
-    </form>
-   <div>
+  
+  <div class="card" style="width: 18rem;">
+  	<img class="card-img-top" src="..." alt="Card image cap">
+  		<div class="card-body">
+    		<h5 class="card-title">Aplicación para uso de redes convolucionales entrenadas</h5>
+    		<p class="card-text">Actualmente está cargado por defecto el modelo...</p>
+    		<form method="POST" action="modelos.do">
+  				<div class="form-row align-items-center">
+    				<h2></h2>
+    				<p>Hora <c:out value="${now}"/></p>
+    				<button type="submit" class="btn btn-success">COMENZAR</button>
+     			<div>
+  			</form>
+  		</div>
+	</div>
+ 
   </body>
 </html>

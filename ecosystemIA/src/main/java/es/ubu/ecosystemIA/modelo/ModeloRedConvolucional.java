@@ -1,138 +1,113 @@
 package es.ubu.ecosystemIA.modelo;
 
-import java.io.IOException;
-import java.util.ArrayList;
 
-import org.deeplearning4j.nn.conf.CNN2DFormat;
-import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
-import org.deeplearning4j.nn.modelimport.keras.KerasSequentialModel;
-import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
-import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.nd4j.linalg.api.ndarray.INDArray;
+import java.util.ArrayList;
+import java.util.Map;
 import java.io.Serializable;
 
-public class ModeloRedConvolucional {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="modelos")
+public class ModeloRedConvolucional implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	// Aunque redimensionemos imágenes en el modelo keras, hay que indicar
 	// las dimensiones que espera el modelo finalmente, una vez redimensionado
 	// ya que estas propiedades se utilizan para definir la composición de las capas
-	String NombreModelo;
-	String Descripcion;
-	Integer ModelImageWidth ;
-	Integer ModelImageHeight;
-	Integer ImageChannels;
-	//NCHW = Canales,Height,Width NHWC: Height,Width,Canales
-	// Tiene que ver con el motor que hay por denbajo de nuestro modelo.
-	// TensorFlow trabaja en formato: NCHW
-	CNN2DFormat formatoImagenModelo;
-	Boolean UsaTensorFlow;
-	String PathToModel;
-	private MultiLayerNetwork multilayerNetwork;
-	INDArray resultado;
-	ArrayList<String> categorias;
-	// Constructores
 	
+	@Id
+	@Column(name="ID_MODELO")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int idModelo;
+	
+	@Column(name="NOMBRE")
+	private String nombreModelo;
+	
+	@Column(name="DESCRIPCION")
+	private String descripcion;
+	
+	@Column(name="INPUT_WIDTH")
+	private Integer modelImageWidth ;
+	
+	@Column(name="INPUT_HEIGHT")
+	private Integer modelImageHeight;
+	
+	@Column(name="INPUT_CHANNELS")
+	private Integer imageChannels;
+	//NCHW = Canales,Height,Width NHWC: Height,Width,Canales
+	// Tiene que ver con el motor que hay por debajo de nuestro modelo.
+	// TensorFlow trabaja en formato: NHWC
+	
+	@Column(name="FORMATO_MATRIZ_IMG")
+	//CNN2DFormat formatoImagenModelo;
+	private String formatoImagenModelo;
+	
+	@Column(name="PATH_FICHERO")
+	private String pathToModel;
+	
+	
+	public Integer getIdModelo() {
+		return idModelo;
+	}
+	public void setIdModelo(Integer idModelo) {
+		idModelo = idModelo;
+	}
+	public String getPathToModel() {
+		return pathToModel;
+	}
+	public void setPathToModel(String pathToModel) {
+		pathToModel = pathToModel;
+	}
 	
 	public Integer getModelImageWidth() {
-		return ModelImageWidth;
-	}
-	public ModeloRedConvolucional() {
-		
-	}
-	public ModeloRedConvolucional(Integer modelImageWidth, Integer modelImageHeight, Integer imageChannels,
-			Boolean usaTensorFlow, String pathToModel) {
-		super();
-		ModelImageWidth = modelImageWidth;
-		ModelImageHeight = modelImageHeight;
-		ImageChannels = imageChannels;
-		UsaTensorFlow = usaTensorFlow;
-		PathToModel = pathToModel;
-		multilayerNetwork = null;
-		// false indica que no hay entrenamiento, se carga para su uso
-		try {
-			multilayerNetwork = KerasModelImport.importKerasSequentialModelAndWeights(pathToModel,false);
-		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void cargarModelo(String path) {
-		try {
-			multilayerNetwork = KerasModelImport.importKerasSequentialModelAndWeights(path,false);
-		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return modelImageWidth;
 	}
 	
 	public String getNombreModelo() {
-		return NombreModelo;
+		return nombreModelo;
 	}
 	public void setNombreModelo(String nombreModelo) {
-		NombreModelo = nombreModelo;
+		nombreModelo = nombreModelo;
 	}
 	public String getDescripcion() {
-		return Descripcion;
+		return descripcion;
 	}
 	public void setDescripcion(String descripcion) {
-		Descripcion = descripcion;
+		descripcion = descripcion;
 	}
 	public void setModelImageWidth(Integer modelImageWidth) {
-		ModelImageWidth = modelImageWidth;
+		modelImageWidth = modelImageWidth;
 	}
 	public Integer getModelImageHeight() {
-		return ModelImageHeight;
+		return modelImageHeight;
 	}
 	public void setModelImageHeight(Integer modelImageHeight) {
-		ModelImageHeight = modelImageHeight;
+		modelImageHeight = modelImageHeight;
 	}
 	public Integer getImageChannels() {
-		return ImageChannels;
+		return imageChannels;
 	}
 	public void setImageChannels(Integer imageChannels) {
-		ImageChannels = imageChannels;
+		imageChannels = imageChannels;
 	}
-	public CNN2DFormat getFormatoImagenModelo() {
+	public String getFormatoImagenModelo() {
 		return formatoImagenModelo;
 	}
-	public void setFormatoImagenModelo(CNN2DFormat formatoImagenModelo) {
+	public void setFormatoImagenModelo(String formatoImagenModelo) {
 		this.formatoImagenModelo = formatoImagenModelo;
 	}
-	public Boolean getUsaTensorFlow() {
-		return UsaTensorFlow;
-	}
-	public void setUsaTensorFlow(Boolean usaTensorFlow) {
-		UsaTensorFlow = usaTensorFlow;
-	}
 	
-	public MultiLayerNetwork getMultilayerNetwork() {
-		return multilayerNetwork;
-	}
-	public void setMultilayerNetwork(MultiLayerNetwork multilayerNetwork) {
-		this.multilayerNetwork = multilayerNetwork;
-	}
-	public INDArray getResultado() {
-		return resultado;
-	}
-	
-	
-	public ArrayList<String> getCategorias() {
-		return categorias;
-	}
-	public void setCategorias(ArrayList<String> categorias) {
-		this.categorias = categorias;
-	}
-	// dada la ruta de un fichero HDF5 de Keras lo importa a un objeto del
-	// tipo MultiLayerNetwork
-	private static MultiLayerNetwork importKerasSequentialModelAndWeights(String modelHdf5Filename)
-	        throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
-		KerasSequentialModel kerasModel = new KerasSequentialModel().modelBuilder().modelHdf5Filename(modelHdf5Filename)
-	          .enforceTrainingConfig(false).buildSequential();
-	  MultiLayerNetwork model = kerasModel.getMultiLayerNetwork();
-	  return model;
-	}
+	public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("Descripcion: " + descripcion + ";");
+        buffer.append("Nombre: " + nombreModelo);
+        return buffer.toString();
+    }
 	
 }

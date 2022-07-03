@@ -11,24 +11,6 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 		
-		<bean id="modelManager" class="es.ubu.ecosystemIA.logica.SimpleNeuralModelManager">
-         <property name="modelos">
-            <list>
-                <ref bean="modelo1"/>
-                <ref bean="modelo2"/>
-            </list>
-         </property>
-       </bean>
-		
-		<bean id="modelo1" class="es.ubu.ecosystemIA.modelo.ModeloRedConvolucional">
-         <property name="nombreModelo" value="modelo_simple_cifar10"/>
-         <property name="descripcion" value="modelo preentrenado con ciclo corto de 10 epoch para cifar10"/>
-       </bean>
-        
-       <bean id="modelo2" class="es.ubu.ecosystemIA.modelo.ModeloRedConvolucional">
-         <property name="nombreModelo" value="modelo_r-cnn"/>
-         <property name="descripcion" value="modelo preentrenado para detección de objetos en imagen, regional based convolutional neural network"/>
-       </bean>
 
 		<!--  gestión de mensajes en varios idiomas -->
 		<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

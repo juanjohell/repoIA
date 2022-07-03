@@ -3,6 +3,7 @@ package es.ubu.ecosystemIA.controller;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.ubu.ecosystemIA.db.JPAModeloRnDao;
 import es.ubu.ecosystemIA.logica.NeuralNetworkManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
+import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 @Controller
 public class EcosystemIAController {
@@ -25,7 +28,7 @@ public class EcosystemIAController {
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
-	private SimpleNeuralModelManager modelManager;
+	private NeuralNetworkManager modelManager;
 	
 	@RequestMapping(value="home.do")
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
@@ -40,14 +43,16 @@ public class EcosystemIAController {
 	public ModelAndView mostrarModelos(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 		logger.info("Retornando la vista de lista de modelos");
-		
-		Map<String, Object> myModel = new HashMap<String, Object>();
-        myModel.put("modelos", this.modelManager.getModelos());
+		String now = (new Date()).toString();
+		Map<String, Object> myModel = new HashMap<>();
+		myModel.put("now", now);
+        myModel.put("listadoModelos", this.modelManager.getModelos());
 		//pasamos el parámetro now a la pagina jsp
-		return new ModelAndView("modelos", "modelos", myModel);
+		
+		return new ModelAndView("modelos", "modeloMVC", myModel);
 	}
 	
-	public void setModelManager(SimpleNeuralModelManager modelManager) {
+	public void setModelManager(NeuralNetworkManager modelManager) {
 		this.modelManager = modelManager;
 	}
 }
