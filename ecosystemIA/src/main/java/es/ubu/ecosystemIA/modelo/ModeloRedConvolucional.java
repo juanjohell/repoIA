@@ -1,8 +1,6 @@
 package es.ubu.ecosystemIA.modelo;
 
 
-import java.util.ArrayList;
-import java.util.Map;
 import java.io.Serializable;
 
 import javax.persistence.Column;

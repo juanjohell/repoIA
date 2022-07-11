@@ -15,21 +15,16 @@
   <title><h1><h1><fmt:message key="titulo"/></h1></title>
   </head>
   <body>
-  
-  <div class="card" style="width: 18rem;">
-  	<img class="card-img-top" src="..." alt="Card image cap">
-  		<div class="card-body">
-    		<h5 class="card-title">Aplicación para uso de redes convolucionales entrenadas</h5>
-    		<p class="card-text">Actualmente está cargado por defecto el modelo...</p>
+  <div class="jumbotron">
+  			<h1 class="display-1">EcosystemIA</h1>
+    		<h3 class="display-4">Aplicación para uso de redes convolucionales entrenadas</h3>
+    		<p class="lead">Actualmente está cargado por defecto el modelo...</p>
     		<form method="POST" action="modelos.do">
   				<div class="form-row align-items-center">
     				<h2></h2>
-    				<p>Hora <c:out value="${now}"/></p>
-    				<button type="submit" class="btn btn-success">COMENZAR</button>
+    				<button type="submit" class="btn btn-primary btn-lg">COMENZAR</button>
      			<div>
   			</form>
-  		</div>
-	</div>
- 
+  </div>
   </body>
 </html>

@@ -27,9 +27,11 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	private MultiLayerNetwork multilayerNetwork;
 	
 	
-
-	public ModeloRedConvolucional getModelo() {
-		return modelo;
+	public void borrarModelo(String idModelo) {
+		
+	}
+	public ModeloRedConvolucional getModelo(String idModelo) {
+		return modeloDao.getModelo(idModelo);
 	}
 
 	public void setModelo(ModeloRedConvolucional modelo) {

@@ -30,6 +30,14 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		return listaModelos;
 	}
 	
+	@Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+	public ModeloRedConvolucional getModelo(String idModelo) {
+		ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+		modelo = (ModeloRedConvolucional) em.createQuery("select m from ModeloRedConvolucional m where m.idModelo = "+idModelo).getSingleResult();
+		return modelo;
+	}
+	
 	@Transactional(readOnly = false)
 	public void saveModelo(ModeloRedConvolucional modelo) {
 		em.merge(modelo);

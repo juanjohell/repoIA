@@ -10,4 +10,6 @@ import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 public interface NeuralNetworkManager extends Serializable{
 	
 	public List<ModeloRedConvolucional> getModelos();
+	public ModeloRedConvolucional getModelo(String idModelo);
+	public void borrarModelo(String idModelo);
 } 	

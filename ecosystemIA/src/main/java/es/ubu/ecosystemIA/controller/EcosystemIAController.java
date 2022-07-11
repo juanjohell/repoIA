@@ -14,7 +14,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.ubu.ecosystemIA.db.JPAModeloRnDao;
@@ -48,8 +51,17 @@ public class EcosystemIAController {
 		myModel.put("now", now);
         myModel.put("listadoModelos", this.modelManager.getModelos());
 		//pasamos el parámetro now a la pagina jsp
-		
 		return new ModelAndView("modelos", "modeloMVC", myModel);
+	}
+	
+	@GetMapping(value="editarModelo.do")
+	public ModelAndView editarModelo(@RequestParam String idModelo) {
+            
+		logger.info("Consultando datos del modelo id"+idModelo);
+		Map<String,Object> myModel = new HashMap<>();
+		myModel.put("modelo", this.modelManager.getModelo(idModelo));
+		//pasamos el parámetro now a la pagina jsp
+		return new ModelAndView("editarModelo","modeloMVC", myModel);
 	}
 	
 	public void setModelManager(NeuralNetworkManager modelManager) {
