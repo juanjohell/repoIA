@@ -2,27 +2,29 @@ package es.ubu.ecosystemIA.db;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.stereotype.Repository;
-import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
-
-import javax.management.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Repository(value = "ModeloRnDao")
+@Transactional
 public class JPAModeloRnDao implements ModeloRnDao {
-	private EntityManager em = null;
+	public EntityManager em = null;
+
 	/*
      * Sets the entity manager.
      */
-    @PersistenceContext
+	@PersistenceContext
     public void setEntityManager(EntityManager em) {
         this.em = em;
     }
 
-	@Transactional(readOnly = true)
+	@Transactional
     @SuppressWarnings("unchecked")
 	public List<ModeloRedConvolucional> getModelosList() {
 		List<ModeloRedConvolucional> listaModelos = new ArrayList<ModeloRedConvolucional>();
@@ -30,7 +32,7 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		return listaModelos;
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional
     @SuppressWarnings("unchecked")
 	public ModeloRedConvolucional getModelo(String idModelo) {
 		ModeloRedConvolucional modelo = new ModeloRedConvolucional();
@@ -38,15 +40,21 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		return modelo;
 	}
 	
-	@Transactional(readOnly = false)
-	public void saveModelo(ModeloRedConvolucional modelo) {
+	@Transactional
+	 @SuppressWarnings("unchecked")
+	public void nuevoModelo(ModeloRedConvolucional modelo) {
 		em.merge(modelo);
 	}
 	
-	@Transactional(readOnly = false)
-	public void modifyModelo(ModeloRedConvolucional modelo) {
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public void editarModelo(ModeloRedConvolucional modelo) {
 		// TODO Auto-generated method stub
-
+		em.unwrap(Session.class).update(modelo);
+	}
+	@Transactional
+	public void borrarModelo(ModeloRedConvolucional modelo) {
+		em.remove(modelo);
 	}
 
 }

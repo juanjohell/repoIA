@@ -1,6 +1,6 @@
 package es.ubu.ecosystemIA.modelo;
 
-
+// BEAN DE LA ENTIDAD
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -21,7 +21,7 @@ public class ModeloRedConvolucional implements Serializable{
 	
 	@Id
 	@Column(name="ID_MODELO")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idModelo;
 	
 	@Column(name="NOMBRE")
@@ -53,9 +53,7 @@ public class ModeloRedConvolucional implements Serializable{
 	public Integer getIdModelo() {
 		return idModelo;
 	}
-	public void setIdModelo(Integer idModelo) {
-		idModelo = idModelo;
-	}
+	
 	public String getPathToModel() {
 		return pathToModel;
 	}
