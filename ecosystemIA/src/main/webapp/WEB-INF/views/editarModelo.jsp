@@ -12,39 +12,42 @@
   	<body>
   	${modelo.nombreModelo}
   		<div class="container-fluid">
-		<form:form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
+		<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
 			<div class="form-row">
   				<div class="form-group">
-  				
+  					<div class="form-group col-md-2">
+   				 		<label for="modelo.idModelo">Id de modelo.</label>
+      					<s:input path="modelo.idModelo" class="form-control" name="idModelo" id="idModelo"/>
+    				</div>
    				 	<div class="form-group col-md-10">
    				 		<label for="modelo.nombreModelo">Nombre de modelo.</label>
-      					<s:input path="modelo.nombreModelo" class="form-control" id="nombreModelo"/>
+      					<s:input path="modelo.nombreModelo" class="form-control" name="nombreModelo" id="nombreModelo"/>
     				</div>
   				</div>
   				<div class="form-group">
-  					<label for="descripcion">Descripcion.</label>
-      				<s:textarea path="descripcion" class="form-control" placeholder="Descripción del modelo" id="descripcion"/>
+  					<label for="modelo.descripcion">Descripcion.</label>
+      				<s:textarea path="modelo.descripcion" class="form-control" placeholder="Descripción del modelo" name="descripcion" id="descripcion"/>
       				
   				</div>
   				<div class="form-group">
   					<div class="form-group col-md-4">
-    					<label for="modelImageHeight">Alto de imagen.</label>
-      					<s:input path="modelImageHeight" class="form-control" placeholder="Alto de imagen" id="modelImageHeight"/>
+    					<label for="modelo.modelImageHeight">Alto de imagen.</label>
+      					<s:input path="modelo.modelImageHeight" class="form-control" placeholder="Alto de imagen" name="modelImageHeight" id="modelImageHeight"/>
     				</div>
     				<div class="form-group col-md-4">
-    					<label for="modeloMVC.modelImageWidth">Ancho de imagen.</label>
-      					<s:input path="modelImageWidth" class="form-control" placeholder="Alto de imagen" id="modelImageWidth"/>
+    					<label for="modelo.modelImageWidth">Ancho de imagen.</label>
+      					<s:input path="modelo.modelImageWidth" class="form-control" placeholder="Alto de imagen" name="modelImageWidth" id="modelImageWidth"/>
     				</div>
     				<div class="form-group col-md-4">
-    					<label for="imageChannels">Canales de imagen</label>
-      					<s:input path="imageChannels" class="form-control" placeholder="Alto de imagen" id="imageChannels"/>
+    					<label for="modelo.imageChannels">Canales de imagen</label>
+      					<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels"/>
     				</div>
   				</div>
   			</div>
-  			<form:button value="Grabar" type="submit" name="grabar" id="grabar" class="btn btn-primary"/>
-			<form:button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary"/>
+  			<button value="Grabar" type="submit" name="grabar" id="grabar" class="btn btn-primary">Grabar</button>
+			<button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Cancelar</button>
   			
-		</form:form>
+		</form>
 		</div>
 	</body>
 </html>

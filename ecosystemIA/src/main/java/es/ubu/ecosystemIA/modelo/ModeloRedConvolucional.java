@@ -49,6 +49,8 @@ public class ModeloRedConvolucional implements Serializable{
 	@Column(name="PATH_FICHERO")
 	private String pathToModel;
 	
+	@Column(name="SELECCIONADO")
+	private Integer porDefecto;
 	
 	public Integer getIdModelo() {
 		return idModelo;
@@ -58,7 +60,7 @@ public class ModeloRedConvolucional implements Serializable{
 		return pathToModel;
 	}
 	public void setPathToModel(String pathToModel) {
-		pathToModel = pathToModel;
+		this.pathToModel = pathToModel;
 	}
 	
 	public Integer getModelImageWidth() {
@@ -69,28 +71,28 @@ public class ModeloRedConvolucional implements Serializable{
 		return nombreModelo;
 	}
 	public void setNombreModelo(String nombreModelo) {
-		nombreModelo = nombreModelo;
+		this.nombreModelo = nombreModelo;
 	}
 	public String getDescripcion() {
 		return descripcion;
 	}
 	public void setDescripcion(String descripcion) {
-		descripcion = descripcion;
+		this.descripcion = descripcion;
 	}
 	public void setModelImageWidth(Integer modelImageWidth) {
-		modelImageWidth = modelImageWidth;
+		this.modelImageWidth = modelImageWidth;
 	}
 	public Integer getModelImageHeight() {
 		return modelImageHeight;
 	}
 	public void setModelImageHeight(Integer modelImageHeight) {
-		modelImageHeight = modelImageHeight;
+		this.modelImageHeight = modelImageHeight;
 	}
 	public Integer getImageChannels() {
 		return imageChannels;
 	}
 	public void setImageChannels(Integer imageChannels) {
-		imageChannels = imageChannels;
+		this.imageChannels = imageChannels;
 	}
 	public String getFormatoImagenModelo() {
 		return formatoImagenModelo;
@@ -99,6 +101,14 @@ public class ModeloRedConvolucional implements Serializable{
 		this.formatoImagenModelo = formatoImagenModelo;
 	}
 	
+	public Integer getPorDefecto() {
+		return porDefecto;
+	}
+
+	public void setPorDefecto(Integer porDefecto) {
+		this.porDefecto = porDefecto;
+	}
+
 	public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("Descripcion: " + descripcion + ";");

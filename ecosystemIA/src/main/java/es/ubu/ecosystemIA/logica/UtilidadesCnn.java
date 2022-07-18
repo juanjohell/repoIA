@@ -65,6 +65,7 @@ public class UtilidadesCnn {
     
     // CARGA DE UN MODELO EN FORMATO KERAS H5
     public MultiLayerNetwork cargaModeloH5(String rutaFichero) {
+    	
     	MultiLayerNetwork model = null;
     	try {
 			model = KerasModelImport.importKerasSequentialModelAndWeights(rutaFichero,false);

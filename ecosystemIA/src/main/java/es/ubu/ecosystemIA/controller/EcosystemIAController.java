@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.ubu.ecosystemIA.db.JPAModeloRnDao;
 import es.ubu.ecosystemIA.logica.NeuralNetworkManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
+import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 
@@ -44,18 +45,23 @@ public class EcosystemIAController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
+	private UtilidadesCnn utilsCnn;
 	@Autowired
-	private NeuralNetworkManager modelManager;
-
+	private NeuralNetworkManager modelManager; 
 	@PersistenceContext
 	private EntityManager em;
 	
-	@RequestMapping(value="home.do")
+	@RequestMapping(value="/home.do")
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 		logger.info("mostrando la vista de Bienvenida");
+		//String modeloPrecargado = modelManager.getModelo().getNombreModelo();
+		String modeloPrecargado = "Cifar10";
+		Map<String, Object> myModel = new HashMap<>();
+		myModel.put("modeloPrecargado", modeloPrecargado);
+		
 		//redirigimos
-		return new ModelAndView("home");
+		return new ModelAndView("home","mensaje",myModel);
 	}
 	
 	@Transactional
@@ -71,17 +77,22 @@ public class EcosystemIAController {
 	
 	@Transactional
 	@RequestMapping(value = "editarModelo.do", method = RequestMethod.POST, params = "grabar")
-    public ModelAndView editarModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result) {
-        if (result.hasErrors()) {
-            return new ModelAndView("error");
-        }
-        ModeloRedConvolucional redconv = this.em.find(ModeloRedConvolucional.class, modelo.getIdModelo());
-        this.modelManager.editarModelo(redconv);
+    public ModelAndView editarModelo(@RequestParam int idModelo, 
+    		@RequestParam String nombreModelo,
+    		@RequestParam String descripcion, 
+    		HttpServletRequest request) {
+        
+        ModeloRedConvolucional modelo = this.modelManager.devuelveModelo(idModelo);
+        modelo.setNombreModelo(nombreModelo);
+        modelo.setDescripcion(descripcion);
+        logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
+        logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
+        this.modelManager.editarModelo(modelo);
         return new ModelAndView("modelos");
     }
 	
 	@RequestMapping(value = "/editarModelo.do", method = RequestMethod.POST, params = "cancelar")
-    public ModelAndView cancel(@Valid @ModelAttribute("modelo") final ModeloRedConvolucional modelo, final BindingResult result, final ModelMap model) {
+    public ModelAndView cancel(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
         model.addAttribute("message", "Modificación Cancelada");
   
 		Map<String,Object> myModel = new HashMap<>();
@@ -91,26 +102,18 @@ public class EcosystemIAController {
     }
 	
 	
-	/*@GetMapping(value="editarModelo.do")
-	public ModelAndView editarModelo(@RequestParam String idModelo, Model m) {
+	@GetMapping(value="editarModelo.do")
+	public ModelAndView editarModelo(@RequestParam String idModelo) {
 		logger.info("Consultando datos del modelo id "+idModelo);
-		ModeloRedConvolucional redconv = this.modelManager.getModelo(idModelo);
-		m.addAttribute("command",redconv);
+		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+		ModelAndView model = new ModelAndView("editarModelo");
+		model.addObject("modelo",redconv);
 		logger.info("modelo neuronal: "+redconv.getNombreModelo());
-		return new ModelAndView("editarModelo", "modelo",m);
-	}*/
+		return model;
+	}
 	
-	 /* It displays object data into form for the given id.   
-     * The @PathVariable puts URL data into variable.*/    
-    @RequestMapping(value="editarModelo.do")    
-    public ModelAndView edit(@RequestParam String id, Model m){    
-    	logger.info("Consultando datos del modelo id "+id);
-		ModeloRedConvolucional redconv = this.modelManager.getModelo(id);   
-        m.addAttribute("command",redconv);  
-        return new ModelAndView("editarModelo", "modelo",m);    
-    }    
 	
-	public void setModelManager(NeuralNetworkManager modelManager) {
+	public void setModelManager(SimpleNeuralModelManager modelManager) {
 		this.modelManager = modelManager;
 	}
 }

@@ -19,7 +19,7 @@
   	<span class="border border-primary">
   			<h1 class="display-1">EcosystemIA</h1>
     		<h3 class="display-4">Aplicación para uso de redes convolucionales entrenadas</h3>
-    		<p class="lead">Actualmente está cargado por defecto el modelo...</p>
+    		<p class="lead">Actualmente está cargado por defecto el modelo <c:out value="${mensaje}"/></p>
     		<form method="POST" action="modelos.do">
   				<div class="form-row align-items-center">
     				<h2></h2>

@@ -12,11 +12,13 @@ public interface ModeloRnDao {
 	
 	public List<ModeloRedConvolucional> getModelosList();
 	
-	public ModeloRedConvolucional getModelo(String idModelo);
+	public ModeloRedConvolucional getModelo(Integer idModelo);
 
     public void nuevoModelo(ModeloRedConvolucional modelo);
 	
     public void editarModelo(ModeloRedConvolucional modelo);
 
     public void borrarModelo(ModeloRedConvolucional modelo);
+    public void establecerModeloPorDefecto(ModeloRedConvolucional modelo);
+    public ModeloRedConvolucional devuelveModeloPorDefecto();
 }

@@ -47,10 +47,10 @@
 			      				<td></td>
 			      				<td></td>
 			      				<td>
-		                            <a href="<c:url value='editarModelo.do?id=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
-		                            <a href="<c:url value='editarModelo.do?id=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
-		                        	<a href="<c:url value='verModelo/${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Ver">remove_red_eye</i></a>
-		                        	<a href="<c:url value='probarModelo/${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Probar">burst_mode</i></a>
+		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
+		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
+		                        	<a href="<c:url value='verModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Ver">remove_red_eye</i></a>
+		                        	<a href="<c:url value='probarModelo?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Probar">burst_mode</i></a>
 		                        </td>
 		      				</tr>
 	    				</c:forEach>
