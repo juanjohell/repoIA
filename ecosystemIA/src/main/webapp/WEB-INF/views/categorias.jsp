@@ -8,7 +8,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Listado de modelos de redes neuronales disponibles</title>
+<title>Listado de categorias del modelo</title>
 
   <body>
     <div class="container">
@@ -16,10 +16,10 @@
             <div class="table-title">
                 <div class="row">
                     <div class="col-sm-6">
-						<h2>Modelos disponibles.</h2>
+						<h2>Categorías del modelo</h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Añadir modelo</span></a>
+						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Añadir categoria</span></a>
 					</div>
                 </div>
             </div>
@@ -27,31 +27,21 @@
                 <thead>
                     <tr>
                     	<th>Id</th>
+                        <th>Orden</th>
                         <th>Nombre</th>
-                        <th>Descripción</th>
-						<th>Img Width</th>
-                        <th>Img Height</th>
-                        <th>Channels</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <!--  Nombre de modelo mvc en controller para esta página, nombre tabla en POJO -->
-	  					<tr><td colspan="6"></td></tr>
-	    				<c:forEach var="m" items="${modeloMVC.listadoModelos}" varStatus="loop">
+	  					<tr><td colspan="4"></td></tr>
+	    				<c:forEach var="m" items="${modeloMVC.listadoCategorias}" varStatus="loop">
 		      				<tr>
-		      					<td>${m.idModelo}</td>
-			      				<td>${m.nombreModelo}</td>
-			      				<td>${m.descripcion}</td>
-			      				<td></td>
-			      				<td></td>
-			      				<td></td>
+		      					<td>${m.idCategoria}</td>
+			      				<td>${m.idOrden}</td>
+			      				<td>${m.nombreCategoria}</td>
 			      				<td>
 		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
 		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="borrar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
-		                        	<a href="<c:url value='verModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="ver" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Ver">remove_red_eye</i></a>
-		                        	<a href="<c:url value='verCategorias.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="categorias" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Categorías">dataset</i></a>
-		                        	<a href="<c:url value='probarModelo?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="predecir" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Probar">burst_mode</i></a>
 		                        </td>
 		      				</tr>
 	    				</c:forEach>

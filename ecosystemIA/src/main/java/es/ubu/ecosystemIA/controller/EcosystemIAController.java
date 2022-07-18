@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.ubu.ecosystemIA.db.JPAModeloRnDao;
+import es.ubu.ecosystemIA.logica.CategoriaManager;
 import es.ubu.ecosystemIA.logica.NeuralNetworkManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
 import es.ubu.ecosystemIA.logica.UtilidadesCnn;
@@ -47,7 +48,9 @@ public class EcosystemIAController {
 	
 	private UtilidadesCnn utilsCnn;
 	@Autowired
-	private NeuralNetworkManager modelManager; 
+	private NeuralNetworkManager modelManager;
+	@Autowired
+	private CategoriaManager categoriaManager;
 	@PersistenceContext
 	private EntityManager em;
 	
@@ -112,6 +115,13 @@ public class EcosystemIAController {
 		return model;
 	}
 	
+	@GetMapping(value="verCategorias.do")
+	public ModelAndView verCategorias(@RequestParam Integer idModelo) {
+		logger.info("Consultando categorias del modelo id "+idModelo);
+		Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoCategorias", this.categoriaManager.getCategorias(idModelo));
+        return new ModelAndView("categorias", "modeloMVC", myModel);
+	}
 	
 	public void setModelManager(SimpleNeuralModelManager modelManager) {
 		this.modelManager = modelManager;
