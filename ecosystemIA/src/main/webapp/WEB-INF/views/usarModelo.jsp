@@ -11,7 +11,7 @@
             String latestPhotoUpload = (String) request.getAttribute(FileUploadController.PARAM_LATESTPHOTO);
             String resultado = (String) request.getAttribute(FileUploadController.PARAM_RESULTADO);
         %>
-        <title>Upload Photo</title>
+        <title>Subir Imagen de entrada para probar el modelo</title>
         <!-- BOOTSTRAP STYLES-->
         <link href="css/bootstrap.min.css" rel="stylesheet" />
  
@@ -22,18 +22,19 @@
             <div class="modal-content">
                 <div class="panel panel-primary" style="margin-bottom: 0px;">
                     <div class="panel-heading">
-                        Form Upload Photo
+                        ${modelo.nombreModelo}
+                        ${modelo.descripcion}
                     </div>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <form role="form" method="POST" action="uploadimgctlr.do" enctype="multipart/form-data">
                                     <div class="form-group">
-                                        <label>File input</label>
+                                        <label>Imagen de entrada</label>
                                         <input type="file" method="POST" accept=".jpg" name="file"/>
                                     </div>  
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">Upload</button>
+                                        <button type="submit" class="btn btn-primary">Subir imagen</button>
                                     </div>
                                 </form>
                             </div>

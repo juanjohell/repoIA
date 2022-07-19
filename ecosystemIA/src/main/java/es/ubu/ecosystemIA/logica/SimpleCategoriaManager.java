@@ -1,28 +1,25 @@
 package es.ubu.ecosystemIA.logica;
 
 import es.ubu.ecosystemIA.modelo.Categoria;
-import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
-
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import es.ubu.ecosystemIA.controller.FileUploadController;
 import es.ubu.ecosystemIA.db.CategoriaRnDao;
-import es.ubu.ecosystemIA.db.ModeloRnDao;
+
 
 @Component
 @Transactional
 public class SimpleCategoriaManager implements CategoriaManager{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	protected final Log logger = LogFactory.getLog(getClass());
-	private static final long serialVersionUID = -5392895280066494635L;
+	
 	private Categoria categoria;
 	private List<Categoria> categorias;
 	@Autowired

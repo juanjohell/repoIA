@@ -46,7 +46,7 @@ public class EcosystemIAController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private UtilidadesCnn utilsCnn;
+	
 	@Autowired
 	private NeuralNetworkManager modelManager;
 	@Autowired

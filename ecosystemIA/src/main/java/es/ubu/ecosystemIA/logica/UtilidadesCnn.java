@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
@@ -22,12 +24,17 @@ import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 
+import es.ubu.ecosystemIA.controller.FileUploadController;
+import es.ubu.ecosystemIA.modelo.Categoria;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
-
+import java.nio.file.Paths;
+import java.net.URISyntaxException;
+import java.net.URL;
 public class UtilidadesCnn {
-
-	// MÃ‰TODO que hace un resize de una imagen
+	protected final Log logger = LogFactory.getLog(getClass());
+	
+	// METODO que hace un resize de una imagen
     public static BufferedImage resizeImage(BufferedImage originalImage, Integer img_width, Integer img_height)
     {
     	int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB
@@ -107,15 +114,28 @@ public class UtilidadesCnn {
          return entrada_a_CNN;
     }
     
-    public String devuelve_categoria(INDArray resultado, ModeloRedConvolucional modelo, ArrayList<String> categorias) {
+    public String devuelve_categoria(INDArray resultado, ArrayList<Categoria> categorias) {
     	String categoria = resultado.toString();
     	INDArray valores = resultado.getRow(0);
     	Number maximo = valores.maxNumber();
     	Integer indice = 0;
     	for (int i=0; i< (int) resultado.length(); i++) {
     		if (valores.getDouble(i) == maximo.doubleValue())
-    			categoria = categorias.get(i);
+    			categoria = categorias.get(i).getNombreCategoria();
     	}
     	return categoria;
+    }
+    
+    public String devuelve_pàth_real(String resource_path) {
+    	URL resource = FileUploadController.class.getClassLoader().getResource(resource_path);
+ 		String ruta = null;
+		try {
+			ruta = Paths.get(resource.toURI()).toString();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("ruta real al fichero h5: "+ruta);
+		return ruta;
     }
 }

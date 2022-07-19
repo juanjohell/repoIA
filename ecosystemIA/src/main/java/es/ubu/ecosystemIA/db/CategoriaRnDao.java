@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import es.ubu.ecosystemIA.modelo.Categoria;
 
 @Transactional
