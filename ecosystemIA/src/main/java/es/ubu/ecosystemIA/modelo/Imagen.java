@@ -3,6 +3,7 @@ package es.ubu.ecosystemIA.modelo;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -15,6 +16,7 @@ public class Imagen {
 	Integer IMAGE_CHANNELS;
 	BufferedImage img;
 	INDArray Matriz_cnn_normalizada;
+	InputStream imagenStream;
 	
 	
 
@@ -72,6 +74,14 @@ public class Imagen {
 
 	public void setImg(BufferedImage img) {
 		this.img = img;
+	}
+
+	public InputStream getImagenStream() {
+		return imagenStream;
+	}
+
+	public void setImagenStream(InputStream imagenStream) {
+		this.imagenStream = imagenStream;
 	}
 	
 }

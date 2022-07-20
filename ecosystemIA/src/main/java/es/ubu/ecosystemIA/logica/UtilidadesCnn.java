@@ -4,15 +4,24 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bytedeco.opencv.global.opencv_highgui;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
+import static org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_DUPLEX;
+import static org.bytedeco.opencv.global.opencv_imgproc.putText;
+
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
 import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
 import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
@@ -24,6 +33,7 @@ import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 
+
 import es.ubu.ecosystemIA.controller.FileUploadController;
 import es.ubu.ecosystemIA.modelo.Categoria;
 import es.ubu.ecosystemIA.modelo.Imagen;
@@ -31,9 +41,11 @@ import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import java.nio.file.Paths;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 public class UtilidadesCnn {
 	protected final Log logger = LogFactory.getLog(getClass());
-	
+	private static final int GRID_WIDTH = 13;
+    private static final int GRID_HEIGHT = 13;
 	// METODO que hace un resize de una imagen
     public static BufferedImage resizeImage(BufferedImage originalImage, Integer img_width, Integer img_height)
     {
@@ -76,6 +88,19 @@ public class UtilidadesCnn {
     	MultiLayerNetwork model = null;
     	try {
 			model = KerasModelImport.importKerasSequentialModelAndWeights(rutaFichero,false);
+		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return model;
+    }
+    
+ // CARGA DE UN MODELO EN FORMATO KERAS H5
+    public ComputationGraph cargaModeloRCNNH5(String rutaFichero) {
+    	
+    	ComputationGraph model = null;
+    	try {
+			model = KerasModelImport.importKerasModelAndWeights(rutaFichero);
 		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,5 +162,44 @@ public class UtilidadesCnn {
 		}
 		logger.info("ruta real al fichero h5: "+ruta);
 		return ruta;
+    }
+    
+    // SI SE OBTIENE UNA UNICA COORDENADA
+    // TODO: MULTIPLES COORDENADAS
+    public void anotacionSimpleImagen(ModeloRedConvolucional model, Mat rawImage, INDArray modelOutput) {
+	    		// Se marca el objeto detectado con un rectángulo y una etiqueta
+    			// Se calcula la posición del rectángulo respecto al tamaño de la imagen
+    		INDArray valores = modelOutput.getRow(0);
+    		double x1 = valores.getDouble(0);
+    		double y1 = valores.getDouble(1);
+    		double x2 = valores.getDouble(2);
+    		double y2 = valores.getDouble(3);
+    		//TODO: Extraccion de etiquetas			
+    		String label = "botella";
+    		// calculo de coordenadas
+    		int xmin = (int) Math.round(model.getModelImageWidth() * x1 / GRID_WIDTH);
+    		int ymin = (int) Math.round(model.getModelImageHeight() * y1 / GRID_HEIGHT);
+    		int xmax = (int) Math.round(model.getModelImageWidth() * x2 / GRID_WIDTH);
+    		int ymax = (int) Math.round(model.getModelImageHeight() * y2 / GRID_HEIGHT);
+    		// Se dibuja el rectangulo en la imagen
+    		rectangle(rawImage, new Point(xmin, ymin), new Point(xmax, ymax), Scalar.RED, 2, 0, 0);
+    		// Se dibuja la etiqueta
+    		putText(rawImage, label, new Point(xmin + 2, ymax - 2),FONT_HERSHEY_DUPLEX, 1, Scalar.RED);
+    		opencv_highgui.imshow("deteccion", rawImage);
+    		// Store the file on disk
+    		//imwrite(outputImagePath, rawImage);
+
+    }
+    
+    // CONVERSIONES ENTRE IMAGENES EN BYTES Y EN FORMA
+    // MATRICIAL
+    public byte[] Mat2Bytes(Mat mat){
+        byte[] b = new byte[mat.channels() * mat.cols() * mat.rows()];
+        mat.data().get(b);
+        return b;
+    }
+
+    public Mat Bytes2Mat(byte[] b){
+        return new Mat(b);
     }
 }

@@ -1,7 +1,9 @@
 package es.ubu.ecosystemIA.controller;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bytedeco.opencv.opencv_core.Mat;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,42 +50,27 @@ public class FileUploadController extends FileBaseController{
 
 	public static final String PARAM_LATESTPHOTO = "LATEST_PHOTO_PARAM";
 	public static final String PARAM_RESULTADO = "RESULTADO";
-	private int IMAGE_CHANNELS = 3;
-	private int IMAGE_MODEL_WIDTH = 32;
-	private int IMAGE_MODEL_HEIGHT = 32;
+
     
 	protected final Log logger = LogFactory.getLog(getClass());
 	@Autowired
 	private NeuralNetworkManager modelManager;
 	@Autowired
 	private CategoriaManager categoriaManager;
-	private ModeloRedConvolucional modeloCargado;
-	private MultiLayerNetwork modeloKeras;
 	private UtilidadesCnn utilsCnn;
-
-	public MultiLayerNetwork getModeloKeras() {
-		return modeloKeras;
-	}
-	public void setModeloKeras(String path_to_h5) {
-		utilsCnn = new UtilidadesCnn();
-		this.modeloKeras = utilsCnn.cargaModeloH5(utilsCnn.devuelve_pàth_real(path_to_h5));
-		logger.info("modelo cargado de fichero h5");
-	}
 	
-	public ModeloRedConvolucional getModeloCargado() {
-		return modeloCargado;
-	}
-	public void setModeloCargado(ModeloRedConvolucional modeloCargado) {
-		this.modeloCargado = modeloCargado;
-	}
 	
 	@GetMapping(value="cargarModelo.do")
 	public ModelAndView probarModelo(@RequestParam String idModelo) {
 		logger.info("Peticion Carga modelo ");
 		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
 		logger.info("Cargando modelo "+redconv.getNombreModelo());
-		this.setModeloKeras(redconv.getPathToModel());
-		this.setModeloCargado(redconv);
+		this.modelManager.setModeloCargado(redconv);
+		if (redconv.getTipoSalida().equals("texto"))
+			this.modelManager.setMultilayerNetwork(redconv);
+		if (redconv.getTipoSalida().equals("imagen"))
+			this.modelManager.setComputationGraph(redconv);
+		
 		Map<String,Object> myModel = new HashMap<>();
 		myModel.put("nombreModelo", redconv.getNombreModelo());
 		myModel.put("descripcion", redconv.getDescripcion());
@@ -121,7 +108,11 @@ public class FileUploadController extends FileBaseController{
     //write uploaded image to disk
         try {
             try (InputStream is = file.getInputStream(); BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile))) {
-                int i;
+            	Imagen imagenCargada = new Imagen(rootPath, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
+                imagenCargada.setImagenStream(is);
+                this.modelManager.setImagenCargada(imagenCargada);
+            	int i;
+                //
                 while ((i = is.read()) != -1) {
                     stream.write(i);
                 }
@@ -149,7 +140,7 @@ public class FileUploadController extends FileBaseController{
  		
  		// Recuperamos categorias del modelo
     	// TODO Si lista viene vacia
- 		ArrayList<Categoria> categorias = (ArrayList<Categoria>) categoriaManager.getCategorias(this.modeloCargado.getIdModelo());
+ 		ArrayList<Categoria> categorias = (ArrayList<Categoria>) categoriaManager.getCategorias(this.modelManager.getModeloCargado().getIdModelo());
  		//modeloCnn.setCategorias(categorias);
  		
  		//leemos imagen
@@ -158,22 +149,43 @@ public class FileUploadController extends FileBaseController{
  		logger.info("ruta imagen: "+rootPath);
  		
  		//Configuramos los datos de entrada esperados por el modelo
- 		Imagen imagenInput = new Imagen(rootPath, this.modeloCargado.getModelImageWidth(), this.modeloCargado.getModelImageHeight(), this.modeloCargado.getImageChannels());
+ 		Imagen imagenInput = new Imagen(rootPath, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
 		//REDIMENSIONAMOS LA IMAGEN POR SI VIENE EN OTRO TAMAÑO AL ESPERADO
- 		imagenInput.setImg(utilsCnn.resizeImage(imagenInput.getImg(), this.modeloCargado.getModelImageWidth(), this.modeloCargado.getModelImageHeight()));
+ 		imagenInput.setImg(utilsCnn.resizeImage(imagenInput.getImg(), this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight()));
 		
 		// CONVERTIMOS IMAGEN EN matriz de entrada al modelo
-		INDArray input = utilsCnn.devuelve_matriz_de_imagen_normalizada(imagenInput, this.modeloCargado);
+		INDArray input = utilsCnn.devuelve_matriz_de_imagen_normalizada(imagenInput, this.modelManager.getModeloCargado());
 		
 		// TODO: Tratamiento segun tipo de modelo, categorias o clasificacion 
 		
 		// PRESENTAMOS IAMGEN AL MODELO Y RECOGEMOS RESPUESTA
-        INDArray output = this.modeloKeras.output(input);
-        
-        String categoria = utilsCnn.devuelve_categoria(output, categorias);
+		INDArray output = null;
+        String resultado = "error";
+        //En funcion del tipo de modelo obtenemos una imagen o un texto que nos da la categoria
+        if (this.modelManager.getModeloCargado().getTipoSalida().equals("texto")) {
+        	output = this.modelManager.getMultilayerNetwork().output(input);
+        	logger.info("se espera texto como salida del modelo");
+        	resultado = utilsCnn.devuelve_categoria(output, categorias);
+        }
+        if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
+        	logger.info("se espera una imagen salida del modelo");
+        	output = this.modelManager.getComputationGraph().outputSingle(input);
+        	//Obtenemos imagen en formato matricial
+        	try {
+				Mat rawImagen = utilsCnn.Bytes2Mat(IOUtils.toByteArray(this.modelManager.getImagenCargada().getImagenStream()));
+				utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), rawImagen, output);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
+        	INDArray valores = output.getRow(0);
+        	resultado = valores.toString();
+        }
          
         //MOSTRAMOS RESULTADO EN EL JSP
-        model.addAttribute(PARAM_RESULTADO, categoria);
+        model.addAttribute(PARAM_RESULTADO, resultado);
+        
         return "usarModelo";
     }
     public void setModelManager(SimpleNeuralModelManager modelManager) {

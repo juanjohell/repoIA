@@ -1,10 +1,13 @@
 package es.ubu.ecosystemIA.logica;
 
 import es.ubu.ecosystemIA.modelo.Categoria;
+import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
+
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import es.ubu.ecosystemIA.db.CategoriaRnDao;
@@ -67,4 +70,5 @@ public class SimpleCategoriaManager implements CategoriaManager{
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
+	
 }

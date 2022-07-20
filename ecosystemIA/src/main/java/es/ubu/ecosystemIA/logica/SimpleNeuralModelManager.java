@@ -1,5 +1,6 @@
 package es.ubu.ecosystemIA.logica;
 
+import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import es.ubu.ecosystemIA.db.ModeloRnDao;
@@ -16,30 +18,14 @@ import es.ubu.ecosystemIA.db.ModeloRnDao;
 public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	protected final Log logger = LogFactory.getLog(getClass());
 	private static final long serialVersionUID = -5392895280098494635L;
-	private ModeloRedConvolucional modelo;
+	private ModeloRedConvolucional modeloCargado;
 	@Autowired
 	private ModeloRnDao modeloDao;
 	private MultiLayerNetwork multilayerNetwork;
+	private UtilidadesCnn utilsCnn;
+	private ComputationGraph computationGraph;
+	private Imagen imagenCargada;
 	
-	// EN EL CONSTRUCTOR SE CARGA EL MODELO POR DEFECTO
-	/*public SimpleNeuralModelManager() {
-		utilsCnn = new UtilidadesCnn();
-		logger.info("Intentando cargar el modelo establecido por defecto...");
-		this.modelo = modeloDao.devuelveModeloPorDefecto();
-		if (this.modelo != null) {
-			URL resource = SimpleNeuralModelManager.class.getClassLoader().getResource(modelo.getPathToModel());
-			String ruta = null;
-			try {
-				ruta = Paths.get(resource.toURI()).toString();
-				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				this.multilayerNetwork = utilsCnn.cargaModeloH5(ruta);
-			}
-		// TODO Auto-generated constructor stub
-	}
-	*/
 	@Transactional
 	@Override
 	public void nuevoModelo(ModeloRedConvolucional modelo) {
@@ -64,8 +50,12 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		return this.modeloDao.getModelo(idModelo);
 	}
 	
-	public ModeloRedConvolucional getModelo() {
-		return this.modelo;
+	public ModeloRedConvolucional getModeloCargado() {
+		return this.modeloCargado;
+	}
+	
+	public void setModeloCargado(ModeloRedConvolucional modelo) {
+		this.modeloCargado = modelo;
 	}
 	
 	@Transactional
@@ -88,15 +78,28 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		modeloDao.establecerModeloPorDefecto(modelo);
 	}
 	
-	public void setModelo(ModeloRedConvolucional modelo) {
-		this.modelo = modelo;
-	}
+	
 	public MultiLayerNetwork getMultilayerNetwork() {
 		return this.multilayerNetwork;
 	}
-	public void setMultilayerNetwork(MultiLayerNetwork multilayerNetwork) {
-		this.multilayerNetwork = multilayerNetwork;
+	public void setMultilayerNetwork(ModeloRedConvolucional modelo) {
+		utilsCnn = new UtilidadesCnn();
+		this.multilayerNetwork = utilsCnn.cargaModeloH5(utilsCnn.devuelve_pàth_real(modelo.getPathToModel()));
+		logger.info("modelo cargado de fichero h5");
 	}
-	
+	public ComputationGraph getComputationGraph() {
+		return this.computationGraph;
+	}
+	public void setComputationGraph(ModeloRedConvolucional modelo) {
+		utilsCnn = new UtilidadesCnn();
+		this.computationGraph = utilsCnn.cargaModeloRCNNH5(utilsCnn.devuelve_pàth_real(modelo.getPathToModel()));
+		logger.info("modelo cargado de fichero h5");
+	}
+	public Imagen getImagenCargada() {
+		return imagenCargada;
+	}
+	public void setImagenCargada(Imagen imagenCargada) {
+		this.imagenCargada = imagenCargada;
+	}
 	
 }

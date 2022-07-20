@@ -52,6 +52,9 @@ public class ModeloRedConvolucional implements Serializable{
 	@Column(name="SELECCIONADO")
 	private Integer porDefecto;
 	
+	@Column(name="TIPO_SALIDA")
+	private String tipoSalida;
+	
 	public Integer getIdModelo() {
 		return idModelo;
 	}
@@ -107,6 +110,14 @@ public class ModeloRedConvolucional implements Serializable{
 
 	public void setPorDefecto(Integer porDefecto) {
 		this.porDefecto = porDefecto;
+	}
+
+	public String getTipoSalida() {
+		return tipoSalida;
+	}
+
+	public void setTipoSalida(String tipoSalida) {
+		this.tipoSalida = tipoSalida;
 	}
 
 	public String toString() {
