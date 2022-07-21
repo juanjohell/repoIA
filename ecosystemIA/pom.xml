@@ -166,7 +166,6 @@
 		    	<version>7.0.4.Final</version>
 			</dependency>
 	
-	
 	<!-- validaciones -->
 	<dependency>
     	<groupId>javax.validation</groupId>

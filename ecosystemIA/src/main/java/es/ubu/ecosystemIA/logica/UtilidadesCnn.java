@@ -1,7 +1,12 @@
 package es.ubu.ecosystemIA.logica;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,13 +16,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.bytedeco.opencv.global.opencv_highgui;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Point;
-import org.bytedeco.opencv.opencv_core.Scalar;
-import static org.bytedeco.opencv.global.opencv_imgproc.rectangle;
-import static org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_DUPLEX;
-import static org.bytedeco.opencv.global.opencv_imgproc.putText;
+
+
 
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
@@ -33,6 +33,10 @@ import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
+
 
 import es.ubu.ecosystemIA.controller.FileUploadController;
 import es.ubu.ecosystemIA.modelo.Categoria;
@@ -46,8 +50,10 @@ public class UtilidadesCnn {
 	protected final Log logger = LogFactory.getLog(getClass());
 	private static final int GRID_WIDTH = 13;
     private static final int GRID_HEIGHT = 13;
+    
+    
 	// METODO que hace un resize de una imagen
-    public static BufferedImage resizeImage(BufferedImage originalImage, Integer img_width, Integer img_height)
+    public BufferedImage resizeImage(BufferedImage originalImage, Integer img_width, Integer img_height)
     {
     	int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB
                 : originalImage.getType();
@@ -55,7 +61,7 @@ public class UtilidadesCnn {
     	Graphics2D g = resizedImage.createGraphics();
     	g.drawImage(originalImage, 0, 0, img_width, img_height, null);
     	g.dispose();
-
+    	logger.info("imagen redimensionada");
     	return resizedImage;
     }
     
@@ -166,9 +172,15 @@ public class UtilidadesCnn {
     
     // SI SE OBTIENE UNA UNICA COORDENADA
     // TODO: MULTIPLES COORDENADAS
-    public void anotacionSimpleImagen(ModeloRedConvolucional model, Mat rawImage, INDArray modelOutput) {
+    // model: modelo actualmente cargado
+    // modelOutput : coordenadas obtenidas del modelo
+    // ruta_escritura : RUTA + NOMBRE COMPLETO DEL FICHERO EN EL QUE SE VA A ESCRIBIR LA IMAGEN
+    // ruta_lectura : RUTA + NOMBRE COMPLETO DE LA IMAGEN ORIGINAL
+    public boolean anotacionSimpleImagen(ModeloRedConvolucional model, INDArray modelOutput, String ruta_lectura, String ruta_escritura) {
 	    		// Se marca el objeto detectado con un rectángulo y una etiqueta
     			// Se calcula la posición del rectángulo respecto al tamaño de la imagen
+    		boolean resultado = true;
+    	
     		INDArray valores = modelOutput.getRow(0);
     		double x1 = valores.getDouble(0);
     		double y1 = valores.getDouble(1);
@@ -177,29 +189,57 @@ public class UtilidadesCnn {
     		//TODO: Extraccion de etiquetas			
     		String label = "botella";
     		// calculo de coordenadas
-    		int xmin = (int) Math.round(model.getModelImageWidth() * x1 / GRID_WIDTH);
-    		int ymin = (int) Math.round(model.getModelImageHeight() * y1 / GRID_HEIGHT);
-    		int xmax = (int) Math.round(model.getModelImageWidth() * x2 / GRID_WIDTH);
-    		int ymax = (int) Math.round(model.getModelImageHeight() * y2 / GRID_HEIGHT);
+    		int xmin = (int) Math.round(model.getModelImageWidth() * x1);
+    		int ymin = (int) Math.round(model.getModelImageHeight() * y1);
+    		int xmax = (int) Math.round(model.getModelImageWidth() * x2);
+    		int ymax = (int) Math.round(model.getModelImageHeight() * y2);
+    		logger.info("rectangulo...xmin="+Integer.toString(xmin));
+    		logger.info("rectangulo...ymin="+Integer.toString(ymin));
+    		logger.info("rectangulo...xmax="+Integer.toString(xmax));
+    		logger.info("rectangulo...ymax="+Integer.toString(ymax));
     		// Se dibuja el rectangulo en la imagen
-    		rectangle(rawImage, new Point(xmin, ymin), new Point(xmax, ymax), Scalar.RED, 2, 0, 0);
-    		// Se dibuja la etiqueta
-    		putText(rawImage, label, new Point(xmin + 2, ymax - 2),FONT_HERSHEY_DUPLEX, 1, Scalar.RED);
-    		opencv_highgui.imshow("deteccion", rawImage);
-    		// Store the file on disk
-    		//imwrite(outputImagePath, rawImage);
+    		int width = Math.abs(xmax - xmin);
+    		int height = Math.abs(ymax - ymin);
+    		
+    		File imageFile = new File(ruta_lectura);
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(imageFile);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                resultado = false;
+            }
+            //TODO: parametrizar color y ancho del borde para el usuario
+            if (resultado) {
+            	Graphics2D graph = img.createGraphics();
+            	graph.setColor(Color.ORANGE);
+            	//graph.fill(new Rectangle(100, 100, 100, 100));
+            	graph.setStroke(new BasicStroke(2));
+            	graph.drawRect(xmin, ymin, width, height);
+            	//graph.fill(new Rectangle(xmin, ymin, width, height));
+            	graph.dispose();
 
+            	try {
+            		ImageIO.write(img, "jpg", 
+                        new File(ruta_escritura));
+            	} catch (IOException e) {
+            		e.printStackTrace();
+            	}
+            }
+            return resultado;
     }
     
     // CONVERSIONES ENTRE IMAGENES EN BYTES Y EN FORMA
     // MATRICIAL
-    public byte[] Mat2Bytes(Mat mat){
-        byte[] b = new byte[mat.channels() * mat.cols() * mat.rows()];
-        mat.data().get(b);
-        return b;
+   /* public byte[] Mat2Bytes(Mat mat){
+    	MatOfByte bytemat = new MatOfByte();
+    	Imgcodecs.imencode("jpg", mat, bytemat);
+    	 byte[] bytes = bytemat.toArray();
+    	 return bytes;
     }
 
     public Mat Bytes2Mat(byte[] b){
-        return new Mat(b);
-    }
+    	Mat mat = Imgcodecs.imdecode(new MatOfByte(b), Imgcodecs.IMREAD_UNCHANGED);
+    	return mat;
+    }*/
 }

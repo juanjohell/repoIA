@@ -37,15 +37,15 @@
                 </thead>
                 <tbody>
                     <!--  Nombre de modelo mvc en controller para esta página, nombre tabla en POJO -->
-	  					<tr><td colspan="6"></td></tr>
+	  					<tr><td colspan="7"></td></tr>
 	    				<c:forEach var="m" items="${modeloMVC.listadoModelos}" varStatus="loop">
 		      				<tr>
 		      					<td>${m.idModelo}</td>
 			      				<td>${m.nombreModelo}</td>
 			      				<td>${m.descripcion}</td>
-			      				<td></td>
-			      				<td></td>
-			      				<td></td>
+			      				<td>${m.modelImageWidth}</td>
+			      				<td>${m.modelImageHeight}</td>
+			      				<td>${m.imageChannels}</td>
 			      				<td>
 		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
 		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="borrar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>

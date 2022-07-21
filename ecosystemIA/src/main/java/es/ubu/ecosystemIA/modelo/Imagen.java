@@ -10,7 +10,9 @@ import javax.imageio.ImageIO;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class Imagen {
-	String  rutaImagen;
+	String rutaImagen;
+	String nombre;
+	String nombreAnotada;
 	Integer IMAGE_WIDTH;
 	Integer IMAGE_HEIGHT;
 	Integer IMAGE_CHANNELS;
@@ -27,14 +29,6 @@ public class Imagen {
 		IMAGE_HEIGHT = iMAGE_HEIGHT;
 		IMAGE_CHANNELS = iMAGE_CHANNELS;
 		img = null;
-		// cargamos imagen:
-		try {
-			this.img = ImageIO.read(new File(rutaImagen));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
 	}
 	
 	public String getRutaImagen() {
@@ -82,6 +76,22 @@ public class Imagen {
 
 	public void setImagenStream(InputStream imagenStream) {
 		this.imagenStream = imagenStream;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getNombreAnotada() {
+		return nombreAnotada;
+	}
+
+	public void setNombreAnotada(String nombreAnotada) {
+		this.nombreAnotada = nombreAnotada;
 	}
 	
 }

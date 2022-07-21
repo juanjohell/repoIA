@@ -3,9 +3,10 @@ package es.ubu.ecosystemIA.controller;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.bytedeco.opencv.opencv_core.Mat;
+
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.opencv.core.Mat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,8 +27,10 @@ import es.ubu.ecosystemIA.logica.SimpleCategoriaManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
 import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +43,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +63,8 @@ public class FileUploadController extends FileBaseController{
 	@Autowired
 	private CategoriaManager categoriaManager;
 	private UtilidadesCnn utilsCnn;
-	
+	File serverfile;
+	String latestUploadPhoto;
 	
 	@GetMapping(value="cargarModelo.do")
 	public ModelAndView probarModelo(@RequestParam String idModelo) {
@@ -95,21 +101,23 @@ public class FileUploadController extends FileBaseController{
     public String uploadImageCtlr(ModelMap model,
             HttpServletRequest request, 
             @RequestParam MultipartFile file){
-        String latestUploadPhoto = "";
+        latestUploadPhoto = "";
         String rootPath = request.getSession().getServletContext().getRealPath("/");
         File dir = new File(rootPath + File.separator + "img");
         if (!dir.exists()) {
             dir.mkdirs();
         }
          
-        File serverFile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
+        serverfile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
         latestUploadPhoto = file.getOriginalFilename();
+        
          
-    //write uploaded image to disk
+        //write uploaded image to disk
         try {
-            try (InputStream is = file.getInputStream(); BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile))) {
+            try (InputStream is = file.getInputStream(); BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverfile))) {
             	Imagen imagenCargada = new Imagen(rootPath, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
-                imagenCargada.setImagenStream(is);
+                
+                imagenCargada.setNombre(latestUploadPhoto);
                 this.modelManager.setImagenCargada(imagenCargada);
             	int i;
                 //
@@ -145,13 +153,20 @@ public class FileUploadController extends FileBaseController{
  		
  		//leemos imagen
  		File file = Paths.get(URI.create(imagen).getPath()).toFile();
- 		String rootPath = request.getSession().getServletContext().getRealPath("/") + "img"+File.separator + file.getName();
- 		logger.info("ruta imagen: "+rootPath);
+ 		String rutaImagenOriginal = request.getSession().getServletContext().getRealPath("/") + "img"+File.separator + file.getName();
+ 		logger.info("ruta imagen: "+rutaImagenOriginal);
  		
  		//Configuramos los datos de entrada esperados por el modelo
- 		Imagen imagenInput = new Imagen(rootPath, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
+ 		Imagen imagenInput = new Imagen(rutaImagenOriginal, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
 		//REDIMENSIONAMOS LA IMAGEN POR SI VIENE EN OTRO TAMAÑO AL ESPERADO
- 		imagenInput.setImg(utilsCnn.resizeImage(imagenInput.getImg(), this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight()));
+ 		BufferedImage bi = null;
+ 		try {
+			bi = ImageIO.read(new File(rutaImagenOriginal));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+ 		imagenInput.setImg(utilsCnn.resizeImage(bi, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight()));
 		
 		// CONVERTIMOS IMAGEN EN matriz de entrada al modelo
 		INDArray input = utilsCnn.devuelve_matriz_de_imagen_normalizada(imagenInput, this.modelManager.getModeloCargado());
@@ -161,6 +176,13 @@ public class FileUploadController extends FileBaseController{
 		// PRESENTAMOS IAMGEN AL MODELO Y RECOGEMOS RESPUESTA
 		INDArray output = null;
         String resultado = "error";
+        //String latestUploadPhoto = "";
+        String rootPath = request.getSession().getServletContext().getRealPath("/");
+        File dir = new File(rootPath + File.separator + "img");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        
         //En funcion del tipo de modelo obtenemos una imagen o un texto que nos da la categoria
         if (this.modelManager.getModeloCargado().getTipoSalida().equals("texto")) {
         	output = this.modelManager.getMultilayerNetwork().output(input);
@@ -168,24 +190,47 @@ public class FileUploadController extends FileBaseController{
         	resultado = utilsCnn.devuelve_categoria(output, categorias);
         }
         if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
-        	logger.info("se espera una imagen salida del modelo");
         	output = this.modelManager.getComputationGraph().outputSingle(input);
         	//Obtenemos imagen en formato matricial
-        	try {
-				Mat rawImagen = utilsCnn.Bytes2Mat(IOUtils.toByteArray(this.modelManager.getImagenCargada().getImagenStream()));
-				utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), rawImagen, output);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
         	
+        		logger.info("se espera una imagen salida del modelo");
+        		logger.info("imagen original :"+serverfile.getAbsolutePath());
+        		//fichero de salida
+				int sufijo = (int) (Math.random() * 10000) + 1;
+				//TODO: almacenar extension en imagen
+				String nombre_imagen = "Imagen_anotada"+Integer.toString(sufijo)+".jpg";
+				String rutaImagenFinal = rootPath +"img"+File.separator +nombre_imagen; 
+				logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
+				if (utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), output, rutaImagenOriginal, rutaImagenFinal))
+					latestUploadPhoto = nombre_imagen;
+        		//InputStream is = new FileInputStream(serverfile);
+				//Mat rawImagen = utilsCnn.Bytes2Mat(IOUtils.toByteArray(is));
+				logger.info("obteniendo imagen cargada en formato matricial ");
+				//InputStream streamImagenAnn = utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), rawImagen, output);
+				
+				
+				
+				/*
+				try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(imagenAnn))) {
+					latestUploadPhoto = nombre_imagen;
+					logger.debug("nueva imagen anotada: "+this.modelManager.getImagenCargada().getRutaImagen() + nombre_imagen);
+					int i;
+					//
+					while ((i = streamImagenAnn.read()) != -1) {
+					    stream.write(i);
+					}
+					stream.flush();
+				}*/
+
         	INDArray valores = output.getRow(0);
         	resultado = valores.toString();
         }
-         
+       //url a la imagen 
+        model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
+        //imagen
+        model.addAttribute(PARAM_LATESTPHOTO, latestUploadPhoto);
         //MOSTRAMOS RESULTADO EN EL JSP
         model.addAttribute(PARAM_RESULTADO, resultado);
-        
         return "usarModelo";
     }
     public void setModelManager(SimpleNeuralModelManager modelManager) {
