@@ -27,44 +27,64 @@
                     </div>
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <form role="form" method="POST" action="uploadimgctlr.do" enctype="multipart/form-data">
                                     <div class="form-group">
-                                        <label>Imagen de entrada</label>
-                                        <input type="file" method="POST" accept=".jpg" name="file"/>
+                                    	<div class="mb-3">
+  											<label for="formFile" class="form-label">Seleccione imagen a probar.</label>
+  											<input class="form-control" type="file" id="formFile" method="POST" accept=".jpg" name="file">
+										</div>
                                     </div>  
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary">Subir imagen</button>
                                     </div>
                                 </form>
                             </div>
-                            	<!-- Bootstrap Progress bar -->
-    							<div class="progress">
-      								<div id="progressBar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
-    							</div>
+                            	
                        	 </div>
-                        <%if (latestPhotoUpload != null && !"".equals(latestPhotoUpload)) {%>
+                        <%if (latestPhotoUpload != null && !"".equals(latestPhotoUpload)) {%>	
+							<form role="form" method="POST" action="testCnnModel.do" enctype="multipart/form-data">
+                        	<div class="row">
+                            	<div class="col-md-12">
+                                	<img src="<%=baseURL%>/img/<%=latestPhotoUpload%>" class="col-md-12"/>
+                            	</div>
+                            </div>
+                            <div class="row">
+                            	<div class="col-md-12">
+                            		<input type="hidden" value="<%=baseURL%>/img/<%=latestPhotoUpload%>" name="imagen">
+                        		</div>
+                        	</div>
+                        	<div class="row">
+                            	<div class="col-md-12">  
+                                    	<div class="form-group">
+                                        	<button type="submit" class="btn btn-primary">Predecir imagen</button>
+                                    	</div>
+                                 </div>
+                             </div>
+                             </form>
+                         	 <%if (resultado != null && !"".equals(resultado)) {%>
+                         	<div class="row">
+                            	<div class="col-md-12">
+                            		<div class="alert alert-success">
+  										<strong>Salida del modelo: </strong> <%=resultado%>
+									</div>
+                        		</div>
+                        	</div>
+                        	<%}%>
+                         	<!-- Bootstrap Progress bar -->
+                        	<div class="row">
+                            	<div class="col-md-12">
+    								<div class="progress">
+  										<div class="progress-bar progress-bar-striped active" role="progressbar"
+  												aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width:80%">
+    												procesando imagen...
+  										</div>
+									</div>
+								</div>
+							</div>		
+                        <%}%>
                         
-                        <form role="form" method="POST" action="testCnnModel.do" enctype="multipart/form-data">
-                                    <div class="row">
-                            			<div class="col-md-12">
-                                			<img src="<%=baseURL%>/img/<%=latestPhotoUpload%>" class="col-md-12"/>
-                            			</div>
-                            			<input type="hidden" value="<%=baseURL%>/img/<%=latestPhotoUpload%>" name="imagen">
-                        			</div>
-                                    <div class="form-group">
-                                        <label>File input</label>
-                                        <input type="file" method="POST" accept=".jpg" name="file"/>
-                                    </div>  
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">Predecir imagen</button>
-                                    </div>
-                                    
-                         </form>
-                        <%}%>
-                        <%if (resultado != null && !"".equals(resultado)) {%>
-                                    	<%=resultado%>
-                        <%}%>
+                        
                     </div>
                 </div>
             </div>            

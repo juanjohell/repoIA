@@ -90,8 +90,13 @@ public class EcosystemIAController {
         modelo.setDescripcion(descripcion);
         logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
         logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
+        // edicion del modelo
         this.modelManager.editarModelo(modelo);
-        return new ModelAndView("modelos");
+        // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el parámetro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
 	
 	@RequestMapping(value = "/editarModelo.do", method = RequestMethod.POST, params = "cancelar")
@@ -115,6 +120,21 @@ public class EcosystemIAController {
 		return model;
 	}
 	
+	@GetMapping(value="eliminarModelo.do")
+	public ModelAndView eliminarModelo(@RequestParam String idModelo) {
+		logger.info("Consultando datos del modelo id "+idModelo);
+		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+        logger.info("Eliminar modelo "+ redconv.getNombreModelo());
+        
+        // eliminar modelo
+        this.modelManager.borrarModelo(redconv);
+        // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el parámetro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
+	}
+	
 	@GetMapping(value="verCategorias.do")
 	public ModelAndView verCategorias(@RequestParam Integer idModelo) {
 		logger.info("Consultando categorias del modelo id "+idModelo);
@@ -122,6 +142,33 @@ public class EcosystemIAController {
         myModel.put("listadoCategorias", this.categoriaManager.getCategorias(idModelo));
         return new ModelAndView("categorias", "modeloMVC", myModel);
 	}
+	
+	@GetMapping(value="nuevoModelo.do")
+	public ModelAndView nuevoModelo() {
+		logger.info("Nuevo modelo");
+		ModelAndView model = new ModelAndView("nuevoModelo");
+		ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+		model.addObject("modelo",modelo);
+		return model;
+	}
+	
+	@Transactional
+	@RequestMapping(value = "grabarNuevoModelo.do", method = RequestMethod.POST, params = "grabar")
+    public ModelAndView nuevoModelo(@RequestParam String nombreModelo,
+    		@RequestParam String descripcion, 
+    		HttpServletRequest request) {
+        ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+        modelo.setNombreModelo(nombreModelo);
+        modelo.setDescripcion(descripcion);
+        logger.info("Grabar nuevo modelo "+ modelo.getNombreModelo());
+        //se graba nuevo modelo
+        this.modelManager.nuevoModelo(modelo);
+        // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el parámetro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
+    }
 	
 	public void setModelManager(SimpleNeuralModelManager modelManager) {
 		this.modelManager = modelManager;

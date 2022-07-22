@@ -15,18 +15,20 @@
   <title><h1><h1><fmt:message key="titulo"/></h1></title>
   </head>
   <body>
-  <div class="jumbotron" class="w-75 p-3" >
-  	<span class="border border-primary">
-  			<h1 class="display-1">EcosystemIA</h1>
-    		<h3 class="display-4">Aplicación para uso de redes convolucionales entrenadas</h3>
-    		<p class="lead">Actualmente está cargado por defecto el modelo <c:out value="${mensaje}"/></p>
-    		<form method="POST" action="modelos.do">
-  				<div class="form-row align-items-center">
-    				<h2></h2>
-    				<button type="submit" class="btn btn-primary btn-lg">COMENZAR</button>
-     			<div>
-  			</form>
-  	</span>
-  </div>
+  	<div class="container">
+	  <div class="jumbotron" class="w-75 p-3" >
+	  	<span class="border border-primary">
+	  			<h1 class="display-1">EcosystemIA</h1>
+	    		<h3 class="display-4">Aplicación para uso de redes convolucionales entrenadas</h3>
+	    		
+	    		<form method="POST" action="modelos.do">
+	  				<div class="form-row align-items-center">
+	    				<h2></h2>
+	    				<button type="submit" class="btn btn-primary btn-lg">COMENZAR</button>
+	     			<div>
+	  			</form>
+	  	</span>
+	  </div>
+	 </div>
   </body>
 </html>

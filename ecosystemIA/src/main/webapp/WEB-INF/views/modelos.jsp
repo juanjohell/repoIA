@@ -19,7 +19,7 @@
 						<h2>Modelos disponibles.</h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Añadir modelo</span></a>
+						<a href="nuevoModelo.do" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Añadir modelo</span></a>
 					</div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
 			      				<td>${m.imageChannels}</td>
 			      				<td>
 		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
-		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="borrar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
+		                            <a href="<c:url value='eliminarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="borrar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
 		                        	<a href="<c:url value='verModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="ver" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Ver">remove_red_eye</i></a>
 		                        	<a href="<c:url value='verCategorias.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="categorias" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Categorías">dataset</i></a>
 		                        	<a href="<c:url value='cargarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="predecir" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Probar">burst_mode</i></a>
@@ -57,18 +57,9 @@
 	    				</c:forEach>
                 </tbody>
             </table>
-			<div class="clearfix">
-                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                <ul class="pagination">
-                    <li class="page-item disabled"><a href="#">Previous</a></li>
-                    <li class="page-item"><a href="#" class="page-link">1</a></li>
-                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
-                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                    <li class="page-item"><a href="#" class="page-link">5</a></li>
-                    <li class="page-item"><a href="#" class="page-link">Next</a></li>
-                </ul>
-            </div>
+			<div class="progress">
+    			<div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 60%"></div>
+			</div>
         </div>
     </div>
 </body>

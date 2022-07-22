@@ -214,7 +214,7 @@ public class UtilidadesCnn {
             	Graphics2D graph = img.createGraphics();
             	graph.setColor(Color.ORANGE);
             	//graph.fill(new Rectangle(100, 100, 100, 100));
-            	graph.setStroke(new BasicStroke(2));
+            	graph.setStroke(new BasicStroke(4));
             	graph.drawRect(xmin, ymin, width, height);
             	//graph.fill(new Rectangle(xmin, ymin, width, height));
             	graph.dispose();
