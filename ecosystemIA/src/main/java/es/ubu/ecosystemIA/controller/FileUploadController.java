@@ -55,7 +55,7 @@ public class FileUploadController extends FileBaseController{
 
 	public static final String PARAM_LATESTPHOTO = "LATEST_PHOTO_PARAM";
 	public static final String PARAM_RESULTADO = "RESULTADO";
-
+	public static final String PARAM_ERROR = "ERROR";
     
 	protected final Log logger = LogFactory.getLog(getClass());
 	@Autowired
@@ -163,8 +163,8 @@ public class FileUploadController extends FileBaseController{
  		try {
 			bi = ImageIO.read(new File(rutaImagenOriginal));
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			model.addAttribute(PARAM_ERROR, e1.getMessage());
+	        return "error";
 		}
  		imagenInput.setImg(utilsCnn.resizeImage(bi, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight()));
 		

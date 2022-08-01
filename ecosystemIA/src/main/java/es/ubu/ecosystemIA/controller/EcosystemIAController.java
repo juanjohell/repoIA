@@ -45,7 +45,7 @@ import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 public class EcosystemIAController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	
+	public static final String PARAM_ERROR = "ERROR";
 	
 	@Autowired
 	private NeuralNetworkManager modelManager;
@@ -115,6 +115,16 @@ public class EcosystemIAController {
 		logger.info("Consultando datos del modelo id "+idModelo);
 		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
 		ModelAndView model = new ModelAndView("editarModelo");
+		model.addObject("modelo",redconv);
+		logger.info("modelo neuronal: "+redconv.getNombreModelo());
+		return model;
+	}
+	
+	@GetMapping(value="verModelo.do")
+	public ModelAndView verModelo(@RequestParam String idModelo) {
+		logger.info("Consultando datos del modelo id "+idModelo);
+		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+		ModelAndView model = new ModelAndView("verModelo");
 		model.addObject("modelo",redconv);
 		logger.info("modelo neuronal: "+redconv.getNombreModelo());
 		return model;

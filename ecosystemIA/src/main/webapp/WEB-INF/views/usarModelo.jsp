@@ -57,11 +57,22 @@
                         	<div class="row">
                             	<div class="col-md-12">  
                                     	<div class="form-group">
-                                        	<button type="submit" class="btn btn-primary">Predecir imagen</button>
+                                        	<button type="submit" class="btn btn-primary" onclick="mostrar('progress');">Predecir imagen</button>
                                     	</div>
                                  </div>
                              </div>
                              </form>
+                             <!-- Bootstrap Progress bar -->
+                        	<div class="row">
+                            	<div class="col-md-12">
+    								<div class="progress" style="visibility:hidden" id="progress">
+  										<div class="progress-bar progress-bar-striped active" role="progressbar"
+  												aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width:80%">
+    												procesando imagen...
+  										</div>
+									</div>
+								</div>
+							</div>
                          	 <%if (resultado != null && !"".equals(resultado)) {%>
                          	<div class="row">
                             	<div class="col-md-12">
@@ -71,17 +82,7 @@
                         		</div>
                         	</div>
                         	<%}%>
-                         	<!-- Bootstrap Progress bar -->
-                        	<div class="row">
-                            	<div class="col-md-12">
-    								<div class="progress">
-  										<div class="progress-bar progress-bar-striped active" role="progressbar"
-  												aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width:80%">
-    												procesando imagen...
-  										</div>
-									</div>
-								</div>
-							</div>		
+                         			
                         <%}%>
                         
                         
