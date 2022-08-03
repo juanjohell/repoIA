@@ -19,7 +19,7 @@
 						<h2>Modelos disponibles.</h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="nuevoModelo.do" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Añadir modelo</span></a>
+						<a href="nuevoModelo.do" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Nuevo modelo</span></a>
 					</div>
                 </div>
             </div>

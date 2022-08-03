@@ -49,8 +49,8 @@ public class ModeloRedConvolucional implements Serializable{
 	@Column(name="PATH_FICHERO")
 	private String pathToModel;
 	
-	@Column(name="SELECCIONADO")
-	private Integer porDefecto;
+	@Column(name="TIPO_PATH")
+	private Integer tipoPath;
 	
 	@Column(name="TIPO_SALIDA")
 	private String tipoSalida;
@@ -104,12 +104,12 @@ public class ModeloRedConvolucional implements Serializable{
 		this.formatoImagenModelo = formatoImagenModelo;
 	}
 	
-	public Integer getPorDefecto() {
-		return porDefecto;
+	public Integer getTipoPath() {
+		return tipoPath;
 	}
 
-	public void setPorDefecto(Integer porDefecto) {
-		this.porDefecto = porDefecto;
+	public void setTipoPath(Integer tipoPath) {
+		this.tipoPath = tipoPath;
 	}
 
 	public String getTipoSalida() {

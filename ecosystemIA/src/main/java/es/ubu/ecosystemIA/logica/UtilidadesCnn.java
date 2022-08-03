@@ -13,11 +13,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-
 
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
@@ -43,13 +45,22 @@ import es.ubu.ecosystemIA.modelo.Categoria;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import java.nio.file.Paths;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
+
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
 
 public class UtilidadesCnn {
 	protected final Log logger = LogFactory.getLog(getClass());
 	private static final int GRID_WIDTH = 13;
     private static final int GRID_HEIGHT = 13;
+    private static final String URL_GOOGLE_DRIVE = "https://www.googleapis.com/drive/v3/files/";
     
     
 	// METODO que hace un resize de una imagen
@@ -114,6 +125,49 @@ public class UtilidadesCnn {
 		return model;
     }
     
+ // CARGA DE UN MODELO EN FORMATO KERAS H5 DESDE GOOGLE DRIVE
+    public ComputationGraph cargaModeloRCNNH5_Drive(String idFichero) throws IOException {
+    	ComputationGraph model = null;
+    	URL url=null;
+    	InputStream is=null;
+    	URLConnection connection=null;
+		
+		// Create a new trust manager that trust all certificates
+		TrustManager[] trustAllCerts = new TrustManager[]{
+		    new X509TrustManager() {
+		        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+		            return null;
+		        }
+		        public void checkClientTrusted(
+		            java.security.cert.X509Certificate[] certs, String authType) {
+		        }
+		        public void checkServerTrusted(
+		            java.security.cert.X509Certificate[] certs, String authType) {
+		        }
+		    }
+		};
+
+		// Activate the new trust manager
+		try {
+		    SSLContext sc = SSLContext.getInstance("SSL");
+		    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (Exception e) {
+		}
+		
+		url = new URL(URL_GOOGLE_DRIVE+idFichero+"?alt=media");  //https://drive.google.com/file/d/12PJ4PNPcSqQLc_5JiKet7QE1B0rox6YH/view?usp=sharing
+		connection = url.openConnection();
+		is = connection.getInputStream();
+		
+    	try {
+			model = KerasModelImport.importKerasModelAndWeights(is);
+		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return model;
+    }
+    
     // Dada una ruta de una imagen la carga y las dimensiones de la matriz de entrada
     // que acepta el modelo que estamos usando la convierte a matriz y normaliza los valores
     // En un rango [0..1] 
@@ -170,8 +224,7 @@ public class UtilidadesCnn {
 		return ruta;
     }
     
-    // SI SE OBTIENE UNA UNICA COORDENADA
-    // TODO: MULTIPLES COORDENADAS
+  
     // model: modelo actualmente cargado
     // modelOutput : coordenadas obtenidas del modelo
     // ruta_escritura : RUTA + NOMBRE COMPLETO DEL FICHERO EN EL QUE SE VA A ESCRIBIR LA IMAGEN
@@ -180,48 +233,52 @@ public class UtilidadesCnn {
 	    		// Se marca el objeto detectado con un rectángulo y una etiqueta
     			// Se calcula la posición del rectángulo respecto al tamaño de la imagen
     		boolean resultado = true;
-    	
-    		INDArray valores = modelOutput.getRow(0);
-    		double x1 = valores.getDouble(0);
-    		double y1 = valores.getDouble(1);
-    		double x2 = valores.getDouble(2);
-    		double y2 = valores.getDouble(3);
-    		//TODO: Extraccion de etiquetas			
-    		String label = "botella";
-    		// calculo de coordenadas
-    		int xmin = (int) Math.round(model.getModelImageWidth() * x1);
-    		int ymin = (int) Math.round(model.getModelImageHeight() * y1);
-    		int xmax = (int) Math.round(model.getModelImageWidth() * x2);
-    		int ymax = (int) Math.round(model.getModelImageHeight() * y2);
-    		logger.info("rectangulo...xmin="+Integer.toString(xmin));
-    		logger.info("rectangulo...ymin="+Integer.toString(ymin));
-    		logger.info("rectangulo...xmax="+Integer.toString(xmax));
-    		logger.info("rectangulo...ymax="+Integer.toString(ymax));
-    		// Se dibuja el rectangulo en la imagen
-    		int width = Math.abs(xmax - xmin);
-    		int height = Math.abs(ymax - ymin);
-    		
     		File imageFile = new File(ruta_lectura);
             BufferedImage img = null;
+            
             try {
                 img = ImageIO.read(imageFile);
             } catch (IOException e1) {
                 e1.printStackTrace();
                 resultado = false;
             }
-            //TODO: parametrizar color y ancho del borde para el usuario
+            if (resultado)
+            	for (int i=0; i<modelOutput.rows(); i++) {
+	    			INDArray valores = modelOutput.getRow(i);
+	    			double x1 = valores.getDouble(0);
+	    			double y1 = valores.getDouble(1);
+	    			double x2 = valores.getDouble(2);
+	    			double y2 = valores.getDouble(3);
+	    			//TODO: Extraccion de etiquetas			
+	    			String label = "botella";
+	    			// calculo de coordenadas
+	    			int xmin = (int) Math.round(model.getModelImageWidth() * x1);
+	    			int ymin = (int) Math.round(model.getModelImageHeight() * y1);
+	    			int xmax = (int) Math.round(model.getModelImageWidth() * x2);
+	    			int ymax = (int) Math.round(model.getModelImageHeight() * y2);
+	    			logger.info("rectangulo...xmin="+Integer.toString(xmin));
+	    			logger.info("rectangulo...ymin="+Integer.toString(ymin));
+	    			logger.info("rectangulo...xmax="+Integer.toString(xmax));
+	    			logger.info("rectangulo...ymax="+Integer.toString(ymax));
+	    			// Se dibuja el rectangulo en la imagen
+	    			int width = Math.abs(xmax - xmin);
+	    			int height = Math.abs(ymax - ymin);
+	    		
+	    			//TODO: parametrizar color y ancho del borde para el usuario
+	    			Graphics2D graph = img.createGraphics();
+	            	graph.setColor(Color.ORANGE);
+	            	//rectángilo relleno:
+	            	//graph.fill(new Rectangle(xmin, ymin, width, height));
+	            	//bordes del rectángulo:
+	            	graph.setStroke(new BasicStroke(4));
+	            	graph.drawRect(xmin, ymin, width, height);
+	            	graph.dispose();
+            	}
+            
             if (resultado) {
-            	Graphics2D graph = img.createGraphics();
-            	graph.setColor(Color.ORANGE);
-            	//graph.fill(new Rectangle(100, 100, 100, 100));
-            	graph.setStroke(new BasicStroke(4));
-            	graph.drawRect(xmin, ymin, width, height);
-            	//graph.fill(new Rectangle(xmin, ymin, width, height));
-            	graph.dispose();
-
             	try {
             		ImageIO.write(img, "jpg", 
-                        new File(ruta_escritura));
+                    new File(ruta_escritura));
             	} catch (IOException e) {
             		e.printStackTrace();
             	}

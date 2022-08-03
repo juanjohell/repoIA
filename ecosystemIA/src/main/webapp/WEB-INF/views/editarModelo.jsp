@@ -12,6 +12,8 @@
   	<body>
   	${modelo.nombreModelo}
   		<div class="container-fluid">
+  		<div class="w-75 p-3">
+  		<span class="border border-primary">
 		<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
 			<div class="form-row">
   				<div class="form-group">
@@ -30,21 +32,25 @@
       				
   				</div>
   				<div class="form-group">
-  					<div class="form-group col-md-4">
+  					<div class="form-group col-md-2">
     					<label for="modelo.modelImageHeight">Alto de imagen.</label>
       					<s:input path="modelo.modelImageHeight" class="form-control" placeholder="Alto de imagen" name="modelImageHeight" id="modelImageHeight"/>
     				</div>
-    				<div class="form-group col-md-4">
+    				<div class="form-group col-md-2">
     					<label for="modelo.modelImageWidth">Ancho de imagen.</label>
       					<s:input path="modelo.modelImageWidth" class="form-control" placeholder="Alto de imagen" name="modelImageWidth" id="modelImageWidth"/>
     				</div>
-    				<div class="form-group col-md-4">
+    				<div class="form-group col-md-1">
     					<label for="modelo.imageChannels">Canales de imagen</label>
       					<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels"/>
     				</div>
+    				<div class="form-group col-md-7">
+    					<label for="modelo.imageChannels">Ruta al recurso del fichero h5. (Keras model)</label>
+      					<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel"/>
+    				</div>
   				</div>
   			</div>
-  			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmacionModal">
+  			<button type="button" id="grabar" name="grabar" class="btn btn-primary" data-toggle="modal" data-target="#confirmacionModal">
   				Grabar cambios
 			</button>
 			<button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>
@@ -59,7 +65,6 @@
 				        </button>
 				      </div>
 				      <div class="modal-body">
-				        ...
 				      </div>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -69,6 +74,8 @@
 				  </div>
 				</div>
 		</form>
+		</span>
+		</div>
 		</div>
 	</body>
 </html>

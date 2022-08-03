@@ -44,15 +44,6 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		return modelo;
 	}
 	
-	@Transactional
-    @SuppressWarnings("unchecked")
-	public ModeloRedConvolucional devuelveModeloPorDefecto() {
-		ModeloRedConvolucional modelo = new ModeloRedConvolucional();
-		modelo = (ModeloRedConvolucional) em.createQuery("select m from ModeloRedConvolucional m where m.porDefecto = 1").getSingleResult();
-		if (modelo == null)
-			modelo = (ModeloRedConvolucional) em.createQuery("select m from ModeloRedConvolucional m order by m.idModelo ASC").getSingleResult();
-		return modelo;
-	}
 	
 	@Transactional
 	 @SuppressWarnings("unchecked")
@@ -72,11 +63,6 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		em.remove(modelo);
 	}
 	
-	public void establecerModeloPorDefecto(ModeloRedConvolucional modelo) {
-		em.createQuery("update modelos m set m.SELECCIONADO=0");
-		Integer setDefecto = new Integer(1);
-		modelo.setPorDefecto(setDefecto);
-		em.unwrap(Session.class).update(modelo);
-	}
+	
 
 }

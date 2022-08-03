@@ -20,7 +20,4 @@ public interface ModeloRnDao {
     
     public void borrarModelo(ModeloRedConvolucional modelo);
     
-    public void establecerModeloPorDefecto(ModeloRedConvolucional modelo);
-    
-    public ModeloRedConvolucional devuelveModeloPorDefecto();
 }

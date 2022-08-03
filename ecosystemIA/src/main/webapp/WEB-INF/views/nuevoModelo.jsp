@@ -11,7 +11,7 @@
 <title>Nuevo modelo</title>
   	<body>
   		<div class="container-fluid">
-		<form method="POST" action="${pageContext.request.contextPath}/grabarNuevoModelo.do">
+		<form method="POST" action="${pageContext.request.contextPath}/nuevoModelo.do">
 			<div class="form-row">
   				<div class="form-group">
    				 	<div class="form-group col-md-12">
@@ -24,17 +24,21 @@
       				<s:textarea path="modelo.descripcion" class="form-control" placeholder="Descripción del modelo" name="descripcion" id="descripcion"/>
   				</div>
   				<div class="form-group">
-  					<div class="form-group col-md-4">
+  					<div class="form-group col-md-2">
     					<label for="modelo.modelImageHeight">Alto de imagen.</label>
       					<s:input path="modelo.modelImageHeight" class="form-control" placeholder="Alto de imagen" name="modelImageHeight" id="modelImageHeight"/>
     				</div>
-    				<div class="form-group col-md-4">
+    				<div class="form-group col-md-2">
     					<label for="modelo.modelImageWidth">Ancho de imagen.</label>
       					<s:input path="modelo.modelImageWidth" class="form-control" placeholder="Alto de imagen" name="modelImageWidth" id="modelImageWidth"/>
     				</div>
-    				<div class="form-group col-md-4">
+    				<div class="form-group col-md-1">
     					<label for="modelo.imageChannels">Canales de imagen</label>
       					<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels"/>
+    				</div>
+    				<div class="form-group col-md-7">
+    					<label for="modelo.imageChannels">Ruta al recurso del fichero h5. (Keras model)</label>
+      					<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel"/>
     				</div>
   				</div>
   			</div>

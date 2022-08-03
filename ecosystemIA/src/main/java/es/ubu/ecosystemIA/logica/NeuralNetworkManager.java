@@ -17,8 +17,6 @@ public interface NeuralNetworkManager extends Serializable{
 	public void nuevoModelo(ModeloRedConvolucional modelo);
 	public void borrarModelo(ModeloRedConvolucional modelo);
 	public void editarModelo(ModeloRedConvolucional modelo);
-	public void establecerModeloDefecto(ModeloRedConvolucional modelo);
-	public ModeloRedConvolucional devuelveModeloDefecto();
 	public void setMultilayerNetwork(ModeloRedConvolucional modelo);
 	public MultiLayerNetwork getMultilayerNetwork();
 	public void setComputationGraph(ModeloRedConvolucional modelo);

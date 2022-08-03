@@ -82,12 +82,20 @@ public class EcosystemIAController {
 	@RequestMapping(value = "editarModelo.do", method = RequestMethod.POST, params = "grabar")
     public ModelAndView editarModelo(@RequestParam int idModelo, 
     		@RequestParam String nombreModelo,
-    		@RequestParam String descripcion, 
+    		@RequestParam String descripcion,
+    		@RequestParam Integer modelImageHeight,
+    		@RequestParam Integer modelImageWidth,
+    		@RequestParam Integer imageChannels,
+    		@RequestParam String pathToModel,
     		HttpServletRequest request) {
         
         ModeloRedConvolucional modelo = this.modelManager.devuelveModelo(idModelo);
         modelo.setNombreModelo(nombreModelo);
         modelo.setDescripcion(descripcion);
+        modelo.setModelImageHeight(modelImageHeight);
+        modelo.setModelImageWidth(modelImageWidth);
+        modelo.setImageChannels(imageChannels);
+        modelo.setPathToModel(pathToModel);
         logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
         logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
         // edicion del modelo
@@ -103,10 +111,11 @@ public class EcosystemIAController {
     public ModelAndView cancel(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
         model.addAttribute("message", "Modificación Cancelada");
   
-		Map<String,Object> myModel = new HashMap<>();
-		myModel.put("modelo", modelo);
+     // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
 		//pasamos el parÃ¡metro now a la pagina jsp
-		return new ModelAndView("editarModelo","modeloMVC", myModel);
+		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
 	
 	
@@ -119,6 +128,7 @@ public class EcosystemIAController {
 		logger.info("modelo neuronal: "+redconv.getNombreModelo());
 		return model;
 	}
+	
 	
 	@GetMapping(value="verModelo.do")
 	public ModelAndView verModelo(@RequestParam String idModelo) {
@@ -163,15 +173,25 @@ public class EcosystemIAController {
 	}
 	
 	@Transactional
-	@RequestMapping(value = "grabarNuevoModelo.do", method = RequestMethod.POST, params = "grabar")
-    public ModelAndView nuevoModelo(@RequestParam String nombreModelo,
-    		@RequestParam String descripcion, 
+	@RequestMapping(value = "nuevoModelo.do", method = RequestMethod.POST, params = "grabar")
+    public ModelAndView grabarNuevoModelo(
+    		@RequestParam String nombreModelo,
+    		@RequestParam String descripcion,
+    		@RequestParam Integer modelImageHeight,
+    		@RequestParam Integer modelImageWidth,
+    		@RequestParam Integer imageChannels,
+    		@RequestParam String pathToModel,
     		HttpServletRequest request) {
+        
         ModeloRedConvolucional modelo = new ModeloRedConvolucional();
         modelo.setNombreModelo(nombreModelo);
         modelo.setDescripcion(descripcion);
+        modelo.setModelImageHeight(modelImageHeight);
+        modelo.setModelImageWidth(modelImageWidth);
+        modelo.setImageChannels(imageChannels);
+        modelo.setPathToModel(pathToModel);
         logger.info("Grabar nuevo modelo "+ modelo.getNombreModelo());
-        //se graba nuevo modelo
+        // alta
         this.modelManager.nuevoModelo(modelo);
         // se regresa al listado de modelos
         Map<String, Object> myModel = new HashMap<>();
