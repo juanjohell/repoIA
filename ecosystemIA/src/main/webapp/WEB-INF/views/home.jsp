@@ -18,7 +18,6 @@
   	<div class="container">
 	  <div class="jumbotron" class="w-75 p-3" >
 	  	<span class="border border-primary">
-	  			<h1 class="display-1">EcosystemIA</h1>
 	    		<h3 class="display-4">Aplicación para uso de redes convolucionales entrenadas</h3>
 	    		
 	    		<form method="POST" action="modelos.do">

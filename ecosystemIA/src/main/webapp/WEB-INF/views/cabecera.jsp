@@ -11,6 +11,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="<c:url value='/resources/css/ecosystemia.css' />"/>
 
 <script type="text/javascript">
 function ocultar (id_element) {
@@ -21,10 +22,11 @@ function mostrar (id_element) {
 }
 
 </script>
+
 <div class="container">
-  <div class="jumbotron bg-info text-white">
-  	<img class="img-responsive" src="img/portada.png" alt="portada">
-    <h1>ecosistemIA</h1>
-    <p>Prueba de modelos de redes neuronales de tratamiento de imágenes</p>
+  <div class="jumbotron_cabecera bg-info text-white">
+    <h1>EcosystemIA</h1>
+    <img class="rounded float-start" src="resources/img/portada.png" alt="portada" >
+    <p>Gestión y uso de modelos de redes neuronales para visión artificial.</p>
   </div>
 </div>

@@ -23,11 +23,33 @@
     <load-on-startup>1</load-on-startup>
    </servlet>
 
+  
   <servlet-mapping>
     <servlet-name>ecosystemIA</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
-  	
+  
+  <!--  gestión de recursos estáticos -->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.css</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.js</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.gif</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.jpg</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.png</url-pattern>
+  </servlet-mapping>
 	
 	<session-config>
 		<session-timeout>60</session-timeout>
