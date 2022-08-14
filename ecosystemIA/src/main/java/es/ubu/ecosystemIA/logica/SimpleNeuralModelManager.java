@@ -88,7 +88,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		// ruta a sistema de ficheros local
 		if(tipoPath.intValue() == (int) 0)
 			this.computationGraph = utilsCnn.cargaModeloRCNNH5(utilsCnn.devuelve_pàth_real(path));
-		// ruta a recurso en la nube
+		// TODO ruta a recurso en la nube
 		if(tipoPath.intValue() == (int) 1)
 			try {
 				this.computationGraph = utilsCnn.cargaModeloRCNNH5_Drive(path);

@@ -10,16 +10,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Editar modelo</title>
   	<body>
-  		<div class="container-fluid">
-  			<div class="col-sm-13 offset-sm-3">
-  				<span class="border border-primary">
+  		<div class="container">
+ 			<div class="row">
+ 				<div class ="col">
+ 				</div>
+ 				<div class ="col-6">
   					<h1 class="display-3">Editar ${modelo.nombreModelo}</h1>
 					<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
 						<div class="form-row">
   							<div class="form-group">
   								<div class="form-group col-md-2">
    				 					<label for="modelo.idModelo">Id de modelo.</label>
-      								<s:input path="modelo.idModelo" class="form-control" name="idModelo" id="idModelo"/>
+      								<s:input path="modelo.idModelo" class="form-control" name="idModelo" id="idModelo" readonly="true"/>
     							</div>
    				 				<div class="form-group col-md-10">
    				 					<label for="modelo.nombreModelo">Nombre de modelo.</label>
@@ -72,8 +74,11 @@
 							    </div>
 							  </div>
 							</div>
+						<!-- fin ventana modal -->
 					</form>
-				</span>
+				</div>
+				<div class="col">
+				</div>
 			</div>
 		</div>
 	</body>

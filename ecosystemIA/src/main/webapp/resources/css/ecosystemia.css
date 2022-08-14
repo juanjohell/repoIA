@@ -1,0 +1,10 @@
+@charset "ISO-8859-1";
+.jumbotron_cabecera {
+  /* background-image: url("../img/portada.png"); */
+  background-size: cover;
+  background-color: #00cc00;
+  color: #ffffff;
+}
+form {
+	background-color: #e6ffe6;
+}

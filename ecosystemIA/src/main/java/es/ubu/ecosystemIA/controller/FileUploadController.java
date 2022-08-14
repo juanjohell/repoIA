@@ -190,6 +190,7 @@ public class FileUploadController extends FileBaseController{
         	resultado = utilsCnn.devuelve_categoria(output, categorias);
         }
         if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
+        	
         	output = this.modelManager.getComputationGraph().outputSingle(input);
         	//Obtenemos imagen en formato matricial
         	

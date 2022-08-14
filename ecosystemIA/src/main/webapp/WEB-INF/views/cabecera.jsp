@@ -24,9 +24,21 @@ function mostrar (id_element) {
 </script>
 
 <div class="container">
-  <div class="jumbotron_cabecera bg-info text-white">
-    <h1>EcosystemIA</h1>
-    <img class="rounded float-start" src="resources/img/portada.png" alt="portada" >
-    <p>Gestión y uso de modelos de redes neuronales para visión artificial.</p>
+  <div class="jumbotron_cabecera bg-info text-white" height="10%">
+  	<div class = "container">
+  		<div class = "row">
+  			<div class = "col-2">
+  				<img class="img-fluid" src="resources/img/portada.png" alt="portada"/>
+  			</div>
+  			<div class = "col-8">
+    			<h1>EcosystemIA</h1>
+    		</div>
+    	</div>
+    	<div class = "row">
+  			<div class = "col-10">
+    			Gestión y uso de modelos de redes neuronales para visión artificial.
+    		</div>
+    	</div>
+     </div>
   </div>
 </div>
