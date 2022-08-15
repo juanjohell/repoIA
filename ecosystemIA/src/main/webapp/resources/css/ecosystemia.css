@@ -8,3 +8,13 @@
 form {
 	background-color: #e6ffe6;
 }
+
+.img-responsive {
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+br {
+   display: block;
+   margin: 10px 0;
+}

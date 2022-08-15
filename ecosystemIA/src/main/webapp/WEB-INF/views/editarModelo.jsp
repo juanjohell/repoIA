@@ -25,7 +25,10 @@
     							</div>
    				 				<div class="form-group col-md-10">
    				 					<label for="modelo.nombreModelo">Nombre de modelo.</label>
-      								<s:input path="modelo.nombreModelo" class="form-control" name="nombreModelo" id="nombreModelo"/>
+      								<s:input path="modelo.nombreModelo" class="form-control" name="nombreModelo" id="nombreModelo" required="true"/>
+      								<div class="invalid-tooltip">
+      										Debe indicar un nombre para el modelo.
+    								</div>
     							</div>
   							</div>
   								<div class="form-group">
@@ -35,19 +38,19 @@
   							<div class="form-group">
   								<div class="form-group col-md-2">
     								<label for="modelo.modelImageHeight">Alto de imagen.</label>
-      								<s:input path="modelo.modelImageHeight" class="form-control" placeholder="Alto de imagen" name="modelImageHeight" id="modelImageHeight"/>
+      								<s:input path="modelo.modelImageHeight" class="form-control" placeholder="Alto de imagen" name="modelImageHeight" id="modelImageHeight" required="true"/>
     							</div>
     							<div class="form-group col-md-2">
     								<label for="modelo.modelImageWidth">Ancho de imagen.</label>
-      								<s:input path="modelo.modelImageWidth" class="form-control" placeholder="Alto de imagen" name="modelImageWidth" id="modelImageWidth"/>
+      								<s:input path="modelo.modelImageWidth" class="form-control" placeholder="Alto de imagen" name="modelImageWidth" id="modelImageWidth" required="true"/>
     							</div>
     							<div class="form-group col-md-1">
     								<label for="modelo.imageChannels">Canales.</label>
-      								<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels"/>
+      								<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels" required="true"/>
     							</div>
     							<div class="form-group col-md-7">
     								<label for="modelo.imageChannels">Ruta al recurso del fichero h5. (Keras model)</label>
-      								<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel"/>
+      								<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel" required="true"/>
     							</div>
   							</div>
   						</div>

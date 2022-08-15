@@ -37,6 +37,7 @@
                                     </div>  
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary">Subir imagen</button>
+                                        <button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver a modelos</button>
                                     </div>
                                 </form>
                             </div>

@@ -108,7 +108,7 @@ public class EcosystemIAController {
     }
 	
 	@RequestMapping(value = "/editarModelo.do", method = RequestMethod.POST, params = "cancelar")
-    public ModelAndView cancel(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+    public ModelAndView cancelEditar(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
         model.addAttribute("message", "ModificaciÛn Cancelada");
   
      // se regresa al listado de modelos
@@ -194,6 +194,28 @@ public class EcosystemIAController {
         // alta
         this.modelManager.nuevoModelo(modelo);
         // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el par√°metro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
+    }
+	
+	@RequestMapping(value = "/nuevoModelo.do", method = RequestMethod.POST, params = "cancelar")
+    public ModelAndView cancelNuevo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+        model.addAttribute("message", "Nuevo modelo Cancelada");
+  
+     // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el par√°metro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
+    }
+	
+	@RequestMapping(value = "/uploadimgctlr.do", method = RequestMethod.POST, params = "cancelar")
+    public ModelAndView cancelUsarModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+        model.addAttribute("message", "ModificaciÛn Cancelada");
+  
+     // se regresa al listado de modelos
         Map<String, Object> myModel = new HashMap<>();
         myModel.put("listadoModelos", this.modelManager.getModelos());
 		//pasamos el par√°metro now a la pagina jsp
