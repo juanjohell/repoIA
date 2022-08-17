@@ -76,7 +76,8 @@ public class FileUploadController extends FileBaseController{
 			this.modelManager.setMultilayerNetwork(redconv);
 		if (redconv.getTipoSalida().equals("imagen"))
 			this.modelManager.setComputationGraph(redconv);
-		
+		if (redconv.getTipoSalida().equals("tensorFlow"))
+			this.modelManager.setSameDiff(redconv);
 		Map<String,Object> myModel = new HashMap<>();
 		myModel.put("nombreModelo", redconv.getNombreModelo());
 		myModel.put("descripcion", redconv.getDescripcion());
@@ -184,16 +185,22 @@ public class FileUploadController extends FileBaseController{
         }
         
         //En funcion del tipo de modelo obtenemos una imagen o un texto que nos da la categoria
+        // PUEDE TRATARSE DE UN FICHERO H5 DE KERAS O UN FICHERO DE TENSORFLOW PB
         if (this.modelManager.getModeloCargado().getTipoSalida().equals("texto")) {
         	output = this.modelManager.getMultilayerNetwork().output(input);
         	logger.info("se espera texto como salida del modelo");
         	resultado = utilsCnn.devuelve_categoria(output, categorias);
         }
-        if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
-        	
-        	output = this.modelManager.getComputationGraph().outputSingle(input);
+        if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen") || this.modelManager.getModeloCargado().getTipoSalida().equals("tensorFlow")) {
+        	if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen"))
+        		output = this.modelManager.getComputationGraph().outputSingle(input);
+        		
+        	if (this.modelManager.getModeloCargado().getTipoSalida().equals("tensorFlow"))
+        	{
+        		logger.info("modelo tensorFlow");
+        		output = utilsCnn.predictPB(input, this.modelManager.getSameDiff());
         	//Obtenemos imagen en formato matricial
-        	
+        	}
         		logger.info("se espera una imagen salida del modelo");
         		logger.info("imagen original :"+serverfile.getAbsolutePath());
         		//fichero de salida

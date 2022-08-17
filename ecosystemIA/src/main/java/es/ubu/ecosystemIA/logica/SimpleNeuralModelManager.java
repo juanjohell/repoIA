@@ -3,12 +3,24 @@ package es.ubu.ecosystemIA.logica;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,9 +34,13 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	private ModeloRedConvolucional modeloCargado;
 	@Autowired
 	private ModeloRnDao modeloDao;
+	// para almacenar modelos secuenciales H5:
 	private MultiLayerNetwork multilayerNetwork;
 	private UtilidadesCnn utilsCnn;
+	//para almacenar modelos con salida multiple H5:
 	private ComputationGraph computationGraph;
+	//para almacenar modelos Tipo TensorFlow PB (PROTOBUF):
+	private SameDiff sameDiff;
 	private Imagen imagenCargada;
 	
 	@Transactional
@@ -75,7 +91,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	}
 	public void setMultilayerNetwork(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
-		this.multilayerNetwork = utilsCnn.cargaModeloH5(utilsCnn.devuelve_pàth_real(modelo.getPathToModel()));
+		this.multilayerNetwork = utilsCnn.cargaModeloH5(utilsCnn.devuelve_path_real(modelo.getPathToModel()));
 		logger.info("modelo cargado de fichero h5");
 	}
 	public ComputationGraph getComputationGraph() {
@@ -87,7 +103,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		Integer tipoPath = modelo.getTipoPath();
 		// ruta a sistema de ficheros local
 		if(tipoPath.intValue() == (int) 0)
-			this.computationGraph = utilsCnn.cargaModeloRCNNH5(utilsCnn.devuelve_pàth_real(path));
+			this.computationGraph = utilsCnn.cargaModeloRCNNH5(utilsCnn.devuelve_path_real(path));
 		// TODO ruta a recurso en la nube
 		if(tipoPath.intValue() == (int) 1)
 			try {
@@ -98,6 +114,29 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 			}
 		logger.info("modelo cargado de fichero h5");
 	}
+	
+	public void setSameDiff(ModeloRedConvolucional modelo) {
+		utilsCnn = new UtilidadesCnn();
+		String path = modelo.getPathToModel();
+		Integer tipoPath = modelo.getTipoPath();
+		// ruta a sistema de ficheros local
+		if(tipoPath.intValue() == (int) 0)
+			this.sameDiff = utilsCnn.cargaModeloRCNNPB(utilsCnn.devuelve_path_real(path));
+		// TODO ruta a recurso en la nube
+		if(tipoPath.intValue() == (int) 1)
+			try {
+				this.computationGraph = utilsCnn.cargaModeloRCNNH5_Drive(path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		logger.info("modelo cargado de fichero h5");
+	}
+	
+	public SameDiff getSameDiff() {
+		return this.sameDiff;
+	}
+	
 	public Imagen getImagenCargada() {
 		return imagenCargada;
 	}

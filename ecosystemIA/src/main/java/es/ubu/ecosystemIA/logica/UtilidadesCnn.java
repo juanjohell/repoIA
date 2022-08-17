@@ -30,6 +30,8 @@ import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfig
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
@@ -55,6 +57,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UtilidadesCnn {
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -76,7 +80,7 @@ public class UtilidadesCnn {
     	return resizedImage;
     }
     
-    // MÉTODO PARA CAMBIAR FORMATO (adaptada de reshape4dTo2d):
+    // METODO PARA CAMBIAR FORMATO (adaptada de reshape4dTo2d):
     // Si el formato es el de canal primero, lo pone al final
     // Tensorflow toma el canal al final en la conformación de matrices
     // con las imágenes.
@@ -99,7 +103,7 @@ public class UtilidadesCnn {
         }
     }
     
-    // CARGA DE UN MODELO EN FORMATO KERAS H5
+    // CARGA DE UN MODELO SECUENCIAL EN FORMATO KERAS H5
     public MultiLayerNetwork cargaModeloH5(String rutaFichero) {
     	
     	MultiLayerNetwork model = null;
@@ -112,7 +116,7 @@ public class UtilidadesCnn {
 		return model;
     }
     
- // CARGA DE UN MODELO EN FORMATO KERAS H5
+ // CARGA DE UN MODELO MULTICAPA ENTRADA/SALIDA EN FORMATO KERAS H5
     public ComputationGraph cargaModeloRCNNH5(String rutaFichero) {
     	
     	ComputationGraph model = null;
@@ -122,6 +126,21 @@ public class UtilidadesCnn {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return model;
+    }
+    
+    
+ // CARGA DE UN MODELO EN FORMATO TENSORFLOW PROTOBUF (PB)
+    public SameDiff cargaModeloRCNNPB(String rutaFichero) {
+
+    	File modeloPb = new File(rutaFichero);
+        if (!modeloPb.exists()){
+        	modeloPb = new File(rutaFichero);
+        }
+    	SameDiff model = null;
+    	logger.info("cargando modelo GRAPH "+rutaFichero);
+		model = TFGraphMapper.importGraph(new File(rutaFichero));
+		logger.info("Cargado modelo GRAPH");
 		return model;
     }
     
@@ -211,7 +230,7 @@ public class UtilidadesCnn {
     	return categoria;
     }
     
-    public String devuelve_p�th_real(String resource_path) {
+    public String devuelve_path_real(String resource_path) {
     	URL resource = FileUploadController.class.getClassLoader().getResource(resource_path);
  		String ruta = null;
 		try {
@@ -220,7 +239,7 @@ public class UtilidadesCnn {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		logger.info("ruta real al fichero h5: "+ruta);
+		logger.info("ruta real al fichero: "+ruta);
 		return ruta;
     }
     
@@ -285,6 +304,16 @@ public class UtilidadesCnn {
             }
             return resultado;
     }
+    
+ // REALIZA PREDICCION DESDE FICHERO TIPO PB
+ 	public  INDArray predictPB (INDArray input, SameDiff sd){
+ 		logger.info("prediccion de modelo tipo PB");
+         Map<String,INDArray> placeholder = new HashMap<>();
+         placeholder.put("input",input);
+         INDArray output = sd.outputSingle(placeholder,"output");
+         System.out.println(Arrays.toString(output.reshape(10).toDoubleVector()));
+         return output;
+     }
     
     // CONVERSIONES ENTRE IMAGENES EN BYTES Y EN FORMA
     // MATRICIAL

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ubu.ecosystemIA.modelo.Imagen;
@@ -21,6 +23,8 @@ public interface NeuralNetworkManager extends Serializable{
 	public MultiLayerNetwork getMultilayerNetwork();
 	public void setComputationGraph(ModeloRedConvolucional modelo);
 	public ComputationGraph getComputationGraph();
+	public void setSameDiff(ModeloRedConvolucional modelo);
+	public SameDiff getSameDiff();
 	public ModeloRedConvolucional getModeloCargado();
 	public void setModeloCargado(ModeloRedConvolucional modelo);
 	public Imagen getImagenCargada();

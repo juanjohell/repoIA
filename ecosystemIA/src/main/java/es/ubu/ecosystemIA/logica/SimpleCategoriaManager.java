@@ -52,7 +52,11 @@ public class SimpleCategoriaManager implements CategoriaManager{
 	public Categoria getCategoria() {
 		return this.categoria;
 	}
-	
+	@Transactional
+	@Override
+	public Categoria devuelveCategoria(Integer idModelo, Integer idOrden) {
+		return this.categoriaDao.getCategoria(idModelo, idOrden);
+	}
 	
 	@Transactional
 	@Override

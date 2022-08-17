@@ -16,7 +16,7 @@
             <div class="table-title">
                 <div class="row">
                     <div class="col-sm-6">
-						<h2>Categorías del modelo</h2>
+						<h2>Categorías del modelo ${modeloMVC.modelo.nombreModelo}</h2>
 					</div>
 					<div class="col-sm-6">
 						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Añadir categoria</span></a>
@@ -40,8 +40,8 @@
 			      				<td>${m.idOrden}</td>
 			      				<td>${m.nombreCategoria}</td>
 			      				<td>
-		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
-		                            <a href="<c:url value='editarModelo.do?idModelo=${modeloMVC.listadoModelos[loop.index].idModelo}' />" class="borrar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
+		                            <a href="<c:url value='editarCategoria.do?idModelo=${modeloMVC.listadoCategorias[loop.index].idModelo}&idOrden=${modeloMVC.listadoCategorias[loop.index].idOrden}' />" class="editar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Editar">&#xE254;</i></a>
+		                            <a href="<c:url value='editarCategoria.do?idModelo=${modeloMVC.listadoCategorias[loop.index].idModelo}&idOrden=${modeloMVC.listadoCategorias[loop.index].idOrden}'  />" class="borrar" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Borrar">&#xE872;</i></a>
 		                        </td>
 		      				</tr>
 	    				</c:forEach>

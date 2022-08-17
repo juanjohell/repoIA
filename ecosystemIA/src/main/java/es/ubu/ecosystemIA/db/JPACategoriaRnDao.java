@@ -48,6 +48,16 @@ public class JPACategoriaRnDao implements CategoriaRnDao {
 	}
 	
 	@Transactional
+    @SuppressWarnings("unchecked")
+	public Categoria getCategoria(Integer idModelo, Integer idOrden) {
+		logger.info("seleccionar categoria por id Modelo: "+idModelo.toString()+" e idOrden: "+idOrden.toString());
+		Categoria categoria = new Categoria();
+		categoria = (Categoria) em.createQuery("select c from Categoria c where c.idOrden = "+idOrden+" and c.idModelo = "+idModelo).getSingleResult();
+		logger.info("retornando categoria : "+categoria.getNombreCategoria());
+		return categoria;
+	}
+	
+	@Transactional
 	 @SuppressWarnings("unchecked")
 	public void nuevaCategoria(Categoria categoria) {
 		em.merge(categoria);

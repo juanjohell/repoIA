@@ -14,6 +14,8 @@ public interface CategoriaRnDao {
 	
 	public Categoria getCategoria(Integer idCategoria);
 	
+	public Categoria getCategoria(Integer idModelo, Integer idCategoria);
+	
     public void nuevaCategoria(Categoria categoria);
 	
     public void editarCategoria(Categoria categoria);

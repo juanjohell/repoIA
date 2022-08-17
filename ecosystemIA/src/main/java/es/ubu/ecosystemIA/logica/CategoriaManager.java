@@ -10,8 +10,9 @@ public interface CategoriaManager extends Serializable{
 	
 	public List<Categoria> getCategorias(Integer idModelo);
 	public Categoria devuelveCategoria(Integer idCategoria);
+	public Categoria devuelveCategoria(Integer idModelo, Integer idOrden);
 	public void nuevaCategoria(Categoria categoria);
 	public void borrarCategoria(Categoria categoria);
 	public void editarCategoria(Categoria categoria);
-	
+
 } 	
