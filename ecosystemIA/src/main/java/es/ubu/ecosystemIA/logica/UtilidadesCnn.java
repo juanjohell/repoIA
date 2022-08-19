@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UtilidadesCnn {
@@ -129,21 +130,26 @@ public class UtilidadesCnn {
 		return model;
     }
     
-    
  // CARGA DE UN MODELO EN FORMATO TENSORFLOW PROTOBUF (PB)
     public SameDiff cargaModeloRCNNPB(String rutaFichero) {
-
+    	SameDiff model = null;
+    	
     	File modeloPb = new File(rutaFichero);
         if (!modeloPb.exists()){
         	modeloPb = new File(rutaFichero);
         }
-    	SameDiff model = null;
+        
     	logger.info("cargando modelo GRAPH "+rutaFichero);
-		model = TFGraphMapper.importGraph(new File(rutaFichero));
+    	//model = TFGraphMapper.importGraph(new File(rutaFichero));
+   
+    	model = SameDiff.importFrozenTF(modeloPb);
+		
 		logger.info("Cargado modelo GRAPH");
 		return model;
-    }
-    
+		
+    }   
+ 
+  
  // CARGA DE UN MODELO EN FORMATO KERAS H5 DESDE GOOGLE DRIVE
     public ComputationGraph cargaModeloRCNNH5_Drive(String idFichero) throws IOException {
     	ComputationGraph model = null;
@@ -306,13 +312,24 @@ public class UtilidadesCnn {
     }
     
  // REALIZA PREDICCION DESDE FICHERO TIPO PB
- 	public  INDArray predictPB (INDArray input, SameDiff sd){
+ 	public  Map<String, INDArray> predictPB (INDArray input, SameDiff sd){
  		logger.info("prediccion de modelo tipo PB");
-         Map<String,INDArray> placeholder = new HashMap<>();
-         placeholder.put("input",input);
-         INDArray output = sd.outputSingle(placeholder,"output");
-         System.out.println(Arrays.toString(output.reshape(10).toDoubleVector()));
-         return output;
+         //Map<String,INDArray> placeholder = new HashMap<>();
+         //placeholder.put("input",input);
+         //INDArray output = sd.outputSingle(placeholder,"output");
+ 		logger.info(sd.summary());
+ 		List<String> inputs = sd.inputs();
+ 		List<String> outputs = sd.outputs();
+ 		logger.info("inputs : "+inputs.toString());
+ 		
+ 		//logger.info("outputs : "+outputs.toString());
+ 		Map<String, INDArray> result = sd.batchOutput()
+                .input("input_tensor", input)
+                .output("detection_boxes", "detection_classes")
+                .output();
+ 		
+         //System.out.println(Arrays.toString(output.reshape(10).toDoubleVector()));
+         return result;
      }
     
     // CONVERSIONES ENTRE IMAGENES EN BYTES Y EN FORMA

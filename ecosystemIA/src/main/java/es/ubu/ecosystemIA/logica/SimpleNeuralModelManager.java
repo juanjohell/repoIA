@@ -100,12 +100,12 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	public void setComputationGraph(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
 		String path = modelo.getPathToModel();
-		Integer tipoPath = modelo.getTipoPath();
+		Integer tipoAlmacenamiento = modelo.getTipoAlmacenamiento();
 		// ruta a sistema de ficheros local
-		if(tipoPath.intValue() == (int) 0)
+		if(tipoAlmacenamiento.intValue() == (int) 2)
 			this.computationGraph = utilsCnn.cargaModeloRCNNH5(utilsCnn.devuelve_path_real(path));
 		// TODO ruta a recurso en la nube
-		if(tipoPath.intValue() == (int) 1)
+		if(tipoAlmacenamiento.intValue() == (int) 3)
 			try {
 				this.computationGraph = utilsCnn.cargaModeloRCNNH5_Drive(path);
 			} catch (IOException e) {
@@ -118,12 +118,12 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	public void setSameDiff(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
 		String path = modelo.getPathToModel();
-		Integer tipoPath = modelo.getTipoPath();
+		Integer tipoAlmacenamiento = modelo.getTipoAlmacenamiento();
 		// ruta a sistema de ficheros local
-		if(tipoPath.intValue() == (int) 0)
+		if(tipoAlmacenamiento.intValue() == (int) 2)
 			this.sameDiff = utilsCnn.cargaModeloRCNNPB(utilsCnn.devuelve_path_real(path));
 		// TODO ruta a recurso en la nube
-		if(tipoPath.intValue() == (int) 1)
+		if(tipoAlmacenamiento.intValue() == (int) 3)
 			try {
 				this.computationGraph = utilsCnn.cargaModeloRCNNH5_Drive(path);
 			} catch (IOException e) {

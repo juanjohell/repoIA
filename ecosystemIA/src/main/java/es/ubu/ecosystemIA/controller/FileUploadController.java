@@ -75,9 +75,11 @@ public class FileUploadController extends FileBaseController{
 		if (redconv.getTipoSalida().equals("texto"))
 			this.modelManager.setMultilayerNetwork(redconv);
 		if (redconv.getTipoSalida().equals("imagen"))
+			//fichero tipo TF (PROTOCOL BUFFER)
+			if (redconv.getTipoFichero().intValue() == (int) 2)
+				this.modelManager.setSameDiff(redconv);
+			else
 			this.modelManager.setComputationGraph(redconv);
-		if (redconv.getTipoSalida().equals("tensorFlow"))
-			this.modelManager.setSameDiff(redconv);
 		Map<String,Object> myModel = new HashMap<>();
 		myModel.put("nombreModelo", redconv.getNombreModelo());
 		myModel.put("descripcion", redconv.getDescripcion());
@@ -176,6 +178,7 @@ public class FileUploadController extends FileBaseController{
 		
 		// PRESENTAMOS IAMGEN AL MODELO Y RECOGEMOS RESPUESTA
 		INDArray output = null;
+		Map<String, INDArray> outputMap;
         String resultado = "error";
         //String latestUploadPhoto = "";
         String rootPath = request.getSession().getServletContext().getRealPath("/");
@@ -191,16 +194,19 @@ public class FileUploadController extends FileBaseController{
         	logger.info("se espera texto como salida del modelo");
         	resultado = utilsCnn.devuelve_categoria(output, categorias);
         }
-        if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen") || this.modelManager.getModeloCargado().getTipoSalida().equals("tensorFlow")) {
-        	if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen"))
-        		output = this.modelManager.getComputationGraph().outputSingle(input);
-        		
-        	if (this.modelManager.getModeloCargado().getTipoSalida().equals("tensorFlow"))
+        if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
+        	//TODO:  tipo de fichero 2 es TF
+        	if (this.modelManager.getModeloCargado().getTipoFichero().intValue() == (int) 2)
         	{
         		logger.info("modelo tensorFlow");
-        		output = utilsCnn.predictPB(input, this.modelManager.getSameDiff());
+        		outputMap = utilsCnn.predictPB(input, this.modelManager.getSameDiff());
+        		logger.info("recogida salida");
         	//Obtenemos imagen en formato matricial
         	}
+        	else if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen"))
+        		output = this.modelManager.getComputationGraph().outputSingle(input);
+        		
+        	
         		logger.info("se espera una imagen salida del modelo");
         		logger.info("imagen original :"+serverfile.getAbsolutePath());
         		//fichero de salida

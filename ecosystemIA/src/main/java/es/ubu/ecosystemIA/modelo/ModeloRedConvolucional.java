@@ -49,8 +49,11 @@ public class ModeloRedConvolucional implements Serializable{
 	@Column(name="PATH_FICHERO")
 	private String pathToModel;
 	
-	@Column(name="TIPO_PATH")
-	private Integer tipoPath;
+	@Column(name="TIPO_FICHERO")
+	private Integer tipoFichero;
+	
+	@Column(name="TIPO_ALMACENAMIENTO")
+	private Integer tipoAlmacenamiento;
 	
 	@Column(name="TIPO_SALIDA")
 	private String tipoSalida;
@@ -104,12 +107,20 @@ public class ModeloRedConvolucional implements Serializable{
 		this.formatoImagenModelo = formatoImagenModelo;
 	}
 	
-	public Integer getTipoPath() {
-		return tipoPath;
+	public Integer getTipoAlmacenamiento() {
+		return tipoAlmacenamiento;
 	}
 
-	public void setTipoPath(Integer tipoPath) {
-		this.tipoPath = tipoPath;
+	public void setTipoAlmacenamiento(Integer tipoAlmacenamiento) {
+		this.tipoAlmacenamiento = tipoAlmacenamiento;
+	}
+	
+	public Integer getTipoFichero() {
+		return tipoFichero;
+	}
+	
+	public void setTipoFichero(Integer tipoFichero) {
+		this.tipoFichero = tipoFichero;
 	}
 
 	public String getTipoSalida() {

@@ -11,13 +11,9 @@ import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 public interface ModeloRnDao {
 	
 	public List<ModeloRedConvolucional> getModelosList();
-	
 	public ModeloRedConvolucional getModelo(Integer idModelo);
-	
     public void nuevoModelo(ModeloRedConvolucional modelo);
-	
     public void editarModelo(ModeloRedConvolucional modelo);
-    
     public void borrarModelo(ModeloRedConvolucional modelo);
     
 }
