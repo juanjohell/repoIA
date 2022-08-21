@@ -1,0 +1,33 @@
+name: Python package
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9']
+        tensorflow-package: ['tensorflow', 'tensorflow==2.6.0 keras==2.6.0']
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        sudo apt-get install protobuf-compiler
+        python -m pip install --upgrade pip setuptools
+        pip install ${{ matrix.tensorflow-package }} torch torchvision onnx pytest protobuf==3.20.1
+    - name: Test with pytest
+      run: py.test -v
+    - name: Build and publish
+      if: github.ref == 'refs/branches/stable'
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
