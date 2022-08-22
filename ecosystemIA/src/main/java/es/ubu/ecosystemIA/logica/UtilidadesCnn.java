@@ -2,6 +2,7 @@ package es.ubu.ecosystemIA.logica;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
@@ -150,7 +151,7 @@ public class UtilidadesCnn {
     }   
  
   
- // CARGA DE UN MODELO EN FORMATO KERAS H5 DESDE GOOGLE DRIVE
+ // CARGA DE UN MODELO EN FORMATO KERAS H5 DESDE GOOGLE DRIVE (NO SE USA DE MOMENTO)
     public ComputationGraph cargaModeloRCNNH5_Drive(String idFichero) throws IOException {
     	ComputationGraph model = null;
     	URL url=null;
@@ -259,10 +260,12 @@ public class UtilidadesCnn {
     			// Se calcula la posición del rectángulo respecto al tamaño de la imagen
     		boolean resultado = true;
     		File imageFile = new File(ruta_lectura);
-            BufferedImage img = null;
-            
+            BufferedImage img = null;   
             try {
+            	//LEER IMAGEN Y RESIZE
                 img = ImageIO.read(imageFile);
+                //hay que hacer resize para que la operacion de desnormalizacion de cajas cuadre con la imagen
+                img = this.resizeImage(img, model.getModelImageWidth(), model.getModelImageHeight());
             } catch (IOException e1) {
                 e1.printStackTrace();
                 resultado = false;
@@ -296,8 +299,47 @@ public class UtilidadesCnn {
 	            	//graph.fill(new Rectangle(xmin, ymin, width, height));
 	            	//bordes del rectángulo:
 	            	graph.setStroke(new BasicStroke(4));
-	            	graph.drawRect(xmin, ymin, width, height);
+	            	graph.drawRect(xmin, model.getModelImageHeight()-ymax, width, height);
+	            	graph.drawRect(ymin, xmin, width, height);
+	            	
 	            	graph.dispose();
+            	}
+            
+            if (resultado) {
+            	try {
+            		ImageIO.write(img, "jpg", 
+                    new File(ruta_escritura));
+            	} catch (IOException e) {
+            		e.printStackTrace();
+            	}
+            }
+            return resultado;
+    }
+    
+    // texto:  texto a escribir en la imagen
+    // ruta_escritura : RUTA + NOMBRE COMPLETO DEL FICHERO EN EL QUE SE VA A ESCRIBIR LA IMAGEN
+    // ruta_lectura : RUTA + NOMBRE COMPLETO DE LA IMAGEN ORIGINAL
+    public boolean rotulaImagen(String texto, String ruta_lectura, String ruta_escritura) {
+	    	// Se marca el objeto detectado con un rectángulo y una etiqueta
+    		// Se calcula la posición del rectángulo respecto al tamaño de la imagen
+    		boolean resultado = true;
+    		File imageFile = new File(ruta_lectura);
+            BufferedImage img = null;
+            
+            try {
+                img = ImageIO.read(imageFile);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                resultado = false;
+            }
+            if (resultado) {
+            	Font font = new Font("Arial", Font.BOLD, 20);
+	    		//TODO: parametrizar color y ancho del borde para el usuario
+	    		Graphics2D graph = img.createGraphics();
+	            graph.setColor(Color.ORANGE);
+	            graph.setFont(font);
+	            graph.drawString(texto, 50, 50);
+	            graph.dispose();
             	}
             
             if (resultado) {

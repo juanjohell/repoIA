@@ -10,7 +10,9 @@ import org.opencv.core.Mat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +51,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @Controller
 public class FileUploadController extends FileBaseController{
@@ -155,9 +158,17 @@ public class FileUploadController extends FileBaseController{
  		//modeloCnn.setCategorias(categorias);
  		
  		//leemos imagen
+ 		String rootPath = request.getSession().getServletContext().getRealPath("/");
+ 		
  		File file = Paths.get(URI.create(imagen).getPath()).toFile();
- 		String rutaImagenOriginal = request.getSession().getServletContext().getRealPath("/") + "img"+File.separator + file.getName();
+ 		String rutaImagenOriginal = rootPath + "img"+File.separator + file.getName();
  		logger.info("ruta imagen: "+rutaImagenOriginal);
+ 		
+ 		//generamos nombre que tendrá nueva imagen una vez anotada
+ 		int sufijo = (int) (Math.random() * 10000) + 1;
+ 		//TODO: almacenar extension en imagen
+ 		String nombre_imagen_anotada = "Imagen_anotada"+Integer.toString(sufijo)+".jpg";
+ 		String rutaImagenFinal = rootPath +"img"+File.separator +nombre_imagen_anotada;
  		
  		//Configuramos los datos de entrada esperados por el modelo
  		Imagen imagenInput = new Imagen(rutaImagenOriginal, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
@@ -180,8 +191,8 @@ public class FileUploadController extends FileBaseController{
 		INDArray output = null;
 		Map<String, INDArray> outputMap;
         String resultado = "error";
-        //String latestUploadPhoto = "";
-        String rootPath = request.getSession().getServletContext().getRealPath("/");
+      
+       
         File dir = new File(rootPath + File.separator + "img");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -190,9 +201,15 @@ public class FileUploadController extends FileBaseController{
         //En funcion del tipo de modelo obtenemos una imagen o un texto que nos da la categoria
         // PUEDE TRATARSE DE UN FICHERO H5 DE KERAS O UN FICHERO DE TENSORFLOW PB
         if (this.modelManager.getModeloCargado().getTipoSalida().equals("texto")) {
+        	
         	output = this.modelManager.getMultilayerNetwork().output(input);
         	logger.info("se espera texto como salida del modelo");
         	resultado = utilsCnn.devuelve_categoria(output, categorias);
+        	
+        	//ANOTAMOS CATEGORIA EN LA IMAGEN
+			logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
+			if (utilsCnn.rotulaImagen(resultado, rutaImagenOriginal, rutaImagenFinal))
+				latestUploadPhoto = nombre_imagen_anotada;
         }
         if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
         	//TODO:  tipo de fichero 2 es TF
@@ -206,35 +223,16 @@ public class FileUploadController extends FileBaseController{
         	else if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen"))
         		output = this.modelManager.getComputationGraph().outputSingle(input);
         		
-        	
         		logger.info("se espera una imagen salida del modelo");
         		logger.info("imagen original :"+serverfile.getAbsolutePath());
         		//fichero de salida
-				int sufijo = (int) (Math.random() * 10000) + 1;
-				//TODO: almacenar extension en imagen
-				String nombre_imagen = "Imagen_anotada"+Integer.toString(sufijo)+".jpg";
-				String rutaImagenFinal = rootPath +"img"+File.separator +nombre_imagen; 
+			
+				
 				logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
 				if (utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), output, rutaImagenOriginal, rutaImagenFinal))
-					latestUploadPhoto = nombre_imagen;
-        		//InputStream is = new FileInputStream(serverfile);
-				//Mat rawImagen = utilsCnn.Bytes2Mat(IOUtils.toByteArray(is));
+					latestUploadPhoto = nombre_imagen_anotada;
+        		
 				logger.info("obteniendo imagen cargada en formato matricial ");
-				//InputStream streamImagenAnn = utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), rawImagen, output);
-				
-				
-				
-				/*
-				try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(imagenAnn))) {
-					latestUploadPhoto = nombre_imagen;
-					logger.debug("nueva imagen anotada: "+this.modelManager.getImagenCargada().getRutaImagen() + nombre_imagen);
-					int i;
-					//
-					while ((i = streamImagenAnn.read()) != -1) {
-					    stream.write(i);
-					}
-					stream.flush();
-				}*/
 
         	INDArray valores = output.getRow(0);
         	resultado = valores.toString();
@@ -247,6 +245,20 @@ public class FileUploadController extends FileBaseController{
         model.addAttribute(PARAM_RESULTADO, resultado);
         return "usarModelo";
     }
+    
+    // CANCELAR Y VOLVER A MODELOS
+    @RequestMapping(value = "/uploadimgctlr.do", method = RequestMethod.POST, params = "cancelar")
+    public ModelAndView cancelUsarModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+        model.addAttribute("message", "Modificación Cancelada");
+  
+     // se regresa al listado de modelos
+        Map<String, Object> myModel = new HashMap<>();
+        myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el parÃ¡metro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
+    }
+    
+    
     public void setModelManager(SimpleNeuralModelManager modelManager) {
 		this.modelManager = modelManager;
 	}

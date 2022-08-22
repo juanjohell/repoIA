@@ -16,7 +16,7 @@
  				</div>
  				<div class ="col-6">
   					<h1 class="display-3">Datos del modelo ${modelo.nombreModelo}</h1>
-						<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
+						<form method="POST" action="${pageContext.request.contextPath}/verModelo.do">
 							<div class="form-row">
 				  				<div class="form-group">
 				  					<div class="form-group col-md-2">

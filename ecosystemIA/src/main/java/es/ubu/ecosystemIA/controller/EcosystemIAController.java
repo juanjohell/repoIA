@@ -63,6 +63,7 @@ public class EcosystemIAController {
 	@PersistenceContext
 	private EntityManager em;
 	
+	// PÁGINA DE INICIO
 	@RequestMapping(value="/home.do")
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -76,6 +77,7 @@ public class EcosystemIAController {
 		return new ModelAndView("home","mensaje",myModel);
 	}
 	
+	// LISTADO DE MODELOS
 	@Transactional
 	@RequestMapping(value="modelos.do")
 	public ModelAndView mostrarModelos(HttpServletRequest request, HttpServletResponse response)
@@ -97,6 +99,8 @@ public class EcosystemIAController {
     		@RequestParam Integer modelImageWidth,
     		@RequestParam Integer imageChannels,
     		@RequestParam String pathToModel,
+    		@RequestParam Integer tipoAlmacenamiento,
+    		@RequestParam Integer tipoFichero,
     		HttpServletRequest request) {
         
         ModeloRedConvolucional modelo = this.modelManager.devuelveModelo(idModelo);
@@ -105,6 +109,8 @@ public class EcosystemIAController {
         modelo.setModelImageHeight(modelImageHeight);
         modelo.setModelImageWidth(modelImageWidth);
         modelo.setImageChannels(imageChannels);
+        modelo.setTipoAlmacenamiento(tipoAlmacenamiento);
+        modelo.setTipoFichero(tipoFichero);
         modelo.setPathToModel(pathToModel);
         logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
         logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
@@ -143,50 +149,7 @@ public class EcosystemIAController {
 		return model;
 	}
 	
-	@RequestMapping(value = "/editarCategoria.do", method = RequestMethod.POST, params = "cancelar")
-    public ModelAndView cancelEditarCategoria(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
-        model.addAttribute("message", "Modificación Cancelada");
-     // se regresa al listado de modelos
-        Map<String, Object> myModel = new HashMap<>();
-        myModel.put("listadoModelos", this.modelManager.getModelos());
-		//pasamos el parÃ¡metro now a la pagina jsp
-		return new ModelAndView("modelos", "modeloMVC", myModel);
-    }
 	
-	@GetMapping(value="editarCategoria.do")
-	public ModelAndView editarCategoria(@RequestParam String idModelo, @RequestParam String idOrden ) {
-		logger.info("Consultando datos de la categoría idModelo: "+idModelo+ " idOrden: "+idOrden);
-		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
-		Categoria categoria = this.categoriaManager.devuelveCategoria(Integer.valueOf(idModelo), Integer.valueOf(idOrden));
-		ModelAndView model = new ModelAndView("editarCategoria");
-		model.addObject("modelo",redconv);
-		model.addObject("categoria",categoria);
-		logger.info("categoria: "+redconv.getNombreModelo()+"-"+categoria.getNombreCategoria());
-		return model;
-	}
-	
-	@Transactional
-	@RequestMapping(value = "editarCategoria.do", method = RequestMethod.POST, params = "grabar")
-    public ModelAndView editarCategoria(@RequestParam int idModelo, 
-    		@RequestParam int idOrden,
-    		@RequestParam String nombreCategoria,
-    		HttpServletRequest request) {
-        
-        Categoria categoria = this.categoriaManager.devuelveCategoria(idModelo, idOrden);
-        categoria.setIdOrden(idOrden);
-        categoria.setIdModelo(idModelo);
-        categoria.setNombreCategoria(nombreCategoria);
-        logger.info("Grabar cambios realizados en categoria "+ categoria.getNombreCategoria());
-        
-        // edicion de la categoria
-        this.categoriaManager.editarCategoria(categoria);
-        // se regresa al listado de categorias
-        Map<String, Object> myModel = new HashMap<>();
-        myModel.put("modelo", this.modelManager.devuelveModelo(idModelo));
-        myModel.put("listadoCategorias", this.categoriaManager.getCategorias(idModelo));
-		//pasamos el parÃ¡metro now a la pagina jsp
-		return new ModelAndView("categorias", "modeloMVC", myModel);
-    }
 	
 	@GetMapping(value="verModelo.do")
 	public ModelAndView verModelo(@RequestParam String idModelo) {
@@ -211,16 +174,6 @@ public class EcosystemIAController {
         myModel.put("listadoModelos", this.modelManager.getModelos());
 		//pasamos el parÃ¡metro now a la pagina jsp
 		return new ModelAndView("modelos", "modeloMVC", myModel);
-	}
-	
-	@GetMapping(value="verCategorias.do")
-	public ModelAndView verCategorias(@RequestParam Integer idModelo) {
-		logger.info("Consultando categorias del modelo id "+idModelo);
-		Map<String, Object> myModel = new HashMap<>();
-		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
-        myModel.put("listadoCategorias", this.categoriaManager.getCategorias(idModelo));
-        myModel.put("modelo", redconv);
-        return new ModelAndView("categorias", "modeloMVC", myModel);
 	}
 	
 	@GetMapping(value="nuevoModelo.do")
@@ -271,16 +224,76 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
 	
-	@RequestMapping(value = "/uploadimgctlr.do", method = RequestMethod.POST, params = "cancelar")
-    public ModelAndView cancelUsarModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
-        model.addAttribute("message", "Modificación Cancelada");
-  
-     // se regresa al listado de modelos
-        Map<String, Object> myModel = new HashMap<>();
-        myModel.put("listadoModelos", this.modelManager.getModelos());
-		//pasamos el parÃ¡metro now a la pagina jsp
-		return new ModelAndView("modelos", "modeloMVC", myModel);
-    }
+	//// CATEGORIAS :
+	
+	// LISTADO CATEGORIAS
+	@GetMapping(value="verCategorias.do")
+	public ModelAndView verCategorias(@RequestParam Integer idModelo) {
+		logger.info("Consultando categorias del modelo id "+idModelo);
+		Map<String, Object> myModel = new HashMap<>();
+		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+        myModel.put("listadoCategorias", this.categoriaManager.getCategorias(idModelo));
+        myModel.put("modelo", redconv);
+        return new ModelAndView("categorias", "modeloMVC", myModel);
+	}
+	
+	//cancelar ver categoria
+		@RequestMapping(value = "/verCategorias.do", method = RequestMethod.POST, params = "cancelar")
+	    public ModelAndView cancelVerCategoria(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+	        model.addAttribute("message", "Modificación Cancelada");
+	     // se regresa al listado de modelos
+	        Map<String, Object> myModel = new HashMap<>();
+	        myModel.put("listadoModelos", this.modelManager.getModelos());
+			//pasamos el parÃ¡metro now a la pagina jsp
+			return new ModelAndView("modelos", "modeloMVC", myModel);
+	    }
+	
+		//cancelar edicion categoria
+		@RequestMapping(value = "/editarCategoria.do", method = RequestMethod.POST, params = "cancelar")
+	    public ModelAndView cancelEditarCategoria(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+	        model.addAttribute("message", "Modificación Cancelada");
+	     // se regresa al listado de modelos
+	        Map<String, Object> myModel = new HashMap<>();
+	        myModel.put("listadoModelos", this.modelManager.getModelos());
+			//pasamos el parÃ¡metro now a la pagina jsp
+			return new ModelAndView("modelos", "modeloMVC", myModel);
+	    }
+		
+		@GetMapping(value="editarCategoria.do")
+		public ModelAndView editarCategoria(@RequestParam String idModelo, @RequestParam String idOrden ) {
+			logger.info("Consultando datos de la categoría idModelo: "+idModelo+ " idOrden: "+idOrden);
+			ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+			Categoria categoria = this.categoriaManager.devuelveCategoria(Integer.valueOf(idModelo), Integer.valueOf(idOrden));
+			ModelAndView model = new ModelAndView("editarCategoria");
+			model.addObject("modelo",redconv);
+			model.addObject("categoria",categoria);
+			logger.info("categoria: "+redconv.getNombreModelo()+"-"+categoria.getNombreCategoria());
+			return model;
+		}
+		
+		@Transactional
+		@RequestMapping(value = "editarCategoria.do", method = RequestMethod.POST, params = "grabar")
+	    public ModelAndView editarCategoria(@RequestParam int idModelo, 
+	    		@RequestParam int idOrden,
+	    		@RequestParam String nombreCategoria,
+	    		HttpServletRequest request) {
+	        
+	        Categoria categoria = this.categoriaManager.devuelveCategoria(idModelo, idOrden);
+	        categoria.setIdOrden(idOrden);
+	        categoria.setIdModelo(idModelo);
+	        categoria.setNombreCategoria(nombreCategoria);
+	        logger.info("Grabar cambios realizados en categoria "+ categoria.getNombreCategoria());
+	        
+	        // edicion de la categoria
+	        this.categoriaManager.editarCategoria(categoria);
+	        // se regresa al listado de categorias
+	        Map<String, Object> myModel = new HashMap<>();
+	        myModel.put("modelo", this.modelManager.devuelveModelo(idModelo));
+	        myModel.put("listadoCategorias", this.categoriaManager.getCategorias(idModelo));
+			//pasamos el parÃ¡metro now a la pagina jsp
+			return new ModelAndView("categorias", "modeloMVC", myModel);
+	    }
+		
 	
 	public void setModelManager(SimpleNeuralModelManager modelManager) {
 		this.modelManager = modelManager;

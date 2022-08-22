@@ -60,12 +60,21 @@
     							<div class="form-group col-md-3">
     								<div class="input-group mb-3">
 										  <div class="input-group-prepend">
-										    <label class="input-group-text" for="inputGroupSelectTipoAlm">Origen del fichero:</label>
+										    <label class="input-group-text" for="tipoAlmacenamiento">Origen del fichero:</label>
 										  </div>
-										  <select class="custom-select" id="inputGroupSelect01">
-										    	<option selected>Seleccione...</option>
+										  <select class="custom-select" id="tipoAlmacenamiento" name="tipoAlmacenamiento">
+										  
 										    	<c:forEach var="ta" items="${tiposAlm}" varStatus="loop">
-										    		<option value="${ta.idTipoAlmacenamiento}">${ta.idTipoAlmacenamiento} - ${ta.nombre}</option>
+										    		<c:choose>
+										    			<c:when test="${ta.idTipoAlmacenamiento == modelo.tipoAlmacenamiento}">
+										    				<option selected="true" value=${ta.idTipoAlmacenamiento}>${ta.idTipoAlmacenamiento} - ${ta.nombre}
+										    				</option>
+										    			</c:when>
+										    			<c:otherwise>
+										    				<option value=${ta.idTipoAlmacenamiento}>${ta.idTipoAlmacenamiento} - ${ta.nombre}
+										    				</option>
+										    			</c:otherwise>
+										    		</c:choose>
 										    	</c:forEach>
 										  </select>
 									</div>
@@ -73,12 +82,20 @@
     							<div class="form-group col-md-4">
     								<div class="input-group mb-4">
 										  <div class="input-group-prepend">
-										    <label class="input-group-text" for="inputGroupSelectTipoAlm">Tipo de fichero:</label>
+										    <label class="input-group-text" for="tipofichero">Tipo de fichero:</label>
 										  </div>
-										  <select class="custom-select" id="inputGroupSelect01">
-										    	<option selected>Seleccione...</option>
+										  <select class="custom-select" id="tipoFichero" name="tipoFichero">
 										    	<c:forEach var="tf" items="${tiposFic}" varStatus="loop">
-										    		<option value="${tf.idTipoFichero}">${tf.idTipoFichero} - ${tf.nombreCorto}</option>
+										    		<c:choose>
+										    			<c:when test="${tf.idTipoFichero == modelo.tipoFichero}">
+										    				<option selected="true" value=${tf.idTipoFichero}>${tf.idTipoFichero} - ${tf.nombreCorto}
+										    				</option>
+										    			</c:when>
+										    			<c:otherwise>
+										    				<option value=${tf.idTipoFichero}>${tf.idTipoFichero} - ${tf.nombreCorto}
+										    				</option>
+										    			</c:otherwise>
+										    		</c:choose>
 										    	</c:forEach>
 										  </select>
 									</div>

@@ -17,8 +17,6 @@ public class EcosystemIAControllerTest {
 		ModelAndView modelAndView = homeController.handleRequest(null, null);
 		assertEquals("home", modelAndView.getViewName());
         assertNotNull(modelAndView.getModel());
-        String nowValue = (String) modelAndView.getModel().get("now");
-        assertNotNull(nowValue);
 	}
 
 }

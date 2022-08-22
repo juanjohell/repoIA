@@ -45,6 +45,11 @@
 		                        </td>
 		      				</tr>
 	    				</c:forEach>
+	    				<tr><td colspan="4">
+	    				<form method="POST" action="${pageContext.request.contextPath}/verCategorias.do">
+	    					<button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>
+	    				</form>
+	    				</td></tr>
                 </tbody>
             </table>
         </div>
