@@ -12,9 +12,7 @@
   	<body>
   		<div class="container">
  			<div class="row">
- 				<div class ="col">
- 				</div>
- 				<div class ="col-6">
+ 				<div class ="col-12">
   					<h1 class="display-3">Editar ${modelo.nombreModelo}</h1>
 					<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
 						<div class="form-row">
@@ -59,13 +57,41 @@
       										Debe indicar número de canales.
     								</div>
     							</div>
-    							<div class="form-group col-md-7">
-    								<label for="modelo.imageChannels">Ruta al recurso del fichero.</label>
+    							<div class="form-group col-md-3">
+    								<div class="input-group mb-3">
+										  <div class="input-group-prepend">
+										    <label class="input-group-text" for="inputGroupSelectTipoAlm">Origen del fichero:</label>
+										  </div>
+										  <select class="custom-select" id="inputGroupSelect01">
+										    	<option selected>Seleccione...</option>
+										    	<c:forEach var="ta" items="${tiposAlm}" varStatus="loop">
+										    		<option value="${ta.idTipoAlmacenamiento}">${ta.idTipoAlmacenamiento} - ${ta.nombre}</option>
+										    	</c:forEach>
+										  </select>
+									</div>
+    							</div>
+    							<div class="form-group col-md-4">
+    								<div class="input-group mb-4">
+										  <div class="input-group-prepend">
+										    <label class="input-group-text" for="inputGroupSelectTipoAlm">Tipo de fichero:</label>
+										  </div>
+										  <select class="custom-select" id="inputGroupSelect01">
+										    	<option selected>Seleccione...</option>
+										    	<c:forEach var="tf" items="${tiposFic}" varStatus="loop">
+										    		<option value="${tf.idTipoFichero}">${tf.idTipoFichero} - ${tf.nombreCorto}</option>
+										    	</c:forEach>
+										  </select>
+									</div>
+    							</div>
+  							</div>
+  							<div class="form-group">
+  								<div class="form-group col-md-12">
+  									<label for="modelo.imageChannels">Ruta al recurso del fichero.</label>
       								<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel" required="true"/>
     								<div class="invalid-tooltip">
       										Debe indicar la ruta al fichero.
     								</div>
-    							</div>
+  								</div>
   							</div>
   						</div>
   						<button type="button" id="grabar" name="grabar" class="btn btn-primary" data-toggle="modal" data-target="#confirmacionModal">

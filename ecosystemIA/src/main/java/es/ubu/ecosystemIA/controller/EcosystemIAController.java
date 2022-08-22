@@ -36,9 +36,13 @@ import es.ubu.ecosystemIA.db.JPAModeloRnDao;
 import es.ubu.ecosystemIA.logica.CategoriaManager;
 import es.ubu.ecosystemIA.logica.NeuralNetworkManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
+import es.ubu.ecosystemIA.logica.TipoAlmacenamientoManager;
+import es.ubu.ecosystemIA.logica.TipoFicheroManager;
 import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 import es.ubu.ecosystemIA.modelo.Categoria;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
+import es.ubu.ecosystemIA.modelo.TipoAlmacenamiento;
+import es.ubu.ecosystemIA.modelo.TipoFichero;
 
 
 @Controller
@@ -52,6 +56,10 @@ public class EcosystemIAController {
 	private NeuralNetworkManager modelManager;
 	@Autowired
 	private CategoriaManager categoriaManager;
+	@Autowired
+	private TipoAlmacenamientoManager tipoAlmacenamientoManager;
+	@Autowired
+	private TipoFicheroManager tipoFicheroManager;
 	@PersistenceContext
 	private EntityManager em;
 	
@@ -79,6 +87,7 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
 	}
 	
+	// GRABACION EN LA EDICION DE UN MODELO DESDE FORMULARIO
 	@Transactional
 	@RequestMapping(value = "editarModelo.do", method = RequestMethod.POST, params = "grabar")
     public ModelAndView editarModelo(@RequestParam int idModelo, 
@@ -107,7 +116,7 @@ public class EcosystemIAController {
 		//pasamos el parÃ¡metro now a la pagina jsp
 		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
-	
+	// CANCELAR EDICION DE UN MODELO
 	@RequestMapping(value = "/editarModelo.do", method = RequestMethod.POST, params = "cancelar")
     public ModelAndView cancelEditar(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
         model.addAttribute("message", "Modificación Cancelada");
@@ -119,13 +128,17 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
 	
-	
+	// MOSTRAR DATOS DE MODELO PARA EDICION EN FORMULARIO
 	@GetMapping(value="editarModelo.do")
 	public ModelAndView editarModelo(@RequestParam String idModelo) {
 		logger.info("Consultando datos del modelo id "+idModelo);
 		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+		List<TipoAlmacenamiento> listadoTiposAlmacenamiento = this.tipoAlmacenamientoManager.getTiposAlmacenamiento();
+		List<TipoFichero> listadoTiposFichero = this.tipoFicheroManager.getTiposFichero();
 		ModelAndView model = new ModelAndView("editarModelo");
 		model.addObject("modelo",redconv);
+		model.addObject("tiposAlm",listadoTiposAlmacenamiento);
+		model.addObject("tiposFic",listadoTiposFichero);
 		logger.info("modelo neuronal: "+redconv.getNombreModelo());
 		return model;
 	}
