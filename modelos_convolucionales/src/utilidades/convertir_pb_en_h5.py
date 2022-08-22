@@ -29,6 +29,7 @@ model.compile()
 print(model.summary())
 # Saving the Model in H5 Format
 model.save_weights(h5_model_pesos)
+tf.keras.models.save_json('..\\..\\modelos_compilados\\modelo.json')
 model.save(h5_model)
 #tf.keras.models.save_model(model, h5_model)
 

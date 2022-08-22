@@ -23,12 +23,11 @@ imagen_prueba = "1_Sand_000020_71_1"
 extension = "jpg"
 img_dir = '../../datasets/uav-bd/val/images/'   # directorios con las imagenes
 
-<<<<<<< Upstream, based on branch 'master' of https://github.com/juanjohell/repoIA.git
 
-=======
-image_height = 342
-image_width = 342
->>>>>>> 28c4567 fuentes python-keras (sobre TensorFlow) para la generacion del modelo rcnn-vgg16
+
+image_height = 224
+image_width = 224
+
 sep="."
 imagen = sep.join((imagen_prueba,extension))
 sep=""

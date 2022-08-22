@@ -14,6 +14,10 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
+IMAGEN_PATH = "../../datasets/cifar/coche.jpg"
+MODELO_PATH = "../../modelos_entrenados/cifar10_entrenado_10epochs.h5"
+
+
 labels = ['Airplane', 'Automobile', 'Bird', 'Cat', 'Deer', 'Dog', 'Frog', 'Horse', 'Ship', 'Truck']
 
 #funcion para carga de la imagen resolucion 32x32 pixels
@@ -26,20 +30,11 @@ def load_image(filename):
 
 #funcion para cargar modelo y probar imagen indicada
 def predict():
-	try:
-		image_path = sys.argv[1]
-	except:
-		print('No path was passed in the argument.')
-		exit()
 	
-	if (not path.exists(image_path)):
-		print('Image file does not exist.')
-		exit()
-
-	image = load_image(image_path)
-	model = load_model('./modelos/cifar10_entrenado_10epochs.h5')
+	image = load_image(IMAGEN_PATH)
+	model = load_model(MODELO_PATH)
 	result = np.argmax(model.predict(image), axis=-1)
-	plt.imshow(mpimg.imread(image_path))
+	plt.imshow(mpimg.imread(IMAGEN_PATH))
 	plt.axis('off')
 	plt.title('Predicted label: {}'.format(labels[result[0]]))
 	plt.show()
