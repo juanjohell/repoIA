@@ -37,7 +37,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
-
+import org.nd4j.linalg.factory.Nd4j;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -61,6 +61,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 
 public class UtilidadesCnn {
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -225,6 +227,7 @@ public class UtilidadesCnn {
          return entrada_a_CNN;
     }
     
+    // CATEGORIAS PARA MATRIZ UNIDIMENSIONAL
     public String devuelve_categoria(INDArray resultado, ArrayList<Categoria> categorias) {
     	String categoria = resultado.toString();
     	INDArray valores = resultado.getRow(0);
@@ -236,6 +239,23 @@ public class UtilidadesCnn {
     	}
     	return categoria;
     }
+    
+    // CATEGORIAS PARA MATRIZ MULTIDIMENSIONAL TIPO IMAGENET
+    // LE PASAMOS EL ARRAY DE RESPUESTA DEL MODELO Y EL NUMERO DE LAS PREDICCIONES
+    // QUE QUEREMOS MOSTRAR (LAS num_predcciones CLASES MEJOR VALORADAS)
+    public String devuelve_categorias_imagenet(INDArray predictions) {
+    	ImageNetLabels labels = null;
+    	String predicciones = "";
+        try {
+			labels = new ImageNetLabels();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        predicciones = labels.decodePredictions(predictions);
+        return predicciones;
+    }
+    
     
     public String devuelve_path_real(String resource_path) {
     	URL resource = FileUploadController.class.getClassLoader().getResource(resource_path);
@@ -255,7 +275,7 @@ public class UtilidadesCnn {
     // modelOutput : coordenadas obtenidas del modelo
     // ruta_escritura : RUTA + NOMBRE COMPLETO DEL FICHERO EN EL QUE SE VA A ESCRIBIR LA IMAGEN
     // ruta_lectura : RUTA + NOMBRE COMPLETO DE LA IMAGEN ORIGINAL
-    public boolean anotacionSimpleImagen(ModeloRedConvolucional model, INDArray modelOutput, String ruta_lectura, String ruta_escritura) {
+    public boolean anotacionSimpleImagen(ModeloRedConvolucional model, INDArray[] modelOutput, String ruta_lectura, String ruta_escritura) {
 	    		// Se marca el objeto detectado con un rectángulo y una etiqueta
     			// Se calcula la posición del rectángulo respecto al tamaño de la imagen
     		boolean resultado = true;
@@ -271,8 +291,8 @@ public class UtilidadesCnn {
                 resultado = false;
             }
             if (resultado)
-            	for (int i=0; i<modelOutput.rows(); i++) {
-	    			INDArray valores = modelOutput.getRow(i);
+            	for (int i=0; i<modelOutput.length; i++) {
+	    			INDArray valores = modelOutput[i];
 	    			double x1 = valores.getDouble(0);
 	    			double y1 = valores.getDouble(1);
 	    			double x2 = valores.getDouble(2);
@@ -333,12 +353,12 @@ public class UtilidadesCnn {
                 resultado = false;
             }
             if (resultado) {
-            	Font font = new Font("Arial", Font.BOLD, 20);
+            	Font font = new Font("Arial", Font.BOLD, 18);
 	    		//TODO: parametrizar color y ancho del borde para el usuario
 	    		Graphics2D graph = img.createGraphics();
 	            graph.setColor(Color.ORANGE);
 	            graph.setFont(font);
-	            graph.drawString(texto, 50, 50);
+	            graph.drawString(texto, 20, 20);
 	            graph.dispose();
             	}
             

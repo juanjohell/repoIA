@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `categorias` (
   `NOMBRE_CATEGORIA` varchar(200) NOT NULL DEFAULT '' COMMENT 'Nombre de la categoría',
   PRIMARY KEY (`ID_ITEM`),
   KEY `FK_MODELOS` (`ID_MODELO`),
-  CONSTRAINT `FK_MODELOS` FOREIGN KEY (`ID_MODELO`) REFERENCES `modelos` (`ID_MODELO`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_MODELOS` FOREIGN KEY (`ID_MODELO`) REFERENCES `modelos` (`ID_MODELO`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1 COMMENT='categorias de clasificación de imágenes de los diferentes modelos de redes neuronales';
 
 -- La exportación de datos fue deseleccionada.
@@ -67,13 +67,18 @@ CREATE TABLE IF NOT EXISTS `modelos` (
   `PATH_FICHERO` varchar(250) COLLATE utf8mb4_spanish2_ci DEFAULT NULL COMMENT 'Ruta al fichero si se almacena de forma externa',
   `TIPO_ALMACENAMIENTO` int(11) NOT NULL DEFAULT 1 COMMENT 'Determina donde se guarda',
   `TIPO_FICHERO` int(1) unsigned NOT NULL DEFAULT 2 COMMENT 'Determina el tipo de fichero en que se encuentra almacenado el modelo neuronal',
-  `TIPO_SALIDA` varchar(50) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  `TIPO_PREDICCION` int(11) unsigned NOT NULL,
+  `TIPO_SALIDA` int(11) unsigned NOT NULL,
   PRIMARY KEY (`ID_MODELO`) USING BTREE,
   KEY `FK1_TIPO_ALMACENAMIENTO` (`TIPO_ALMACENAMIENTO`),
   KEY `FK2_TIPO_FICHERO` (`TIPO_FICHERO`),
+  KEY `FK3_TIPO_SALIDA` (`TIPO_SALIDA`),
+  KEY `FK4_TIPO_PREDICCION` (`TIPO_PREDICCION`),
   CONSTRAINT `FK1_TIPO_ALMACENAMIENTO` FOREIGN KEY (`TIPO_ALMACENAMIENTO`) REFERENCES `tipos_almacenamiento` (`idTipoAlmacenamiento`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK2_TIPO_FICHERO` FOREIGN KEY (`TIPO_FICHERO`) REFERENCES `tipos_fichero` (`idTipoModelo`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
+  CONSTRAINT `FK2_TIPO_FICHERO` FOREIGN KEY (`TIPO_FICHERO`) REFERENCES `tipos_fichero` (`idTipoFichero`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK3_TIPO_SALIDA` FOREIGN KEY (`TIPO_SALIDA`) REFERENCES `tipo_salida` (`idTiposalida`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK4_TIPO_PREDICCION` FOREIGN KEY (`TIPO_PREDICCION`) REFERENCES `tipo_prediccion` (`idTipoPrediccion`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
 
 -- La exportación de datos fue deseleccionada.
 
@@ -88,12 +93,32 @@ CREATE TABLE IF NOT EXISTS `tipos_almacenamiento` (
 
 -- Volcando estructura para tabla bbdd_modelos_neuronales.tipos_fichero
 CREATE TABLE IF NOT EXISTS `tipos_fichero` (
-  `idTipoModelo` int(10) unsigned NOT NULL COMMENT 'primary',
+  `idTipoFichero` int(10) unsigned NOT NULL COMMENT 'primary',
   `nombreCorto` varchar(2) NOT NULL COMMENT 'identifica al tipo de fichero',
   `nombreLargo` varchar(50) NOT NULL,
   `descripcion` varchar(250) NOT NULL COMMENT 'Descripción del formato',
-  PRIMARY KEY (`idTipoModelo`)
+  PRIMARY KEY (`idTipoFichero`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='tipos de formatos de almacenamiento de ficheros de redes neuronales entrenadas';
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla bbdd_modelos_neuronales.tipo_prediccion
+CREATE TABLE IF NOT EXISTS `tipo_prediccion` (
+  `idTipoPrediccion` int(11) unsigned NOT NULL,
+  `nombre` varchar(50) NOT NULL DEFAULT '',
+  `descripccion` varchar(250) NOT NULL DEFAULT '',
+  PRIMARY KEY (`idTipoPrediccion`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Determina si el modelo es para prediccion o deteccion de objetos';
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla bbdd_modelos_neuronales.tipo_salida
+CREATE TABLE IF NOT EXISTS `tipo_salida` (
+  `idTiposalida` int(11) unsigned NOT NULL,
+  `nombre` varchar(50) NOT NULL DEFAULT '',
+  `descripcion` varchar(250) NOT NULL DEFAULT '',
+  PRIMARY KEY (`idTiposalida`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Si la salida del modelo es secuencial (matriz unidimendional) o multicapa (matriz multidimensional)';
 
 -- La exportación de datos fue deseleccionada.
 

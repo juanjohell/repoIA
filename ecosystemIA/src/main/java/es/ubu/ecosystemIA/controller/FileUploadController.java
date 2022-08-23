@@ -59,6 +59,10 @@ public class FileUploadController extends FileBaseController{
 	public static final String PARAM_LATESTPHOTO = "LATEST_PHOTO_PARAM";
 	public static final String PARAM_RESULTADO = "RESULTADO";
 	public static final String PARAM_ERROR = "ERROR";
+	public static final Integer SALIDA_UNIDIMENSIONAL = (int) 1; 
+	public static final Integer SALIDA_MULTIDIMENSIONAL = (int) 2;
+	public static final Integer CLASIFICACION = (int) 1; 
+	public static final Integer DETECCION = (int) 2;
     
 	protected final Log logger = LogFactory.getLog(getClass());
 	@Autowired
@@ -69,20 +73,25 @@ public class FileUploadController extends FileBaseController{
 	File serverfile;
 	String latestUploadPhoto;
 	
+	// ACCIONES EN LA CARGA DEL MODELO
 	@GetMapping(value="cargarModelo.do")
 	public ModelAndView probarModelo(@RequestParam String idModelo) {
 		logger.info("Peticion Carga modelo ");
 		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
 		logger.info("Cargando modelo "+redconv.getNombreModelo());
 		this.modelManager.setModeloCargado(redconv);
-		if (redconv.getTipoSalida().equals("texto"))
+		// MODELOS CON SALIDA UNIDIMENSIONAL SE DEBEN CARGAR CON
+		// MULTILAYERNETWORK
+		if (redconv.getTipoSalida() == SALIDA_UNIDIMENSIONAL)
 			this.modelManager.setMultilayerNetwork(redconv);
-		if (redconv.getTipoSalida().equals("imagen"))
-			//fichero tipo TF (PROTOCOL BUFFER)
+		// MODELOS CON SALIDA MULTIDIMENSIONAL SE DEBEN CARGAR CON
+		// MULTILAYERNETWORK COMPUTATIONGRAPH
+		if (redconv.getTipoSalida() == SALIDA_MULTIDIMENSIONAL)
+			//TIPOS DE FICHERO TF
 			if (redconv.getTipoFichero().intValue() == (int) 2)
 				this.modelManager.setSameDiff(redconv);
 			else
-			this.modelManager.setComputationGraph(redconv);
+				this.modelManager.setComputationGraph(redconv);
 		Map<String,Object> myModel = new HashMap<>();
 		myModel.put("nombreModelo", redconv.getNombreModelo());
 		myModel.put("descripcion", redconv.getDescripcion());
@@ -188,6 +197,7 @@ public class FileUploadController extends FileBaseController{
 		// TODO: Tratamiento segun tipo de modelo, categorias o clasificacion 
 		
 		// PRESENTAMOS IAMGEN AL MODELO Y RECOGEMOS RESPUESTA
+		INDArray[] multi_output = null;
 		INDArray output = null;
 		Map<String, INDArray> outputMap;
         String resultado = "error";
@@ -200,18 +210,30 @@ public class FileUploadController extends FileBaseController{
         
         //En funcion del tipo de modelo obtenemos una imagen o un texto que nos da la categoria
         // PUEDE TRATARSE DE UN FICHERO H5 DE KERAS O UN FICHERO DE TENSORFLOW PB
-        if (this.modelManager.getModeloCargado().getTipoSalida().equals("texto")) {
-        	
-        	output = this.modelManager.getMultilayerNetwork().output(input);
-        	logger.info("se espera texto como salida del modelo");
-        	resultado = utilsCnn.devuelve_categoria(output, categorias);
-        	
+        
+        //TIPO_PREDICCION 1 ES CLASIFICACION DE IMAGENES
+        if (this.modelManager.getModeloCargado().getTipoPrediccion().intValue() == CLASIFICACION) {
+        	logger.info("CLASIFICACION DE IMAGENES");
+        	// SI LA SALIDA ES UNIDIMENSIONAL (USAR MULTILAYERNETWORK)
+        	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_UNIDIMENSIONAL) {
+        		output = this.modelManager.getMultilayerNetwork().output(input);
+        		logger.info("output "+output.toString());
+        		resultado = utilsCnn.devuelve_categoria(output, categorias);
+        	}
+        	// SI ES MULTIDIMENSIONAL (USAR COMPUTATIONGRAPH)
+        	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_MULTIDIMENSIONAL) {
+        		output = this.modelManager.getComputationGraph().outputSingle(input);
+        		logger.info("output "+output.toString());
+        		resultado = utilsCnn.devuelve_categorias_imagenet(output);
+        	}
         	//ANOTAMOS CATEGORIA EN LA IMAGEN
 			logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
 			if (utilsCnn.rotulaImagen(resultado, rutaImagenOriginal, rutaImagenFinal))
 				latestUploadPhoto = nombre_imagen_anotada;
         }
-        if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen")) {
+        
+        //TIPO_PREDICCION 2 ES DETECCION DE OBJETOS (BOUNDING BOXES)
+        if (this.modelManager.getModeloCargado().getTipoPrediccion().intValue() == DETECCION) {
         	//TODO:  tipo de fichero 2 es TF
         	if (this.modelManager.getModeloCargado().getTipoFichero().intValue() == (int) 2)
         	{
@@ -220,23 +242,18 @@ public class FileUploadController extends FileBaseController{
         		logger.info("recogida salida");
         	//Obtenemos imagen en formato matricial
         	}
-        	else if (this.modelManager.getModeloCargado().getTipoSalida().equals("imagen"))
-        		output = this.modelManager.getComputationGraph().outputSingle(input);
-        		
-        		logger.info("se espera una imagen salida del modelo");
-        		logger.info("imagen original :"+serverfile.getAbsolutePath());
-        		//fichero de salida
-			
-				
-				logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
-				if (utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), output, rutaImagenOriginal, rutaImagenFinal))
-					latestUploadPhoto = nombre_imagen_anotada;
-        		
-				logger.info("obteniendo imagen cargada en formato matricial ");
-
-        	INDArray valores = output.getRow(0);
-        	resultado = valores.toString();
-        }
+        	else
+        		multi_output = this.modelManager.getComputationGraph().output(input);
+			logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
+			if (utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), multi_output, rutaImagenOriginal, rutaImagenFinal))
+			latestUploadPhoto = nombre_imagen_anotada;
+			logger.info("obteniendo imagen cargada en formato matricial ");
+        }			
+        	if(output != null)
+        		resultado = output.toString();
+        	if(multi_output != null)
+        		resultado = multi_output.toString();
+        
        //url a la imagen 
         model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
         //imagen

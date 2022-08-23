@@ -110,11 +110,16 @@
     								</div>
   								</div>
   							</div>
+  							<div class="form-group">
+  								<div class="form-group col-md-12">
+  									<button type="button" id="grabar" name="grabar" class="btn btn-primary" data-toggle="modal" data-target="#confirmacionModal">
+  										Grabar cambios
+									</button>
+									<button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>
+  								</div>
+  							</div>
   						</div>
-  						<button type="button" id="grabar" name="grabar" class="btn btn-primary" data-toggle="modal" data-target="#confirmacionModal">
-  								Grabar cambios
-						</button>
-						<button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>
+  						
 						<!-- Modal -->
 							<div class="modal fade" id="confirmacionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 							  <div class="modal-dialog" role="document">
@@ -139,7 +144,7 @@
 				</div>
 				<div class="col">
 				</div>
-			</div>
+			</div> <!-- row -->
 		</div>
 	</body>
 </html>

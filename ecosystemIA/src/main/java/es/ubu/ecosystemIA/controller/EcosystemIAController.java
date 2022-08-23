@@ -181,10 +181,15 @@ public class EcosystemIAController {
 		logger.info("Nuevo modelo");
 		ModelAndView model = new ModelAndView("nuevoModelo");
 		ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+		List<TipoAlmacenamiento> listadoTiposAlmacenamiento = this.tipoAlmacenamientoManager.getTiposAlmacenamiento();
+		List<TipoFichero> listadoTiposFichero = this.tipoFicheroManager.getTiposFichero();
 		model.addObject("modelo",modelo);
+		model.addObject("tiposAlm",listadoTiposAlmacenamiento);
+		model.addObject("tiposFic",listadoTiposFichero);
 		return model;
 	}
 	
+	// FORMULARIO CREACION DE NUEVO MODELO GRABAR DATOS
 	@Transactional
 	@RequestMapping(value = "nuevoModelo.do", method = RequestMethod.POST, params = "grabar")
     public ModelAndView grabarNuevoModelo(
@@ -194,6 +199,8 @@ public class EcosystemIAController {
     		@RequestParam Integer modelImageWidth,
     		@RequestParam Integer imageChannels,
     		@RequestParam String pathToModel,
+    		@RequestParam Integer tipoAlmacenamiento,
+    		@RequestParam Integer tipoFichero,
     		HttpServletRequest request) {
         
         ModeloRedConvolucional modelo = new ModeloRedConvolucional();
@@ -203,6 +210,8 @@ public class EcosystemIAController {
         modelo.setModelImageWidth(modelImageWidth);
         modelo.setImageChannels(imageChannels);
         modelo.setPathToModel(pathToModel);
+        modelo.setTipoAlmacenamiento(tipoAlmacenamiento);
+        modelo.setTipoFichero(tipoFichero);
         logger.info("Grabar nuevo modelo "+ modelo.getNombreModelo());
         // alta
         this.modelManager.nuevoModelo(modelo);
@@ -213,6 +222,7 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
 	
+	// FORMULARIO CREACION DE NUEVO MODELO CANCELAR
 	@RequestMapping(value = "/nuevoModelo.do", method = RequestMethod.POST, params = "cancelar")
     public ModelAndView cancelNuevo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
         model.addAttribute("message", "Nuevo modelo Cancelada");

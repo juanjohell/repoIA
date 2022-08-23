@@ -56,7 +56,11 @@ public class ModeloRedConvolucional implements Serializable{
 	private Integer tipoAlmacenamiento;
 	
 	@Column(name="TIPO_SALIDA")
-	private String tipoSalida;
+	private Integer tipoSalida;
+	
+	@Column(name="TIPO_PREDICCION")
+	private Integer tipoPrediccion;
+	
 	
 	public Integer getIdModelo() {
 		return idModelo;
@@ -123,12 +127,20 @@ public class ModeloRedConvolucional implements Serializable{
 		this.tipoFichero = tipoFichero;
 	}
 
-	public String getTipoSalida() {
+	public Integer getTipoSalida() {
 		return tipoSalida;
 	}
 
-	public void setTipoSalida(String tipoSalida) {
+	public void setTipoSalida(Integer tipoSalida) {
 		this.tipoSalida = tipoSalida;
+	}
+
+	public Integer getTipoPrediccion() {
+		return tipoPrediccion;
+	}
+
+	public void setTipoPrediccion(Integer tipoPrediccion) {
+		this.tipoPrediccion = tipoPrediccion;
 	}
 
 	public String toString() {

@@ -38,12 +38,42 @@
 			      					<s:input path="modelo.modelImageWidth" class="form-control" placeholder="Alto de imagen" name="modelImageWidth" id="modelImageWidth"/>
 			    				</div>
 			    				<div class="form-group col-md-1">
-			    					<label for="modelo.imageChannels">Canales de imagen</label>
+			    					<label for="modelo.imageChannels">Canales.</label>
 			      					<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels"/>
 			    				</div>
-			    				<div class="form-group col-md-7">
-			    					<label for="modelo.imageChannels">Ruta al recurso del fichero h5. (Keras model)</label>
+			    				<div class="form-group col-md-3">
+    								<div class="input-group mb-3">
+										  <div class="input-group-prepend">
+										    <label class="input-group-text" for="tipoAlmacenamiento">Origen del fichero:</label>
+										  </div>
+										  <select class="custom-select" id="tipoAlmacenamiento" name="tipoAlmacenamiento">
+										    	<c:forEach var="ta" items="${tiposAlm}" varStatus="loop">
+										    		<option value=${ta.idTipoAlmacenamiento}>${ta.idTipoAlmacenamiento} - ${ta.nombre}
+										    		</option>
+										    	</c:forEach>
+										  </select>
+									</div>
+    							</div>
+    							<div class="form-group col-md-4">
+    								<div class="input-group mb-4">
+										  <div class="input-group-prepend">
+										    <label class="input-group-text" for="tipofichero">Tipo de fichero:</label>
+										  </div>
+										  <select class="custom-select" id="tipoFichero" name="tipoFichero">
+										    	<c:forEach var="tf" items="${tiposFic}" varStatus="loop">
+										    		<option value=${tf.idTipoFichero}>${tf.idTipoFichero} - ${tf.nombreCorto}
+										    		</option>
+										    	</c:forEach>
+										  </select>
+									</div>
+    							</div>
+			  				</div>
+			  				<div class="form-group">
+			  					<div class="form-group col-md-7">
+			    					<label for="modelo.imageChannels">Ruta al recurso del fichero. (Keras model, Tensor...)</label>
 			      					<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel"/>
+			    				</div>
+			    				<div class="form-group col-md-5">
 			    				</div>
 			  				</div>
 			  			</div>
