@@ -38,5 +38,6 @@ def predict():
 	plt.axis('off')
 	plt.title('Predicted label: {}'.format(labels[result[0]]))
 	plt.show()
+
  
 predict()

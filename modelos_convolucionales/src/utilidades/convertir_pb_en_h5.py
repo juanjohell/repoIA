@@ -9,15 +9,17 @@ Created on Tue Aug 16 12:09:04 2022
 #A FORMATO H5 DE KERAS
 import os
 import tensorflow as tf
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, save_model
 from tensorflow.keras.preprocessing import image
 
 
-pb_model_dir = "..\\..\\modelos_compilados\\formatos_pb\\yolov5_keras"
-h5_model_pesos = "..\\..\\modelos_compilados\\formato_h5\\yolov5_residuos_keras_weights.h5"
-h5_model = "..\\..\\modelos_compilados\\formato_h5\\yolov5_residuos_keras.h5"
+pb_model_dir = "..\\..\\modelos_entrenados\\yolov5_keras"
+h5_model_pesos = "..\\..\\modelos_entrenados\\yolov5_residuos_keras_pesos.h5"
+h5_model = "..\\..\\modelos_entrenados\\yolov5_residuos_keras.h5"
+json_file = "..\\..\\modelos_entrenados\\modelo.json"
 # Loading the Tensorflow Saved Model (PB)
 model = tf.keras.models.load_model(pb_model_dir)
+#save_model(model,h5_model,save_format='h5')
 print(model.summary())
 print(model.input)
 print(model.outputs)
@@ -29,7 +31,7 @@ model.compile()
 print(model.summary())
 # Saving the Model in H5 Format
 model.save_weights(h5_model_pesos)
-tf.keras.models.save_json('..\\..\\modelos_compilados\\modelo.json')
+
 model.save(h5_model)
 #tf.keras.models.save_model(model, h5_model)
 

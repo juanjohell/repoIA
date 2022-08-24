@@ -4,8 +4,6 @@ Created on Fri Jun 10 13:13:49 2022
 
 @author: juanjo
 """
-
-
 import cv2
 import xml.etree.ElementTree as ET
 import math
