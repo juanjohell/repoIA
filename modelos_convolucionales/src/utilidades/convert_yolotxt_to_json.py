@@ -72,4 +72,4 @@ display(dataset_val.visualize.ShowBoundingBoxes(100))
 display(dataset_val.visualize.ShowBoundingBoxes(30))
 
 #EXPORTAR a JSON
-dataset_val.export.ExportToCoco(cat_id_index=1)
+#dataset_val.export.ExportToCoco(cat_id_index=1)
