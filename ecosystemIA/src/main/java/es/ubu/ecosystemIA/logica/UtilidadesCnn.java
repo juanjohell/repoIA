@@ -318,8 +318,7 @@ public class UtilidadesCnn {
 	            	//rectángilo relleno:
 	            	//graph.fill(new Rectangle(xmin, ymin, width, height));
 	            	//bordes del rectángulo:
-	            	graph.setStroke(new BasicStroke(4));
-	            	graph.drawRect(xmin, model.getModelImageHeight()-ymax, width, height);
+	            	graph.setStroke(new BasicStroke(2));
 	            	graph.drawRect(ymin, xmin, width, height);
 	            	
 	            	graph.dispose();

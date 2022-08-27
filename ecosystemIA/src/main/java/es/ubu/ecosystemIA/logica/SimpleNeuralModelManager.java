@@ -114,7 +114,13 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 			}
 		logger.info("modelo cargado de fichero h5");
 	}
-	
+	public String devuelveArquitectura(ModeloRedConvolucional modelo) {
+		String arquitectura ="no puede representarse la arquitectura";
+		this.setComputationGraph(modelo);
+		ComputationGraph cg = this.getComputationGraph();
+		if (cg != null) arquitectura = cg.summary();
+		return arquitectura;
+	}
 	public void setSameDiff(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
 		String path = modelo.getPathToModel();

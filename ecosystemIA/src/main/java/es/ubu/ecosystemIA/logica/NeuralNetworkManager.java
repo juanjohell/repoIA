@@ -29,4 +29,5 @@ public interface NeuralNetworkManager extends Serializable{
 	public void setModeloCargado(ModeloRedConvolucional modelo);
 	public Imagen getImagenCargada();
 	public void setImagenCargada(Imagen imagenCargada);
+	public String devuelveArquitectura(ModeloRedConvolucional modelo);
 } 	
