@@ -11,7 +11,7 @@ import funciones_utilidades as utils
 import os
 import matplotlib.pyplot as plt
 import cv2
-import imutils
+#import imutils
 
 imagen_prueba = "8_Playground_000280_116_2"
 extension = "jpg"
@@ -40,20 +40,8 @@ for i, box in (enumerate(boxes)):
              
 
 #mostrar coordenadas sin girar (menos ajustadas)
-<<<<<<< Upstream, based on branch 'master' of https://github.com/juanjohell/repoIA.git
-'''
-for i, box in (enumerate(boxes)):
-    print(box)
-    nbox = utils.return_coordinates_of_angled_rec(box[0],box[1], box[2], box[3], box[4])
-    print(nbox)
-    (startX, startY,endX, endY) = utils.return_two_point_coordinates(nbox[0],nbox[1],nbox[2], nbox[3])
-    print((startX, startY), (endX, endY))
-    #color RGB y grosor de la caja como parámetros finales 
-    cv2.rectangle(img, (startX, startY), (endX, endY),
-    		(255, 255, 0), 3)
-'''
-=======
 
+'''
 for i, box in (enumerate(boxes)):
     print(box)
     nbox = utils.return_coordinates_of_angled_rec(box[0],box[1], box[2], box[3], box[4])
@@ -63,6 +51,6 @@ for i, box in (enumerate(boxes)):
     #color RGB y grosor de la caja como parámetros finales 
     cv2.rectangle(img, (startX, startY), (endX, endY),
     		(255, 255, 0), 3)
->>>>>>> 28c4567 fuentes python-keras (sobre TensorFlow) para la generacion del modelo rcnn-vgg16
+'''
 plt.figure()
 plt.imshow(img)  
