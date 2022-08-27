@@ -12,6 +12,9 @@ from yolov5m import Yolov5m
 from yolov5s import Yolov5s
 from layers import nms, YoloHead
 
+from tensorflow import keras
+from tensorflow.keras import layers
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
@@ -24,7 +27,7 @@ class Yolo:
                  image_shape=[640, 640, 3],
                  is_training=True,
                  batch_size=5,
-                 net_type='5l',
+                 net_type='5s',
                  strides=[8, 16, 32],
                  anchors_per_location=3,
                  yolo_max_boxes=100,
@@ -41,7 +44,6 @@ class Yolo:
         self.yolo_iou_threshold = yolo_iou_threshold
         self.yolo_conf_threshold = yolo_conf_threshold
         self.model_path = model_path
-
         self.num_class = num_class
         self.anchors = anchors
         self.anchor_masks = anchor_masks
@@ -182,7 +184,7 @@ class Yolo:
         # model = tf.keras.models.Model(inputs=inputs, outputs=yolo_body_outputs)
         model = tf.keras.models.Model(inputs=inputs, outputs=outputs)
         return model
-
+    
     def predict(self, images, image_need_resize=True, resize_to_origin=True):
         """预测
            预测模式下实例化类: is_training=False, weights_path=, batch_size跟随输入建议1, image_shape跟随训练模式,不做调整

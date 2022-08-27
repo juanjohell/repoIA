@@ -15,15 +15,12 @@ from loss import ComputeLoss
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 def main():
-    # model_path = "h5模型路径, 默认在 ./logs/yolov5-tf-300.h5"
-    model_path = "./logs/yolov5s-best.h5"
-    # image_path = "提供你要测试的图片路径"
-    image_path = "./data/tmp/Cats_Test49.jpg"
-    # image_path = "./data/coco_2017_val_images/289343.jpg"
-    # image_path = "./data/cat_dog_face_data/JPEGImages/Cats_Test849.jpg"
-    # image_path = "./data/cat_dog_face_data/JPEGImages/Cats_Test214.jpg"
+   
+    model_path = "./logs/yolov5s-last.h5"
+   
+    image_path = "./data/tmp/1_Sand_000004_69_1.jpg"
+   
     image = cv2.imread(image_path)
-    # 可以选择 ['5l', '5s', '5m', '5x'], 跟随训练
     yolov5_type = "5s"
     image_shape = (320, 320, 3)
     # num_class = 91
@@ -60,7 +57,7 @@ def main():
     #            'dining table', 'none', 'none', 'toilet', 'none', 'tv', 'laptop', 'mouse', 'remote', 'keyboard',
     #            'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'none', 'book', 'clock',
     #            'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush']
-    classes = ['cat', 'dog']
+    classes = ['none', 'botella']
 
     yolo = Yolo(
         model_path=model_path,
@@ -72,9 +69,14 @@ def main():
         anchor_masks=anchor_masks,
         net_type=yolov5_type
     )
-    yolo.yolov5.summary(line_length=100)
-
-    # 预测结果: [nms_nums, (x1, y1, x2, y2, conf, cls)]
+    modelo = yolo.build_graph()
+    modelo.summary()
+    modelo.save(
+        filepath="./logs/yolov5s-residuos-modelo.h5",
+        overwrite=True,
+        include_optimizer=True
+        )
+    
     predicts = yolo.predict(image)
     print(predicts)
     if predicts.shape[0]:
@@ -87,8 +89,8 @@ def main():
                 pred_image = draw_bounding_box(pred_image, class_name, box_obj_cls[4], int(xmin), int(ymin),
                                                int(xmax), int(ymax))
         cv2.imwrite("./data/tmp/predicts.jpg", pred_image)
-        # cv2.imshow("prediction", pred_image)
-        # cv2.waitKey(0)
+        cv2.imshow("prediction", pred_image)
+        #cv2.waitKey(0)
 
 if __name__ == "__main__":
     main()

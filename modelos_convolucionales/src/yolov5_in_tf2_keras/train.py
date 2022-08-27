@@ -35,7 +35,7 @@ def main():
     yolov5_type = "5l"
     image_shape = (320, 320, 3)
     # num_class = 91
-    num_class = 1
+    num_class = 2
     batch_size = 20
     # -1 : todos los datos forman parte del entrenamiento
     train_img_nums = -1
@@ -55,7 +55,7 @@ def main():
     #            'dining table', 'none', 'none', 'toilet', 'none', 'tv', 'laptop', 'mouse', 'remote', 'keyboard',
     #            'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'none', 'book', 'clock',
     #            'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush']
-    classes = ['botella']
+    classes = ['none','botella']
 
     # 这里anchor归一化到[0,1]区间
     anchors = np.array([[10, 13], [16, 30], [33, 23],
