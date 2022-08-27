@@ -47,6 +47,7 @@
 				    				</div>
 				  				</div>
 				  			</div>
+				  			<a href="<c:url value='verEstructura.do?idModelo=${modelo.idModelo}' />" class="ver" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Ver">remove_red_eye</i></a>
 							<button value="cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>
 						</form>
 					</div>
