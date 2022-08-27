@@ -161,6 +161,41 @@ public class EcosystemIAController {
 		return model;
 	}
 	
+	// FORMULARIO CREACION DE NUEVO MODELO CANCELAR
+		@RequestMapping(value = "/verModelo.do", method = RequestMethod.POST, params = "cancelar")
+	    public ModelAndView cancelVerModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+	        model.addAttribute("message", "Nuevo modelo Cancelada");
+	     // se regresa al listado de modelos
+	        Map<String, Object> myModel = new HashMap<>();
+	        myModel.put("listadoModelos", this.modelManager.getModelos());
+			//pasamos el parámetro now a la pagina jsp
+			return new ModelAndView("modelos", "modeloMVC", myModel);
+	    }
+	
+	// MOSTRAR ARQUITECTURA
+	@GetMapping(value="verEstructura.do")
+	public ModelAndView verArquitectura(@RequestParam String idModelo) {
+		logger.info("Consultando arquitectura del modelo id "+idModelo);
+		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+		String arquitectura = this.modelManager.devuelveArquitectura(redconv);
+		ModelAndView model = new ModelAndView("verEstructura");
+		model.addObject("modelo",redconv);
+		model.addObject("estructura", arquitectura);
+		logger.info("arquitectura de : "+redconv.getNombreModelo());
+		return model;
+	}
+	
+	// MOSTRAR ARQUITECTURA CANCELAR
+			@RequestMapping(value = "/verEstructura.do", method = RequestMethod.POST, params = "cancelar")
+		    public ModelAndView cancelVerArquitectura(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+		        model.addAttribute("message", "ver estructura Cancelada");
+		     // se regresa al listado de modelos
+		        Map<String, Object> myModel = new HashMap<>();
+		        myModel.put("listadoModelos", this.modelManager.getModelos());
+				//pasamos el parámetro now a la pagina jsp
+				return new ModelAndView("modelos", "modeloMVC", myModel);
+		    }
+	
 	@GetMapping(value="eliminarModelo.do")
 	public ModelAndView eliminarModelo(@RequestParam String idModelo) {
 		logger.info("Consultando datos del modelo id "+idModelo);
