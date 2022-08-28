@@ -275,7 +275,7 @@ public class UtilidadesCnn {
     // modelOutput : coordenadas obtenidas del modelo
     // ruta_escritura : RUTA + NOMBRE COMPLETO DEL FICHERO EN EL QUE SE VA A ESCRIBIR LA IMAGEN
     // ruta_lectura : RUTA + NOMBRE COMPLETO DE LA IMAGEN ORIGINAL
-    public boolean anotacionSimpleImagen(ModeloRedConvolucional model, INDArray[] modelOutput, String ruta_lectura, String ruta_escritura) {
+    public boolean anotacionSimpleImagen(ModeloRedConvolucional model, INDArray[] modelOutput, String ruta_lectura, String ruta_escritura, Integer rangoGrosor, String color) {
 	    		// Se marca el objeto detectado con un rectángulo y una etiqueta
     			// Se calcula la posición del rectángulo respecto al tamaño de la imagen
     		boolean resultado = true;
@@ -314,12 +314,12 @@ public class UtilidadesCnn {
 	    		
 	    			//TODO: parametrizar color y ancho del borde para el usuario
 	    			Graphics2D graph = img.createGraphics();
-	            	graph.setColor(Color.ORANGE);
+	            	graph.setColor(devuelveColor(color));
 	            	//rectángilo relleno:
 	            	//graph.fill(new Rectangle(xmin, ymin, width, height));
 	            	//bordes del rectángulo:
-	            	graph.setStroke(new BasicStroke(2));
-	            	graph.drawRect(ymin, xmin, width, height);
+	            	graph.setStroke(new BasicStroke((float) rangoGrosor));
+	            	graph.drawRect(xmin, ymin, width, height);
 	            	
 	            	graph.dispose();
             	}
@@ -338,7 +338,7 @@ public class UtilidadesCnn {
     // texto:  texto a escribir en la imagen
     // ruta_escritura : RUTA + NOMBRE COMPLETO DEL FICHERO EN EL QUE SE VA A ESCRIBIR LA IMAGEN
     // ruta_lectura : RUTA + NOMBRE COMPLETO DE LA IMAGEN ORIGINAL
-    public boolean rotulaImagen(String texto, String ruta_lectura, String ruta_escritura) {
+    public boolean rotulaImagen(String texto, String ruta_lectura, String ruta_escritura, String color) {
 	    	// Se marca el objeto detectado con un rectángulo y una etiqueta
     		// Se calcula la posición del rectángulo respecto al tamaño de la imagen
     		boolean resultado = true;
@@ -355,7 +355,7 @@ public class UtilidadesCnn {
             	Font font = new Font("Arial", Font.BOLD, 18);
 	    		//TODO: parametrizar color y ancho del borde para el usuario
 	    		Graphics2D graph = img.createGraphics();
-	            graph.setColor(Color.ORANGE);
+	            graph.setColor(devuelveColor(color));
 	            graph.setFont(font);
 	            graph.drawString(texto, 20, 20);
 	            graph.dispose();
@@ -393,6 +393,16 @@ public class UtilidadesCnn {
          return result;
      }
     
+ 	public Color devuelveColor(String color){
+ 		Color c = Color.ORANGE;
+ 		if (color.equals("amarillo")) c = Color.yellow;
+ 		if (color.equals("blanco")) c = Color.white;
+ 		if (color.equals("negro")) c = Color.black;
+ 		if (color.equals("rojo")) c = Color.red;
+ 		if (color.equals("verde")) c = Color.green;
+ 		if (color.equals("azul")) c = Color.blue;
+ 		return c;
+ 	}
     // CONVERSIONES ENTRE IMAGENES EN BYTES Y EN FORMA
     // MATRICIAL
    /* public byte[] Mat2Bytes(Mat mat){

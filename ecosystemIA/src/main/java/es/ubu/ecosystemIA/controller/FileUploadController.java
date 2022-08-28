@@ -121,17 +121,13 @@ public class FileUploadController extends FileBaseController{
         File dir = new File(rootPath + File.separator + "img");
         if (!dir.exists()) {
             dir.mkdirs();
-        }
-         
+        } 
         serverfile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
         latestUploadPhoto = file.getOriginalFilename();
-        
-         
         //write uploaded image to disk
         try {
             try (InputStream is = file.getInputStream(); BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverfile))) {
-            	Imagen imagenCargada = new Imagen(rootPath, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels());
-                
+            	Imagen imagenCargada = new Imagen(rootPath, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight(), this.modelManager.getModeloCargado().getImageChannels()); 
                 imagenCargada.setNombre(latestUploadPhoto);
                 this.modelManager.setImagenCargada(imagenCargada);
             	int i;
@@ -149,6 +145,8 @@ public class FileUploadController extends FileBaseController{
         model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
     //send photo name to jsp
         model.addAttribute(PARAM_LATESTPHOTO, latestUploadPhoto);
+        model.addAttribute("modelo.nombreModelo", this.modelManager.getModeloCargado().getNombreModelo());
+        model.addAttribute("modelo.descripcion", this.modelManager.getModeloCargado().getDescripcion());
         return "usarModelo";
     }  
     
@@ -156,7 +154,9 @@ public class FileUploadController extends FileBaseController{
     @RequestMapping(value = "testCnnModel.do", method = RequestMethod.POST)
     public String testCnnModel(ModelMap model,
             HttpServletRequest request, 
-            @RequestParam String imagen){
+            @RequestParam String imagen,
+            @RequestParam Integer rangoGrosor,
+            @RequestParam String color){
         
       // cargamos utilidades
     	utilsCnn = new UtilidadesCnn();
@@ -223,12 +223,15 @@ public class FileUploadController extends FileBaseController{
         	// SI ES MULTIDIMENSIONAL (USAR COMPUTATIONGRAPH)
         	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_MULTIDIMENSIONAL) {
         		output = this.modelManager.getComputationGraph().outputSingle(input);
-        		logger.info("output "+output.toString());
+        		
+        		//TODO:
         		resultado = utilsCnn.devuelve_categorias_imagenet(output);
+        		resultado = resultado.split(":")[1];
+        		logger.info("resultado "+resultado.toString());
         	}
         	//ANOTAMOS CATEGORIA EN LA IMAGEN
 			logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
-			if (utilsCnn.rotulaImagen(resultado, rutaImagenOriginal, rutaImagenFinal))
+			if (utilsCnn.rotulaImagen(resultado, rutaImagenOriginal, rutaImagenFinal, color))
 				latestUploadPhoto = nombre_imagen_anotada;
         }
         
@@ -245,19 +248,22 @@ public class FileUploadController extends FileBaseController{
         	else
         		multi_output = this.modelManager.getComputationGraph().output(input);
 			logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
-			if (utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), multi_output, rutaImagenOriginal, rutaImagenFinal))
+			if (utilsCnn.anotacionSimpleImagen(this.modelManager.getModeloCargado(), multi_output, rutaImagenOriginal, rutaImagenFinal, rangoGrosor, color))
 			latestUploadPhoto = nombre_imagen_anotada;
 			logger.info("obteniendo imagen cargada en formato matricial ");
         }			
         	if(output != null)
         		resultado = output.toString();
         	if(multi_output != null)
-        		resultado = multi_output.toString();
+        		resultado = multi_output[0].toString();
         
        //url a la imagen 
         model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
         //imagen
         model.addAttribute(PARAM_LATESTPHOTO, latestUploadPhoto);
+        //nombre modelo
+        model.addAttribute("modelo.nombreModelo", this.modelManager.getModeloCargado().getNombreModelo());
+        model.addAttribute("modelo.descripcion", this.modelManager.getModeloCargado().getDescripcion());
         //MOSTRAMOS RESULTADO EN EL JSP
         model.addAttribute(PARAM_RESULTADO, resultado);
         return "usarModelo";

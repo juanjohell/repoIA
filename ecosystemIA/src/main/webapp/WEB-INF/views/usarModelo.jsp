@@ -34,7 +34,7 @@
   											<label for="formFile" class="form-label">Seleccione imagen a probar.</label>
   											<input class="form-control" type="file" id="formFile" method="POST" accept=".jpg" name="file">
 										</div>
-                                    </div>  
+                            		</div>
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary">Subir imagen</button>
                                         <button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver a modelos</button>
@@ -58,6 +58,17 @@
                         	<div class="row">
                             	<div class="col-md-12">  
                                     	<div class="form-group">
+                                    			<label for="rangoGrosor" class="form-label">Grosor de anotaciones.</label>
+												<input type="range" class="form-range" min="1" max="5" id="rangoGrosor" name="rangoGrosor">
+												 <select class="form-select" aria-label="Color de anotacion" id="color" name="color">
+  													<option selected value="naranja">naranja</option>
+  													<option value="amarillo">amarillo</option>
+  													<option value="blanco">blanco</option>
+  													<option value="negro">negro</option>
+  													<option value="rojo">rojo</option>
+  													<option value="azul">azul</option>
+  													<option value="verde">verde</option>
+												</select>
                                         	<button type="submit" class="btn btn-primary" onclick="mostrar('progress');">Predecir imagen</button>
                                     	</div>
                                  </div>
