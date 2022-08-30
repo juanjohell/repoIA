@@ -13,8 +13,13 @@ Created on Fri Jul  8 13:14:11 2022
 """
 #ENTRENAR UN MODELO
 
+#CÓDIGO ADAPTADO DE:
 #https://pyimagesearch.com/2020/10/05/object-detection-bounding-box-regression-with-keras-tensorflow-and-deep-learning/
-# import the necessary packages
+
+##################################################
+#  CONFIGURAR EN Config/config.py                #
+##################################################
+
 import config
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.layers import Flatten
@@ -31,40 +36,42 @@ import cv2
 import os
 
 # load the contents of the CSV annotations file
-print("[INFO] loading dataset...")
-rows = open(config.ANNOTS_PATH).read().strip().split("\n")
+print("[INFO] cargando dataset de entrenamiento...")
+
+#leemos lineas, cada linea corresponde a una imagen
+rows = open(config.ANNOTS_PATH_TRAIN).read().strip().split("\n")
 # initialize the list of data (images), our target output predictions
 # (bounding box coordinates), along with the filenames of the
 # individual images
 data = []
 targets = []
 filenames = []
+row = []
 
-# loop over the rows
+# iteramos por las filas
 for row in rows:
     # break the row into the filename and bounding box coordinates
-    row = row.split(",")
-    (filename, startX, startY, endX, endY) = row
-    # derive the path to the input image, load the image (in OpenCV
-    # format), and grab its dimensions
+    row = row.split(" ")
+    filename = row[0]
     imagePath = os.path.sep.join([config.IMAGES_PATH, filename])
     image = cv2.imread(imagePath)
     (h, w) = image.shape[:2]
-    # scale the bounding box coordinates relative to the spatial
-    # dimensions of the input image
-    startX = float(startX) / w
-    startY = float(startY) / h
-    endX = float(endX) / w
-    endY = float(endY) / h
-    
-	# load the image and preprocess it
+    # load the image and preprocess it
     image = load_img(imagePath, target_size=(224, 224))
     image = img_to_array(image)
-    
+    for x in range(len(row)):
+        if x > 0:
+            (startX, startY, endX, endY) = row[x]
+            # normalizamos las coordenadas con respecto al ancho
+            # y alto de la imagen
+            startX = float(startX) / w
+            startY = float(startY) / h
+            endX = float(endX) / w
+            endY = float(endY) / h
+            targets.append((startX, startY, endX, endY))
+            filenames.append(filename)
     # update our list of data, targets, and filenames
     data.append(image)
-    targets.append((startX, startY, endX, endY))
-    filenames.append(filename)
     
 # convert the data and targets to NumPy arrays, scaling the input
 # pixel intensities from the range [0, 255] to [0, 1]
@@ -75,6 +82,9 @@ targets = np.array(targets, dtype="float32")
 split = train_test_split(data, targets, filenames, test_size=0.10,
 random_state=42)
 # unpack the data split
+
+# SI SE EJECUTA ASI SE GENERA UN SUBCONJUNTO
+# PARA TEST
 (trainImages, testImages) = split[:2]
 (trainTargets, testTargets) = split[2:4]
 (trainFilenames, testFilenames) = split[4:]
