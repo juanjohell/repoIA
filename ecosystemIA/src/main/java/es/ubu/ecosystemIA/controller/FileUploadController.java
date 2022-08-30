@@ -80,18 +80,7 @@ public class FileUploadController extends FileBaseController{
 		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
 		logger.info("Cargando modelo "+redconv.getNombreModelo());
 		this.modelManager.setModeloCargado(redconv);
-		// MODELOS CON SALIDA UNIDIMENSIONAL SE DEBEN CARGAR CON
-		// MULTILAYERNETWORK
-		if (redconv.getTipoSalida() == SALIDA_UNIDIMENSIONAL)
-			this.modelManager.setMultilayerNetwork(redconv);
-		// MODELOS CON SALIDA MULTIDIMENSIONAL SE DEBEN CARGAR CON
-		// MULTILAYERNETWORK COMPUTATIONGRAPH
-		if (redconv.getTipoSalida() == SALIDA_MULTIDIMENSIONAL)
-			//TIPOS DE FICHERO TF
-			if (redconv.getTipoFichero().intValue() == (int) 2)
-				this.modelManager.setSameDiff(redconv);
-			else
-				this.modelManager.setComputationGraph(redconv);
+		this.modelManager.setModeloDl4j(redconv);
 		Map<String,Object> myModel = new HashMap<>();
 		myModel.put("nombreModelo", redconv.getNombreModelo());
 		myModel.put("descripcion", redconv.getDescripcion());
@@ -216,6 +205,7 @@ public class FileUploadController extends FileBaseController{
         	logger.info("CLASIFICACION DE IMAGENES");
         	// SI LA SALIDA ES UNIDIMENSIONAL (USAR MULTILAYERNETWORK)
         	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_UNIDIMENSIONAL) {
+        		logger.info("SALIDA_UNIDIMENSIONAL");
         		output = this.modelManager.getMultilayerNetwork().output(input);
         		logger.info("output "+output.toString());
         		resultado = utilsCnn.devuelve_categoria(output, categorias);
@@ -223,7 +213,7 @@ public class FileUploadController extends FileBaseController{
         	// SI ES MULTIDIMENSIONAL (USAR COMPUTATIONGRAPH)
         	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_MULTIDIMENSIONAL) {
         		output = this.modelManager.getComputationGraph().outputSingle(input);
-        		
+        		logger.info("SALIDA_MULTIDIMENSIONAL");
         		//TODO:
         		resultado = utilsCnn.devuelve_categorias_imagenet(output);
         		resultado = resultado.split(":")[1];
@@ -237,6 +227,7 @@ public class FileUploadController extends FileBaseController{
         
         //TIPO_PREDICCION 2 ES DETECCION DE OBJETOS (BOUNDING BOXES)
         if (this.modelManager.getModeloCargado().getTipoPrediccion().intValue() == DETECCION) {
+        	logger.info("DETECCION");
         	//TODO:  tipo de fichero 2 es TF
         	if (this.modelManager.getModeloCargado().getTipoFichero().intValue() == (int) 2)
         	{

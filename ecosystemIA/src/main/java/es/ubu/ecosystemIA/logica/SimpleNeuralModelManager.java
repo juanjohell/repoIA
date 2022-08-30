@@ -29,11 +29,22 @@ import es.ubu.ecosystemIA.db.ModeloRnDao;
 @Component
 @Transactional
 public class SimpleNeuralModelManager implements NeuralNetworkManager{
+	
+	public static final Integer SALIDA_UNIDIMENSIONAL = (int) 1; 
+	public static final Integer SALIDA_MULTIDIMENSIONAL = (int) 2;
+	public static final Integer CLASIFICACION = (int) 1; 
+	public static final Integer DETECCION = (int) 2;
+	public static final Integer FICHERO_PB = (int) 2;
+	public static final Integer FICHERO_H5 = (int) 1;
+	public static final Integer FICHERO_ON = (int) 3;
+	
 	protected final Log logger = LogFactory.getLog(getClass());
 	private static final long serialVersionUID = -5392895280098494635L;
 	private ModeloRedConvolucional modeloCargado;
 	@Autowired
 	private ModeloRnDao modeloDao;
+	@Autowired
+	private TipoAlmacenamientoManager managerAlmacenamiento;
 	// para almacenar modelos secuenciales H5:
 	private MultiLayerNetwork multilayerNetwork;
 	private UtilidadesCnn utilsCnn;
@@ -89,31 +100,33 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	public MultiLayerNetwork getMultilayerNetwork() {
 		return this.multilayerNetwork;
 	}
+	
+	public void setModeloDl4j(ModeloRedConvolucional modelo) {
+		if (modelo.getTipoFichero() == FICHERO_H5)
+			if (modelo.getTipoSalida() == SALIDA_UNIDIMENSIONAL)
+				this.setMultilayerNetwork(modelo);
+			if (modelo.getTipoSalida() == SALIDA_MULTIDIMENSIONAL)
+				this.setComputationGraph(modelo);
+		if (modelo.getTipoFichero() == FICHERO_PB)
+				this.setSameDiff(modelo);
+	}
 	public void setMultilayerNetwork(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
-		this.multilayerNetwork = utilsCnn.cargaModeloH5(utilsCnn.devuelve_path_real(modelo.getPathToModel()));
-		logger.info("modelo cargado de fichero h5");
+		this.multilayerNetwork = utilsCnn.cargaModeloH5(modelo);
+		logger.info("modelo cargado de fichero h5 MultiLayer");
 	}
 	public ComputationGraph getComputationGraph() {
 		return this.computationGraph;
 	}
+	
 	public void setComputationGraph(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
-		String path = modelo.getPathToModel();
-		Integer tipoAlmacenamiento = modelo.getTipoAlmacenamiento();
 		// ruta a sistema de ficheros local
-		if(tipoAlmacenamiento.intValue() == (int) 2)
-			this.computationGraph = utilsCnn.cargaModeloRCNNH5(utilsCnn.devuelve_path_real(path));
-		// TODO ruta a recurso en la nube
-		if(tipoAlmacenamiento.intValue() == (int) 3)
-			try {
-				this.computationGraph = utilsCnn.cargaModeloRCNNH5_Drive(path);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		logger.info("modelo cargado de fichero h5");
+		this.computationGraph = utilsCnn.cargaModeloRCNNH5(modelo);
+		logger.info("modelo cargado de fichero h5 ComputationGraph");
 	}
+	
+	
 	public String devuelveArquitectura(ModeloRedConvolucional modelo) {
 		String arquitectura ="no puede representarse la arquitectura";
 		this.setComputationGraph(modelo);
@@ -121,21 +134,12 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		if (cg != null) arquitectura = cg.summary();
 		return arquitectura;
 	}
+	
 	public void setSameDiff(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
 		String path = modelo.getPathToModel();
 		Integer tipoAlmacenamiento = modelo.getTipoAlmacenamiento();
-		// ruta a sistema de ficheros local
-		if(tipoAlmacenamiento.intValue() == (int) 2)
-			this.sameDiff = utilsCnn.cargaModeloRCNNPB(utilsCnn.devuelve_path_real(path));
-		// TODO ruta a recurso en la nube
-		if(tipoAlmacenamiento.intValue() == (int) 3)
-			try {
-				this.computationGraph = utilsCnn.cargaModeloRCNNH5_Drive(path);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		this.sameDiff = utilsCnn.cargaModeloRCNNPB(modelo);
 		logger.info("modelo cargado de fichero h5");
 	}
 	

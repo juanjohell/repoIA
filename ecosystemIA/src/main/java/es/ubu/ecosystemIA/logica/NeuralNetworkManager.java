@@ -30,4 +30,7 @@ public interface NeuralNetworkManager extends Serializable{
 	public Imagen getImagenCargada();
 	public void setImagenCargada(Imagen imagenCargada);
 	public String devuelveArquitectura(ModeloRedConvolucional modelo);
+	// DECIDE EN QUE FORMATO LO GUARDA EN FUNCION DEL TIPO FICHERO 
+	public void setModeloDl4j(ModeloRedConvolucional modelo);
+	
 } 	

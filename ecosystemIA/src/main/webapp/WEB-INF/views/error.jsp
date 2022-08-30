@@ -15,7 +15,7 @@
 <body>
 <div class="alert alert-danger" role="alert">
   Oops! Se ha producido un error. <br>
-  <%=msg_error_ficheros%>
+  <h3>${msg_error}</h3>
 </div>
 <form method="POST" action="home.do">
 	  <div class="form-row align-items-center">

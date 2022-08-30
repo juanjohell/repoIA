@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.ubu.ecosystemIA.db.JPAModeloRnDao;
@@ -38,12 +39,15 @@ import es.ubu.ecosystemIA.logica.NeuralNetworkManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
 import es.ubu.ecosystemIA.logica.TipoAlmacenamientoManager;
 import es.ubu.ecosystemIA.logica.TipoFicheroManager;
+import es.ubu.ecosystemIA.logica.TipoPrediccionManager;
+import es.ubu.ecosystemIA.logica.TipoSalidaManager;
 import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 import es.ubu.ecosystemIA.modelo.Categoria;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import es.ubu.ecosystemIA.modelo.TipoAlmacenamiento;
 import es.ubu.ecosystemIA.modelo.TipoFichero;
-
+import es.ubu.ecosystemIA.modelo.TipoPrediccion;
+import es.ubu.ecosystemIA.modelo.TipoSalida;
 
 @Controller
 @Transactional
@@ -60,6 +64,10 @@ public class EcosystemIAController {
 	private TipoAlmacenamientoManager tipoAlmacenamientoManager;
 	@Autowired
 	private TipoFicheroManager tipoFicheroManager;
+	@Autowired
+	private TipoPrediccionManager tipoPrediccionManager;
+	@Autowired
+	private TipoSalidaManager tipoSalidaManager;
 	@PersistenceContext
 	private EntityManager em;
 	
@@ -68,11 +76,7 @@ public class EcosystemIAController {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 		logger.info("mostrando la vista de Bienvenida");
-		//String modeloPrecargado = modelManager.getModelo().getNombreModelo();
-		String modeloPrecargado = "Cifar10";
 		Map<String, Object> myModel = new HashMap<>();
-		myModel.put("modeloPrecargado", modeloPrecargado);
-		
 		//redirigimos
 		return new ModelAndView("home","mensaje",myModel);
 	}
@@ -89,6 +93,27 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
 	}
 	
+	// EDICION DE MODELOS /////////////////////////////////////////
+	
+	// MOSTRAR DATOS DE MODELO PARA EDICION EN FORMULARIO
+		@GetMapping(value="editarModelo.do")
+		public ModelAndView editarModelo(@RequestParam String idModelo) {
+			logger.info("Consultando datos del modelo id "+idModelo);
+			ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+			List<TipoAlmacenamiento> listadoTiposAlmacenamiento = this.tipoAlmacenamientoManager.getTiposAlmacenamiento();
+			List<TipoFichero> listadoTiposFichero = this.tipoFicheroManager.getTiposFichero();
+			List<TipoPrediccion> listadoTiposPrediccion = this.tipoPrediccionManager.getTiposPrediccion();
+			List<TipoSalida> listadoTiposSalida = this.tipoSalidaManager.getTiposSalida();
+			ModelAndView model = new ModelAndView("editarModelo");
+			model.addObject("modelo",redconv);
+			model.addObject("tiposAlm",listadoTiposAlmacenamiento);
+			model.addObject("tiposFic",listadoTiposFichero);
+			model.addObject("tiposPred",listadoTiposPrediccion);
+			model.addObject("tiposSal",listadoTiposSalida);
+			logger.info("modelo neuronal: "+redconv.getNombreModelo());
+			return model;
+		}
+	
 	// GRABACION EN LA EDICION DE UN MODELO DESDE FORMULARIO
 	@Transactional
 	@RequestMapping(value = "editarModelo.do", method = RequestMethod.POST, params = "grabar")
@@ -101,6 +126,8 @@ public class EcosystemIAController {
     		@RequestParam String pathToModel,
     		@RequestParam Integer tipoAlmacenamiento,
     		@RequestParam Integer tipoFichero,
+    		@RequestParam Integer tipoPrediccion,
+    		@RequestParam Integer tipoSalida,
     		HttpServletRequest request) {
         
         ModeloRedConvolucional modelo = this.modelManager.devuelveModelo(idModelo);
@@ -111,6 +138,8 @@ public class EcosystemIAController {
         modelo.setImageChannels(imageChannels);
         modelo.setTipoAlmacenamiento(tipoAlmacenamiento);
         modelo.setTipoFichero(tipoFichero);
+        modelo.setTipoPrediccion(tipoPrediccion);
+        modelo.setTipoSalida(tipoSalida);
         modelo.setPathToModel(pathToModel);
         logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
         logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
@@ -122,11 +151,11 @@ public class EcosystemIAController {
 		//pasamos el parámetro now a la pagina jsp
 		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
+	
 	// CANCELAR EDICION DE UN MODELO
 	@RequestMapping(value = "/editarModelo.do", method = RequestMethod.POST, params = "cancelar")
     public ModelAndView cancelEditar(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
         model.addAttribute("message", "Modificaci�n Cancelada");
-  
      // se regresa al listado de modelos
         Map<String, Object> myModel = new HashMap<>();
         myModel.put("listadoModelos", this.modelManager.getModelos());
@@ -134,23 +163,92 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
     }
 	
-	// MOSTRAR DATOS DE MODELO PARA EDICION EN FORMULARIO
-	@GetMapping(value="editarModelo.do")
-	public ModelAndView editarModelo(@RequestParam String idModelo) {
-		logger.info("Consultando datos del modelo id "+idModelo);
-		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
-		List<TipoAlmacenamiento> listadoTiposAlmacenamiento = this.tipoAlmacenamientoManager.getTiposAlmacenamiento();
-		List<TipoFichero> listadoTiposFichero = this.tipoFicheroManager.getTiposFichero();
-		ModelAndView model = new ModelAndView("editarModelo");
-		model.addObject("modelo",redconv);
-		model.addObject("tiposAlm",listadoTiposAlmacenamiento);
-		model.addObject("tiposFic",listadoTiposFichero);
-		logger.info("modelo neuronal: "+redconv.getNombreModelo());
-		return model;
-	}
 	
+	// NUEVO MODELO /////////////////////////////////////////
 	
+	// MOSTRAR FORMULARIO DE NUEVO MODELO
+		@GetMapping(value="nuevoModelo.do")
+		public ModelAndView nuevoModelo() {
+			logger.info("Nuevo modelo");
+			ModelAndView model = new ModelAndView("nuevoModelo");
+			ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+			List<TipoAlmacenamiento> listadoTiposAlmacenamiento = this.tipoAlmacenamientoManager.getTiposAlmacenamiento();
+			List<TipoFichero> listadoTiposFichero = this.tipoFicheroManager.getTiposFichero();
+			List<TipoPrediccion> listadoTiposPrediccion = this.tipoPrediccionManager.getTiposPrediccion();
+			List<TipoSalida> listadoTiposSalida = this.tipoSalidaManager.getTiposSalida();
+			model.addObject("modelo",modelo);
+			model.addObject("tiposAlm",listadoTiposAlmacenamiento);
+			model.addObject("tiposFic",listadoTiposFichero);
+			model.addObject("tiposPred",listadoTiposPrediccion);
+			model.addObject("tiposSal",listadoTiposSalida);
+			return model;
+		}
+		
+		// FORMULARIO CREACION DE NUEVO MODELO GRABAR DATOS
+		@Transactional
+		@RequestMapping(value = "nuevoModelo.do", method = RequestMethod.POST, params = "grabar")
+	    public ModelAndView grabarNuevoModelo(
+	    		@RequestParam String nombreModelo,
+	    		@RequestParam String descripcion,
+	    		@RequestParam Integer modelImageHeight,
+	    		@RequestParam Integer modelImageWidth,
+	    		@RequestParam Integer imageChannels,
+	    		@RequestParam String pathToModel,
+	    		@RequestParam Integer tipoAlmacenamiento,
+	    		@RequestParam Integer tipoFichero,
+	    		@RequestParam Integer tipoPrediccion,
+	    		@RequestParam Integer tipoSalida,
+	    		@RequestParam MultipartFile ficheroModelo,
+	    		HttpServletRequest request) {
+	        
+	        ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+	        modelo.setNombreModelo(nombreModelo);
+	        modelo.setDescripcion(descripcion);
+	        modelo.setModelImageHeight(modelImageHeight);
+	        modelo.setModelImageWidth(modelImageWidth);
+	        modelo.setImageChannels(imageChannels);
+	        modelo.setPathToModel(pathToModel);
+	        modelo.setTipoAlmacenamiento(tipoAlmacenamiento);
+	        modelo.setTipoFichero(tipoFichero);
+	        modelo.setTipoPrediccion(tipoPrediccion);
+	        modelo.setTipoSalida(tipoSalida);
+	        	byte[] byteArr = null;
+	        	if (ficheroModelo!=null && !ficheroModelo.isEmpty())
+				try {
+					byteArr = ficheroModelo.getBytes();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					ModelAndView model = new ModelAndView("error");
+					String error = "No se ha podido grabar fichero en base de datos.";
+					model.addObject("msg_error",error);
+					return model;
+				}
+	        modelo.setFichero(byteArr);
+	        logger.info("Grabar nuevo modelo "+ modelo.getNombreModelo());
+	        // alta
+	        this.modelManager.nuevoModelo(modelo);
+	        // se regresa al listado de modelos
+	        Map<String, Object> myModel = new HashMap<>();
+	        myModel.put("listadoModelos", this.modelManager.getModelos());
+			//pasamos el parámetro now a la pagina jsp
+			return new ModelAndView("modelos", "modeloMVC", myModel);
+	    }
+		
+		// FORMULARIO CREACION DE NUEVO MODELO CANCELAR
+		@RequestMapping(value = "/nuevoModelo.do", method = RequestMethod.POST, params = "cancelar")
+	    public ModelAndView cancelNuevo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+	        model.addAttribute("message", "Nuevo modelo Cancelada");
+	  
+	     // se regresa al listado de modelos
+	        Map<String, Object> myModel = new HashMap<>();
+	        myModel.put("listadoModelos", this.modelManager.getModelos());
+			//pasamos el parámetro now a la pagina jsp
+			return new ModelAndView("modelos", "modeloMVC", myModel);
+	    }
+		
+	/////////////  VER DATOS DE MODELO
 	
+	// MOSTRAR FORMULARIO PARA VISUALIZAR DATOS DE MODELO:
 	@GetMapping(value="verModelo.do")
 	public ModelAndView verModelo(@RequestParam String idModelo) {
 		logger.info("Consultando datos del modelo id "+idModelo);
@@ -161,16 +259,17 @@ public class EcosystemIAController {
 		return model;
 	}
 	
-	// FORMULARIO CREACION DE NUEVO MODELO CANCELAR
-		@RequestMapping(value = "/verModelo.do", method = RequestMethod.POST, params = "cancelar")
-	    public ModelAndView cancelVerModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
-	        model.addAttribute("message", "Nuevo modelo Cancelada");
-	     // se regresa al listado de modelos
-	        Map<String, Object> myModel = new HashMap<>();
-	        myModel.put("listadoModelos", this.modelManager.getModelos());
-			//pasamos el parámetro now a la pagina jsp
-			return new ModelAndView("modelos", "modeloMVC", myModel);
-	    }
+	// FORMULARIO VER DATOS DE MODELO DE NUEVO MODELO CANCELAR
+	@RequestMapping(value = "/verModelo.do", method = RequestMethod.POST, params = "cancelar")
+	public ModelAndView cancelVerModelo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
+		model.addAttribute("message", "Nuevo modelo Cancelada");
+		// se regresa al listado de modelos
+		Map<String, Object> myModel = new HashMap<>();
+		myModel.put("listadoModelos", this.modelManager.getModelos());
+		//pasamos el parámetro now a la pagina jsp
+		return new ModelAndView("modelos", "modeloMVC", myModel);
+	}
+			
 	
 	// MOSTRAR ARQUITECTURA
 	@GetMapping(value="verEstructura.do")
@@ -195,7 +294,11 @@ public class EcosystemIAController {
 				//pasamos el parámetro now a la pagina jsp
 				return new ModelAndView("modelos", "modeloMVC", myModel);
 		    }
+			
+			
+	// LISTADO DE MODELOS /////////////////////////////////////////
 	
+	// ELIMINAR MODELO DESDE LISTADO:
 	@GetMapping(value="eliminarModelo.do")
 	public ModelAndView eliminarModelo(@RequestParam String idModelo) {
 		logger.info("Consultando datos del modelo id "+idModelo);
@@ -211,63 +314,6 @@ public class EcosystemIAController {
 		return new ModelAndView("modelos", "modeloMVC", myModel);
 	}
 	
-	@GetMapping(value="nuevoModelo.do")
-	public ModelAndView nuevoModelo() {
-		logger.info("Nuevo modelo");
-		ModelAndView model = new ModelAndView("nuevoModelo");
-		ModeloRedConvolucional modelo = new ModeloRedConvolucional();
-		List<TipoAlmacenamiento> listadoTiposAlmacenamiento = this.tipoAlmacenamientoManager.getTiposAlmacenamiento();
-		List<TipoFichero> listadoTiposFichero = this.tipoFicheroManager.getTiposFichero();
-		model.addObject("modelo",modelo);
-		model.addObject("tiposAlm",listadoTiposAlmacenamiento);
-		model.addObject("tiposFic",listadoTiposFichero);
-		return model;
-	}
-	
-	// FORMULARIO CREACION DE NUEVO MODELO GRABAR DATOS
-	@Transactional
-	@RequestMapping(value = "nuevoModelo.do", method = RequestMethod.POST, params = "grabar")
-    public ModelAndView grabarNuevoModelo(
-    		@RequestParam String nombreModelo,
-    		@RequestParam String descripcion,
-    		@RequestParam Integer modelImageHeight,
-    		@RequestParam Integer modelImageWidth,
-    		@RequestParam Integer imageChannels,
-    		@RequestParam String pathToModel,
-    		@RequestParam Integer tipoAlmacenamiento,
-    		@RequestParam Integer tipoFichero,
-    		HttpServletRequest request) {
-        
-        ModeloRedConvolucional modelo = new ModeloRedConvolucional();
-        modelo.setNombreModelo(nombreModelo);
-        modelo.setDescripcion(descripcion);
-        modelo.setModelImageHeight(modelImageHeight);
-        modelo.setModelImageWidth(modelImageWidth);
-        modelo.setImageChannels(imageChannels);
-        modelo.setPathToModel(pathToModel);
-        modelo.setTipoAlmacenamiento(tipoAlmacenamiento);
-        modelo.setTipoFichero(tipoFichero);
-        logger.info("Grabar nuevo modelo "+ modelo.getNombreModelo());
-        // alta
-        this.modelManager.nuevoModelo(modelo);
-        // se regresa al listado de modelos
-        Map<String, Object> myModel = new HashMap<>();
-        myModel.put("listadoModelos", this.modelManager.getModelos());
-		//pasamos el parámetro now a la pagina jsp
-		return new ModelAndView("modelos", "modeloMVC", myModel);
-    }
-	
-	// FORMULARIO CREACION DE NUEVO MODELO CANCELAR
-	@RequestMapping(value = "/nuevoModelo.do", method = RequestMethod.POST, params = "cancelar")
-    public ModelAndView cancelNuevo(@Valid @ModelAttribute("modelo") ModeloRedConvolucional modelo, BindingResult result, final ModelMap model) {
-        model.addAttribute("message", "Nuevo modelo Cancelada");
-  
-     // se regresa al listado de modelos
-        Map<String, Object> myModel = new HashMap<>();
-        myModel.put("listadoModelos", this.modelManager.getModelos());
-		//pasamos el parámetro now a la pagina jsp
-		return new ModelAndView("modelos", "modeloMVC", myModel);
-    }
 	
 	//// CATEGORIAS :
 	

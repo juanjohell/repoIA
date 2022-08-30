@@ -107,94 +107,215 @@ public class UtilidadesCnn {
         }
     }
     
-    // CARGA DE UN MODELO SECUENCIAL EN FORMATO KERAS H5
-    public MultiLayerNetwork cargaModeloH5(String rutaFichero) {
-    	
-    	MultiLayerNetwork model = null;
-    	try {
-			model = KerasModelImport.importKerasSequentialModelAndWeights(rutaFichero,false);
-		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return model;
-    }
-    
- // CARGA DE UN MODELO MULTICAPA ENTRADA/SALIDA EN FORMATO KERAS H5
-    public ComputationGraph cargaModeloRCNNH5(String rutaFichero) {
-    	
-    	ComputationGraph model = null;
-    	try {
-			model = KerasModelImport.importKerasModelAndWeights(rutaFichero);
-		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return model;
-    }
-    
- // CARGA DE UN MODELO EN FORMATO TENSORFLOW PROTOBUF (PB)
-    public SameDiff cargaModeloRCNNPB(String rutaFichero) {
-    	SameDiff model = null;
-    	
-    	File modeloPb = new File(rutaFichero);
-        if (!modeloPb.exists()){
-        	modeloPb = new File(rutaFichero);
-        }
-        
-    	logger.info("cargando modelo GRAPH "+rutaFichero);
-    	//model = TFGraphMapper.importGraph(new File(rutaFichero));
-   
-    	model = SameDiff.importFrozenTF(modeloPb);
-		
-		logger.info("Cargado modelo GRAPH");
-		return model;
-		
-    }   
- 
-  
- // CARGA DE UN MODELO EN FORMATO KERAS H5 DESDE GOOGLE DRIVE (NO SE USA DE MOMENTO)
-    public ComputationGraph cargaModeloRCNNH5_Drive(String idFichero) throws IOException {
-    	ComputationGraph model = null;
+    // DEVUELVE INSTANCIA DE MULTILAYERNETWORK RECOGIENDO EL FICHERO SEGUN
+    // EL LUGAR DE ALMACENAMIENTO
+    public MultiLayerNetwork cargaModeloH5(ModeloRedConvolucional model) {
+    	MultiLayerNetwork mlModel = null;
     	URL url=null;
     	InputStream is=null;
     	URLConnection connection=null;
-		
-		// Create a new trust manager that trust all certificates
-		TrustManager[] trustAllCerts = new TrustManager[]{
-		    new X509TrustManager() {
-		        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-		            return null;
-		        }
-		        public void checkClientTrusted(
-		            java.security.cert.X509Certificate[] certs, String authType) {
-		        }
-		        public void checkServerTrusted(
-		            java.security.cert.X509Certificate[] certs, String authType) {
-		        }
-		    }
-		};
-
-		// Activate the new trust manager
-		try {
-		    SSLContext sc = SSLContext.getInstance("SSL");
-		    sc.init(null, trustAllCerts, new java.security.SecureRandom());
-		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (Exception e) {
+    	InputStream isFichero = null;
+    	byte[] fichero = null;
+    	
+    	logger.info("tipo_almacenamiento :" + model.getTipoAlmacenamiento().toString());
+    	// ALMACENADO EN BASE DE DATOS:
+    	if (model.getTipoAlmacenamiento() == (int) 1) {
+    		logger.info("BASE DE DATOS");
+    		fichero = model.getFichero();
+    		isFichero = new ByteArrayInputStream(fichero);
+    		try {
+				mlModel = KerasModelImport.importKerasSequentialModelAndWeights(isFichero);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	//ALMACENAMIENTO EN FICHERO LOCAL (RESOURCES)
+    	if (model.getTipoAlmacenamiento() == (int) 2) {
+    		logger.info("FICHERO LOCAL");
+			try {
+				mlModel = KerasModelImport.importKerasSequentialModelAndWeights(this.devuelve_path_real(model.getPathToModel()),false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+		//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
+		if (model.getTipoAlmacenamiento() == (int) 3) {
+			try {
+				url = new URL(model.getPathToModel());
+				try {
+					connection = url.openConnection();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					isFichero = connection.getInputStream();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					mlModel = KerasModelImport.importKerasSequentialModelAndWeights(isFichero);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidKerasConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedKerasConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
-		url = new URL(URL_GOOGLE_DRIVE+idFichero+"?alt=media");  //https://drive.google.com/file/d/12PJ4PNPcSqQLc_5JiKet7QE1B0rox6YH/view?usp=sharing
-		connection = url.openConnection();
-		is = connection.getInputStream();
-		
-    	try {
-			model = KerasModelImport.importKerasModelAndWeights(is);
-		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return model;
+		return mlModel;
     }
+    
+ // CARGA DE UN MODELO MULTICAPA ENTRADA/SALIDA EN FORMATO KERAS H5
+ // EN FUNCION DE DONDE ESTÉ ALMACENADO
+    public ComputationGraph cargaModeloRCNNH5(ModeloRedConvolucional model) {
+    	
+    	ComputationGraph cgModel = null;
+    	URL url=null;
+    	InputStream is=null;
+    	URLConnection connection=null;
+    	InputStream isFichero = null;
+    	byte[] fichero = null;
+    	
+    	// ALMACENADO EN BASE DE DATOS:
+    	if (model.getTipoAlmacenamiento() == (int) 1) {
+    		fichero = model.getFichero();
+    		isFichero = new ByteArrayInputStream(fichero);
+    		try {
+				cgModel = KerasModelImport.importKerasModelAndWeights(isFichero);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	//ALMACENAMIENTO EN FICHERO LOCAL (RESOURCES)
+    	if (model.getTipoAlmacenamiento() == (int) 2) {
+    		try {
+    			cgModel = KerasModelImport.importKerasModelAndWeights(devuelve_path_real(model.getPathToModel()));
+    		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	}
+    	//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
+    	if (model.getTipoAlmacenamiento() == (int) 3) {
+    		try {
+    			url = new URL(model.getPathToModel());
+    			try {
+    				connection = url.openConnection();
+    			} catch (IOException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    				}
+    			try {
+    				isFichero = connection.getInputStream();
+    			} catch (IOException e) {
+    					// TODO Auto-generated catch block
+    						e.printStackTrace();
+    				}
+    			try {
+    				cgModel = KerasModelImport.importKerasModelAndWeights(isFichero);	
+    			} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidKerasConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedKerasConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+		    }
+		
+    	}
+		return cgModel;
+    }
+  
+ // TODO: DIFERENCIAR POR LUGARES DE ALMACENAMIENTO
+ // CARGA DE UN MODELO EN FORMATO TENSORFLOW PROTOBUF (PB)
+    public SameDiff cargaModeloRCNNPB(ModeloRedConvolucional model) {
+    	SameDiff sdModel = null;
+    	URL url=null;
+    	InputStream is=null;
+    	URLConnection connection=null;
+    	InputStream isFichero = null;
+    	byte[] fichero = null;
+    	
+    	// ALMACENADO EN BASE DE DATOS:
+    	if (model.getTipoAlmacenamiento() == (int) 1) {
+    		fichero = model.getFichero();
+    		isFichero = new ByteArrayInputStream(fichero);
+    		sdModel = SameDiff.importFrozenTF(isFichero);
+    	}
+    	
+    	//ALMACENAMIENTO EN FICHERO LOCAL (RESOURCES)
+    	if (model.getTipoAlmacenamiento() == (int) 2) {
+    			File modeloPb = new File((devuelve_path_real(model.getPathToModel())));
+    			sdModel = SameDiff.importFrozenTF(modeloPb);
+    			logger.info("cargando modelo GRAPH "+model.getPathToModel());
+    	}		
+       
+    	//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
+    	if (model.getTipoAlmacenamiento() == (int) 3) {
+    		try {
+    			url = new URL(model.getPathToModel());
+    			try {
+    				connection = url.openConnection();
+    			} catch (IOException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    				}
+    			try {
+    				isFichero = connection.getInputStream();
+    			} catch (IOException e) {
+    					// TODO Auto-generated catch block
+    						e.printStackTrace();
+    				}
+    				sdModel = SameDiff.importFrozenTF(isFichero);	
+    			
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+		    }
+    	}
+		logger.info("Cargado modelo GRAPH");
+		return sdModel;
+    }   
+ 
+  
+ 
     
     // Dada una ruta de una imagen la carga y las dimensiones de la matriz de entrada
     // que acepta el modelo que estamos usando la convierte a matriz y normaliza los valores

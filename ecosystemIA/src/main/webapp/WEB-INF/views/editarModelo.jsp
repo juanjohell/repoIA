@@ -3,7 +3,24 @@
 
 <%@ include file="/WEB-INF/views/cabecera.jsp" %>
 
-<html lang="en">
+<html lang="es">
+<script type="text/javascript">
+function mostrar_control() {
+	var index = document.getElementById('tipoAlmacenamiento').selectedIndex;
+	//BASE DE DATOS
+	if (index == '0') 
+		{
+		document.getElementById('uploadFichero').style.visibility = 'visible';
+		document.getElementById('rutaFichero').style.visibility = 'hidden';
+		}
+	// URL O RECURSO SISTEMA FICHEROS SERVIDOR
+	else{
+		document.getElementById('uploadFichero').style.visibility = 'hidden';
+		document.getElementById('rutaFichero').style.visibility = 'visible';
+		}
+}
+
+</script>
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +29,10 @@
   	<body>
   		<div class="container">
  			<div class="row">
- 				<div class ="col-12">
+ 				<div class ="col-2">
+ 				</div>
+ 				<div class ="col-10">
+ 				
   					<h1 class="display-3">Editar ${modelo.nombreModelo}</h1>
 					<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
 						<div class="form-row">
@@ -62,7 +82,7 @@
 										  <div class="input-group-prepend">
 										    <label class="input-group-text" for="tipoAlmacenamiento">Origen del fichero:</label>
 										  </div>
-										  <select class="custom-select" id="tipoAlmacenamiento" name="tipoAlmacenamiento">
+										  <select class="custom-select" id="tipoAlmacenamiento" name="tipoAlmacenamiento" onChange="mostrar_control();">
 										  
 										    	<c:forEach var="ta" items="${tiposAlm}" varStatus="loop">
 										    		<c:choose>
@@ -79,8 +99,8 @@
 										  </select>
 									</div>
     							</div>
-    							<div class="form-group col-md-4">
-    								<div class="input-group mb-4">
+    							<div class="form-group col-md-2">
+    								<div class="input-group mb-2">
 										  <div class="input-group-prepend">
 										    <label class="input-group-text" for="tipofichero">Tipo de fichero:</label>
 										  </div>
@@ -100,14 +120,62 @@
 										  </select>
 									</div>
     							</div>
+    							<div class="form-group col-md-2">
+    								<div class="input-group mb-2">
+										  <div class="input-group-prepend">
+										    <label class="input-group-text" for="tipoPrediccion">Tipo de fichero:</label>
+										  </div>
+										  <select class="custom-select" id="tipoPrediccion" name="tipoPrediccion">
+										    	<c:forEach var="tp" items="${tiposPred}" varStatus="loop">
+										    		<c:choose>
+										    			<c:when test="${tp.idTipoPrediccion == modelo.tipoPrediccion}">
+										    				<option selected="true" value=${tf.idTipoPrediccion}>${tp.idTipoPrediccion} - ${tp.nombre}
+										    				</option>
+										    			</c:when>
+										    			<c:otherwise>
+										    				<option value=${tp.idTipoPrediccion}>${tp.idTipoPrediccion} - ${tp.nombre}
+										    				</option>
+										    			</c:otherwise>
+										    		</c:choose>
+										    	</c:forEach>
+										  </select>
+									</div>
+    							</div>
   							</div>
   							<div class="form-group">
-  								<div class="form-group col-md-12">
-  									<label for="modelo.imageChannels">Ruta al recurso del fichero.</label>
-      								<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel" required="true"/>
-    								<div class="invalid-tooltip">
-      										Debe indicar la ruta al fichero.
+  								<div class="form-group col-md-2">
+    								<div class="input-group mb-2">
+										  <div class="input-group-prepend">
+										    <label class="input-group-text" for="tipoSalida">Tipo de salida:</label>
+										  </div>
+										  <select class="custom-select" id="tipoSalida" name="tipoSalida">
+										    	<c:forEach var="ts" items="${tiposSal}" varStatus="loop">
+										    		<c:choose>
+										    			<c:when test="${ts.idTipoSalida == modelo.tipoSalida}">
+										    				<option selected="true" value=${ts.idTipoSalida}>${ts.idTipoSalida} - ${ts.nombre}
+										    				</option>
+										    			</c:when>
+										    			<c:otherwise>
+										    				<option value=${ts.idTipoSalida}>${ts.idTipoSalida} - ${ts.nombre}
+										    				</option>
+										    			</c:otherwise>
+										    		</c:choose>
+										    	</c:forEach>
+										  </select>
+									</div>
+    							</div>
+  							</div>
+  							<div class="form-group">
+  								<div class="form-group col-md-6">
+  									<div id="rutaFichero" style="visibility:hidden">
+  										<label for="modelo.imageChannels">Ruta al recurso del fichero.</label>
+      									<s:input path="modelo.pathToModel" class="form-control" placeholder="ruta a fichero h5" name="pathToModel" id="pathToModel"/>
     								</div>
+  								</div>
+  								<div class="form-group col-md-6">
+  									<div class="custom-file" id="uploadFichero">
+  										No se puede editar el fichero almacenado en base de datos. Cree nuevo modelo.
+  									</div>
   								</div>
   							</div>
   							<div class="form-group">
@@ -142,8 +210,8 @@
 						<!-- fin ventana modal -->
 					</form>
 				</div>
-				<div class="col">
-				</div>
+				<div class ="col-2">
+ 				</div>
 			</div> <!-- row -->
 		</div>
 	</body>

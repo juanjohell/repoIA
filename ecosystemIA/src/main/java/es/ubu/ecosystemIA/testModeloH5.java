@@ -37,7 +37,7 @@ public class testModeloH5 {
 		//resize
 		imagen.setImg(utils.resizeImage(imagen.getImg(), IMAGE_MODEL_WIDTH, IMAGE_MODEL_HEIGHT));
 		
-		multilayerNetwork = utils.cargaModeloH5(ruta);
+		multilayerNetwork = utils.cargaModeloH5(modeloCnn);
 		
 		// matriz de entrada al modelo
 		INDArray input = utils.devuelve_matriz_de_imagen_normalizada(imagen, modeloCnn);
