@@ -123,7 +123,7 @@ function mostrar_control() {
     							<div class="form-group col-md-2">
     								<div class="input-group mb-2">
 										  <div class="input-group-prepend">
-										    <label class="input-group-text" for="tipoPrediccion">Tipo de fichero:</label>
+										    <label class="input-group-text" for="tipoPrediccion">Tipo predicción:</label>
 										  </div>
 										  <select class="custom-select" id="tipoPrediccion" name="tipoPrediccion">
 										    	<c:forEach var="tp" items="${tiposPred}" varStatus="loop">
@@ -173,10 +173,11 @@ function mostrar_control() {
     								</div>
   								</div>
   								<div class="form-group col-md-6">
-  									<div class="custom-file" id="uploadFichero">
-  										No se puede editar el fichero almacenado en base de datos. Cree nuevo modelo.
-  									</div>
-  								</div>
+					    			<div class="custom-file" id="uploadFichero">
+		  								<input type="file" class="custom-file-input" id="ficheroModelo" name="ficheroModelo" lang="es">
+		  								<label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+									</div>
+					    		</div>
   							</div>
   							<div class="form-group">
   								<div class="form-group col-md-12">

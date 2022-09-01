@@ -25,7 +25,7 @@ public class testModeloH5 {
 		UtilidadesCnn utils = new UtilidadesCnn();
 		
 		//Importamos el modelo de red convolucional
-		URL resource = testModeloH5.class.getClassLoader().getResource("modelos\\cifar10_entrenado_10epochs.h5");
+		URL resource = testModeloH5.class.getClassLoader().getResource("modelos\\modelo_sencillo_cifar10_100epochs.h5");
 		String ruta = Paths.get(resource.toURI()).toString();
 		ModeloRedConvolucional modeloCnn = new ModeloRedConvolucional();
 	    
@@ -40,7 +40,7 @@ public class testModeloH5 {
 		multilayerNetwork = utils.cargaModeloH5(modeloCnn);
 		
 		// matriz de entrada al modelo
-		INDArray input = utils.devuelve_matriz_de_imagen_normalizada(imagen, modeloCnn);
+		INDArray input = utils.devuelve_matriz_de_imagen_normalizada(imagen, modeloCnn,false);
 		// recogemos salida del modelo
         INDArray output = multilayerNetwork.output(input);
         System.out.println("Test " + output);

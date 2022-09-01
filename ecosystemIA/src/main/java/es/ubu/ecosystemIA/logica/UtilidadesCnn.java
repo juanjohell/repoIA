@@ -315,12 +315,10 @@ public class UtilidadesCnn {
     }   
  
   
- 
-    
     // Dada una ruta de una imagen la carga y las dimensiones de la matriz de entrada
     // que acepta el modelo que estamos usando la convierte a matriz y normaliza los valores
     // En un rango [0..1] 
-    public INDArray devuelve_matriz_de_imagen_normalizada(Imagen imagen, ModeloRedConvolucional model) {
+    public INDArray devuelve_matriz_de_imagen_normalizada(Imagen imagen, ModeloRedConvolucional model, Boolean normalizar) {
     	BufferedImage img = null;
     	INDArray entrada_a_CNN = null;
     	try {
@@ -338,8 +336,12 @@ public class UtilidadesCnn {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-         DataNormalization scalar = new ImagePreProcessingScaler(0, 1);
-         scalar.transform(entrada_a_CNN);
+         //normalizacion:
+         if (normalizar) {
+        	 DataNormalization scalar = new ImagePreProcessingScaler(0, 1);
+        	 scalar.transform(entrada_a_CNN);
+         }
+         
          LayerWorkspaceMgr workspaceMgr;
          workspaceMgr = LayerWorkspaceMgr.noWorkspaces();
          // TODO Ver cuándo hay que realizar ésta transformación :
@@ -361,22 +363,42 @@ public class UtilidadesCnn {
     	return categoria;
     }
     
-    // CATEGORIAS PARA MATRIZ MULTIDIMENSIONAL TIPO IMAGENET
-    // LE PASAMOS EL ARRAY DE RESPUESTA DEL MODELO Y EL NUMERO DE LAS PREDICCIONES
-    // QUE QUEREMOS MOSTRAR (LAS num_predcciones CLASES MEJOR VALORADAS)
-    public String devuelve_categorias_imagenet(INDArray predictions) {
-    	ImageNetLabels labels = null;
+    // dado un array de predicciones de Imagenet, devuelve las etiquetas de las 3
+    // primeras predicciones
+    public String decodificarPrediccionesImagenet(INDArray predictions)
+    {
+    	int topN = 3;
     	String predicciones = "";
-        try {
+        int[] topNPredictions = new int[topN];
+        float topNProb;
+        String label = "";
+        ImageNetLabels labels = null;
+		try {
 			labels = new ImageNetLabels();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        predicciones = labels.decodePredictions(predictions);
-        return predicciones;
+       //brute force collect top N
+      int i = 0;
+      for (int batch = 0; batch < predictions.size(0); batch++) {
+        INDArray currentBatch = predictions.getRow(batch).dup();
+        logger.info("currentBatch: "+currentBatch.toString());
+        while (i < topN) {
+          topNPredictions[i] = Nd4j.argMax(currentBatch, 1).getInt(0, 0);
+          logger.info("indice_top: "+Integer.toString(topNPredictions[i]));
+          topNProb = currentBatch.getFloat(batch, topNPredictions[i]);
+          currentBatch.putScalar(0, topNPredictions[i], 0);
+          label = labels.getLabel(topNPredictions[i]);
+          logger.info("label: "+label);
+          predicciones = predicciones + label + " "+ Float.toString(topNProb)+"\n";
+          i++;
+        }
+      }
+      return predicciones;
     }
-    
+  
+    //////////
     
     public String devuelve_path_real(String resource_path) {
     	URL resource = FileUploadController.class.getClassLoader().getResource(resource_path);
@@ -475,10 +497,16 @@ public class UtilidadesCnn {
             if (resultado) {
             	Font font = new Font("Arial", Font.BOLD, 18);
 	    		//TODO: parametrizar color y ancho del borde para el usuario
+            	// coordenadas donde se empieza a rotular:
+            	int x = 20;
+            	int y = 20;
 	    		Graphics2D graph = img.createGraphics();
 	            graph.setColor(devuelveColor(color));
 	            graph.setFont(font);
-	            graph.drawString(texto, 20, 20);
+	            // si el string tiene retornos de carro hemos de tratarlos:
+	            for (String line : texto.split("\n"))
+	                graph.drawString(line, x, y += graph.getFontMetrics().getHeight());
+	            //graph.drawString(texto, 20, 20);
 	            graph.dispose();
             	}
             

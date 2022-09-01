@@ -180,8 +180,7 @@ public class FileUploadController extends FileBaseController{
 		}
  		imagenInput.setImg(utilsCnn.resizeImage(bi, this.modelManager.getModeloCargado().getModelImageWidth(), this.modelManager.getModeloCargado().getModelImageHeight()));
 		
-		// CONVERTIMOS IMAGEN EN matriz de entrada al modelo
-		INDArray input = utilsCnn.devuelve_matriz_de_imagen_normalizada(imagenInput, this.modelManager.getModeloCargado());
+		
 		
 		// TODO: Tratamiento segun tipo de modelo, categorias o clasificacion 
 		
@@ -203,6 +202,8 @@ public class FileUploadController extends FileBaseController{
         //TIPO_PREDICCION 1 ES CLASIFICACION DE IMAGENES
         if (this.modelManager.getModeloCargado().getTipoPrediccion().intValue() == CLASIFICACION) {
         	logger.info("CLASIFICACION DE IMAGENES");
+        	// CONVERTIMOS IMAGEN EN matriz de entrada al modelo NO SE NORMALIZA
+ 			INDArray input = utilsCnn.devuelve_matriz_de_imagen_normalizada(imagenInput, this.modelManager.getModeloCargado(), false);
         	// SI LA SALIDA ES UNIDIMENSIONAL (USAR MULTILAYERNETWORK)
         	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_UNIDIMENSIONAL) {
         		logger.info("SALIDA_UNIDIMENSIONAL");
@@ -212,11 +213,10 @@ public class FileUploadController extends FileBaseController{
         	}
         	// SI ES MULTIDIMENSIONAL (USAR COMPUTATIONGRAPH)
         	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_MULTIDIMENSIONAL) {
-        		output = this.modelManager.getComputationGraph().outputSingle(input);
-        		logger.info("SALIDA_MULTIDIMENSIONAL");
+        		output = this.modelManager.getComputationGraph().outputSingle(false, input);
+        		logger.info("SALIDA_MULTIDIMENSIONAL"+ output.toString());
         		//TODO:
-        		resultado = utilsCnn.devuelve_categorias_imagenet(output);
-        		resultado = resultado.split(":")[1];
+        		resultado = utilsCnn.decodificarPrediccionesImagenet(output);
         		logger.info("resultado "+resultado.toString());
         	}
         	//ANOTAMOS CATEGORIA EN LA IMAGEN
@@ -227,6 +227,8 @@ public class FileUploadController extends FileBaseController{
         
         //TIPO_PREDICCION 2 ES DETECCION DE OBJETOS (BOUNDING BOXES)
         if (this.modelManager.getModeloCargado().getTipoPrediccion().intValue() == DETECCION) {
+        	// CONVERTIMOS IMAGEN EN matriz de entrada al modelo NORMALIZACION
+ 			INDArray input = utilsCnn.devuelve_matriz_de_imagen_normalizada(imagenInput, this.modelManager.getModeloCargado(), true);
         	logger.info("DETECCION");
         	//TODO:  tipo de fichero 2 es TF
         	if (this.modelManager.getModeloCargado().getTipoFichero().intValue() == (int) 2)
