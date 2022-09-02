@@ -47,10 +47,6 @@ public class ModeloRedConvolucional implements Serializable{
 	//CNN2DFormat formatoImagenModelo;
 	private String formatoImagenModelo;
 	
-	@Lob
-	@Column(name="FICHERO")
-	private byte[] fichero;
-	
 	@Column(name="PATH_FICHERO")
 	private String pathToModel;
 	
@@ -146,14 +142,6 @@ public class ModeloRedConvolucional implements Serializable{
 
 	public void setTipoPrediccion(Integer tipoPrediccion) {
 		this.tipoPrediccion = tipoPrediccion;
-	}
-	
-	public byte[] getFichero() {
-		return fichero;
-	}
-
-	public void setFichero(byte[] fichero) {
-		this.fichero = fichero;
 	}
 
 	public String toString() {

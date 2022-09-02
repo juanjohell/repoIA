@@ -1,12 +1,18 @@
 package es.ubu.ecosystemIA.logica;
 
+import es.ubu.ecosystemIA.modelo.Ficheros;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +28,9 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import es.ubu.ecosystemIA.db.ModeloRnDao;
@@ -37,6 +46,9 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	public static final Integer FICHERO_PB = (int) 2;
 	public static final Integer FICHERO_H5 = (int) 1;
 	public static final Integer FICHERO_ON = (int) 3;
+	public static final Integer ALMACENAM_BASE_DATOS = (int) 1;
+	public static final Integer ALMACENAM_CARPETA = (int) 2;
+	public static final Integer ALMACENAM_URL = (int) 3;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	private static final long serialVersionUID = -5392895280098494635L;
@@ -45,6 +57,8 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	private ModeloRnDao modeloDao;
 	@Autowired
 	private TipoAlmacenamientoManager managerAlmacenamiento;
+	@Autowired 
+	private FicherosManager managerFicheros;
 	// para almacenar modelos secuenciales H5:
 	private MultiLayerNetwork multilayerNetwork;
 	private UtilidadesCnn utilsCnn;
@@ -112,7 +126,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	}
 	public void setMultilayerNetwork(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
-		this.multilayerNetwork = utilsCnn.cargaModeloH5(modelo);
+		this.multilayerNetwork = this.cargaModeloH5(modelo);
 		logger.info("modelo cargado de fichero h5 MultiLayer");
 	}
 	public ComputationGraph getComputationGraph() {
@@ -122,7 +136,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	public void setComputationGraph(ModeloRedConvolucional modelo) {
 		utilsCnn = new UtilidadesCnn();
 		// ruta a sistema de ficheros local
-		this.computationGraph = utilsCnn.cargaModeloRCNNH5(modelo);
+		this.computationGraph = this.cargaModeloRCNNH5(modelo);
 		logger.info("modelo cargado de fichero h5 ComputationGraph");
 	}
 	
@@ -139,7 +153,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		utilsCnn = new UtilidadesCnn();
 		String path = modelo.getPathToModel();
 		Integer tipoAlmacenamiento = modelo.getTipoAlmacenamiento();
-		this.sameDiff = utilsCnn.cargaModeloRCNNPB(modelo);
+		this.sameDiff = this.cargaModeloRCNNPB(modelo);
 		logger.info("modelo cargado de fichero h5");
 	}
 	
@@ -153,5 +167,210 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 	public void setImagenCargada(Imagen imagenCargada) {
 		this.imagenCargada = imagenCargada;
 	}
+	
+	// DEVUELVE INSTANCIA DE MULTILAYERNETWORK RECOGIENDO EL FICHERO SEGUN
+    // EL LUGAR DE ALMACENAMIENTO
+    public MultiLayerNetwork cargaModeloH5(ModeloRedConvolucional model) {
+    	MultiLayerNetwork mlModel = null;
+    	URL url=null;
+    	InputStream is=null;
+    	URLConnection connection=null;
+    	InputStream isFichero = null;
+    	Ficheros fichero = new Ficheros();
+    	
+    	logger.info("tipo_almacenamiento :" + model.getTipoAlmacenamiento().toString());
+    	// ALMACENADO EN BASE DE DATOS:
+    	if (model.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
+    		logger.info("BASE DE DATOS");
+    		fichero = managerFicheros.devuelveFichero(model.getIdModelo());
+    		isFichero = new ByteArrayInputStream(fichero.getFichero());
+    		try {
+				mlModel = KerasModelImport.importKerasSequentialModelAndWeights(isFichero);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	//ALMACENAMIENTO EN FICHERO LOCAL (RESOURCES)
+    	if (model.getTipoAlmacenamiento() == ALMACENAM_CARPETA) {
+    		logger.info("FICHERO LOCAL");
+			try {
+				mlModel = KerasModelImport.importKerasSequentialModelAndWeights(utilsCnn.devuelve_path_real(model.getPathToModel()),false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedKerasConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+		//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
+		if (model.getTipoAlmacenamiento() == ALMACENAM_URL) {
+			try {
+				url = new URL(model.getPathToModel());
+				try {
+					connection = url.openConnection();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					isFichero = connection.getInputStream();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					mlModel = KerasModelImport.importKerasSequentialModelAndWeights(isFichero);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidKerasConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedKerasConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return mlModel;
+    }
+    
+     // CARGA DE UN MODELO COMPUTATIONGRAPH MULTICAPA ENTRADA/SALIDA EN FORMATO KERAS H5
+    // EN FUNCION DE DONDE ESTÉ ALMACENADO
+   public ComputationGraph cargaModeloRCNNH5(ModeloRedConvolucional model) {
+       	
+       	ComputationGraph cgModel = null;
+       	URL url=null;
+       	InputStream is=null;
+       	URLConnection connection=null;
+       	InputStream isFichero = null;
+       	Ficheros fichero = new Ficheros();
+       	
+       	// ALMACENADO EN BASE DE DATOS:
+       	if (model.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
+       		fichero = managerFicheros.devuelveFichero(model.getIdModelo());
+       		isFichero = new ByteArrayInputStream(fichero.getFichero());
+       		try {
+   				cgModel = KerasModelImport.importKerasModelAndWeights(isFichero);
+   			} catch (IOException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			} catch (UnsupportedKerasConfigurationException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			} catch (InvalidKerasConfigurationException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			}
+       	}
+       	//ALMACENAMIENTO EN FICHERO LOCAL (RESOURCES)
+       	if (model.getTipoAlmacenamiento() == ALMACENAM_CARPETA) {
+       		try {
+       			cgModel = KerasModelImport.importKerasModelAndWeights(utilsCnn.devuelve_path_real(model.getPathToModel()));
+       		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+       			// TODO Auto-generated catch block
+       			e.printStackTrace();
+       		}
+       	}
+       	//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
+       	if (model.getTipoAlmacenamiento() == ALMACENAM_URL) {
+       		try {
+       			url = new URL(model.getPathToModel());
+       			try {
+       				connection = url.openConnection();
+       			} catch (IOException e) {
+       						// TODO Auto-generated catch block
+       						e.printStackTrace();
+       				}
+       			try {
+       				isFichero = connection.getInputStream();
+       			} catch (IOException e) {
+       					// TODO Auto-generated catch block
+       						e.printStackTrace();
+       				}
+       			try {
+       				cgModel = KerasModelImport.importKerasModelAndWeights(isFichero);	
+       			} catch (IOException e) {
+   					// TODO Auto-generated catch block
+   					e.printStackTrace();
+   				} catch (InvalidKerasConfigurationException e) {
+   					// TODO Auto-generated catch block
+   					e.printStackTrace();
+   				} catch (UnsupportedKerasConfigurationException e) {
+   					// TODO Auto-generated catch block
+   					e.printStackTrace();
+   				}
+   			} catch (MalformedURLException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   		    }
+   		
+       	}
+   		return cgModel;
+       }
+       
+    // CARGA DE UN MODELO EN FORMATO TENSORFLOW PROTOBUF (PB)
+       // TODO: DIFERENCIAR POR LUGARES DE ALMACENAMIENTO
+    public SameDiff cargaModeloRCNNPB(ModeloRedConvolucional model) {
+          	SameDiff sdModel = null;
+          	URL url=null;
+          	InputStream is=null;
+          	URLConnection connection=null;
+          	InputStream isFichero = null;
+          	Ficheros fichero = new Ficheros();
+          	// ALMACENADO EN BASE DE DATOS:
+          	if (model.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
+          		fichero = managerFicheros.devuelveFichero(model.getIdModelo());
+          		isFichero = new ByteArrayInputStream(fichero.getFichero());
+          		sdModel = SameDiff.importFrozenTF(isFichero);
+          	}
+          	
+          	//ALMACENAMIENTO EN FICHERO LOCAL (RESOURCES)
+          	if (model.getTipoAlmacenamiento() == ALMACENAM_CARPETA) {
+          			File modeloPb = new File((utilsCnn.devuelve_path_real(model.getPathToModel())));
+          			sdModel = SameDiff.importFrozenTF(modeloPb);
+          			logger.info("cargando modelo GRAPH "+model.getPathToModel());
+          	}		
+             
+          	//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
+          	if (model.getTipoAlmacenamiento() == ALMACENAM_URL) {
+          		try {
+          			url = new URL(model.getPathToModel());
+          			try {
+          				connection = url.openConnection();
+          			} catch (IOException e) {
+          						// TODO Auto-generated catch block
+          						e.printStackTrace();
+          				}
+          			try {
+          				isFichero = connection.getInputStream();
+          			} catch (IOException e) {
+          					// TODO Auto-generated catch block
+          						e.printStackTrace();
+          				}
+          				sdModel = SameDiff.importFrozenTF(isFichero);	
+          			
+      			} catch (MalformedURLException e) {
+      				// TODO Auto-generated catch block
+      				e.printStackTrace();
+      		    }
+          	}
+      		logger.info("Cargado modelo GRAPH");
+      		return sdModel;
+          } 
 	
 }

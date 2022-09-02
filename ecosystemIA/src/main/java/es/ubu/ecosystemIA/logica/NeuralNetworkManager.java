@@ -32,5 +32,11 @@ public interface NeuralNetworkManager extends Serializable{
 	public String devuelveArquitectura(ModeloRedConvolucional modelo);
 	// DECIDE EN QUE FORMATO LO GUARDA EN FUNCION DEL TIPO FICHERO 
 	public void setModeloDl4j(ModeloRedConvolucional modelo);
+	// DEVUELVE MULTILAYERNETWORK SECUENCIAL H5
+	public MultiLayerNetwork cargaModeloH5(ModeloRedConvolucional model);
+	// DEVUELVE UN MODELO EN FORMATO TENSORFLOW PROTOBUF (PB)
+	public SameDiff cargaModeloRCNNPB(ModeloRedConvolucional model);
+	// CARGA DE UN MODELO COMPUTATIONGRAPH MULTICAPA ENTRADA/SALIDA EN FORMATO KERAS H5
+    public ComputationGraph cargaModeloRCNNH5(ModeloRedConvolucional model);
 	
 } 	

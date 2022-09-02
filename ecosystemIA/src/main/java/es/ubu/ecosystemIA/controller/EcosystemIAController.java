@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.ubu.ecosystemIA.db.JPAModeloRnDao;
 import es.ubu.ecosystemIA.logica.CategoriaManager;
+import es.ubu.ecosystemIA.logica.FicherosManager;
 import es.ubu.ecosystemIA.logica.NeuralNetworkManager;
 import es.ubu.ecosystemIA.logica.SimpleNeuralModelManager;
 import es.ubu.ecosystemIA.logica.TipoAlmacenamientoManager;
@@ -43,6 +44,7 @@ import es.ubu.ecosystemIA.logica.TipoPrediccionManager;
 import es.ubu.ecosystemIA.logica.TipoSalidaManager;
 import es.ubu.ecosystemIA.logica.UtilidadesCnn;
 import es.ubu.ecosystemIA.modelo.Categoria;
+import es.ubu.ecosystemIA.modelo.Ficheros;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import es.ubu.ecosystemIA.modelo.TipoAlmacenamiento;
 import es.ubu.ecosystemIA.modelo.TipoFichero;
@@ -55,9 +57,14 @@ public class EcosystemIAController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	public static final String PARAM_ERROR = "ERROR";
+	public static final Integer ALMACENAM_BASE_DATOS = (int) 1;
+	public static final Integer ALMACENAM_CARPETA = (int) 2;
+	public static final Integer ALMACENAM_URL = (int) 3;
 	
 	@Autowired
 	private NeuralNetworkManager modelManager;
+	@Autowired
+	private FicherosManager ficherosManager;
 	@Autowired
 	private CategoriaManager categoriaManager;
 	@Autowired
@@ -128,6 +135,7 @@ public class EcosystemIAController {
     		@RequestParam Integer tipoFichero,
     		@RequestParam Integer tipoPrediccion,
     		@RequestParam Integer tipoSalida,
+    		@RequestParam MultipartFile ficheroModelo,
     		HttpServletRequest request) {
         
         ModeloRedConvolucional modelo = this.modelManager.devuelveModelo(idModelo);
@@ -141,10 +149,27 @@ public class EcosystemIAController {
         modelo.setTipoPrediccion(tipoPrediccion);
         modelo.setTipoSalida(tipoSalida);
         modelo.setPathToModel(pathToModel);
+        
         logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
         logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
         // edicion del modelo
         this.modelManager.editarModelo(modelo);
+        logger.info("Grabado modelo "+ modelo.getIdModelo().toString());
+        // Grabar fichero si procede:
+        if (modelo.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
+        	byte[] ArrBytes = null;
+        	try {
+				ArrBytes = ficheroModelo.getBytes();
+				Ficheros fichero = new Ficheros();
+				fichero.setIdModelo(modelo.getIdModelo());
+				fichero.setFichero(ArrBytes);
+				this.ficherosManager.nuevoFichero(fichero);
+				logger.info("Grabado fichero binario para modelo");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
         // se regresa al listado de modelos
         Map<String, Object> myModel = new HashMap<>();
         myModel.put("listadoModelos", this.modelManager.getModelos());
@@ -198,7 +223,6 @@ public class EcosystemIAController {
 	    		@RequestParam Integer tipoFichero,
 	    		@RequestParam Integer tipoPrediccion,
 	    		@RequestParam Integer tipoSalida,
-	    		@RequestParam MultipartFile ficheroModelo,
 	    		HttpServletRequest request) {
 	        
 	        ModeloRedConvolucional modelo = new ModeloRedConvolucional();
@@ -212,18 +236,6 @@ public class EcosystemIAController {
 	        modelo.setTipoFichero(tipoFichero);
 	        modelo.setTipoPrediccion(tipoPrediccion);
 	        modelo.setTipoSalida(tipoSalida);
-	        	byte[] byteArr = null;
-	        	if (ficheroModelo!=null && !ficheroModelo.isEmpty())
-				try {
-					byteArr = ficheroModelo.getBytes();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					ModelAndView model = new ModelAndView("error");
-					String error = "No se ha podido grabar fichero en base de datos.";
-					model.addObject("msg_error",error);
-					return model;
-				}
-	        modelo.setFichero(byteArr);
 	        logger.info("Grabar nuevo modelo "+ modelo.getNombreModelo());
 	        // alta
 	        this.modelManager.nuevoModelo(modelo);
