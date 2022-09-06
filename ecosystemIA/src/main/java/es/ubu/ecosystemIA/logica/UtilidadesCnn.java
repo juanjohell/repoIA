@@ -159,9 +159,9 @@ public class UtilidadesCnn {
     
     // dado un array de predicciones de Imagenet, devuelve las etiquetas de las 3
     // primeras predicciones
-    public String decodificarPrediccionesImagenet(INDArray predictions)
+    public String decodificarPrediccionesImagenet(INDArray predictions, Integer numPredic)
     {
-    	int topN = 3;
+    	int topN = numPredic;
     	String predicciones = "";
         int[] topNPredictions = new int[topN];
         float topNProb;

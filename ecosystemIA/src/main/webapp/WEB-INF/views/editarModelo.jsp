@@ -26,15 +26,14 @@ function mostrar_control() {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Editar modelo</title>
-  	<body>
-  		<div class="container">
- 			<div class="row">
- 				<div class ="col-2">
+  	<body onload="mostrar_control();">
+   		<div class="container">
+  			<div class="row">
+ 				<div class ="col">
  				</div>
- 				<div class ="col-10">
- 				
+ 				<div class ="col-6">
   					<h1 class="display-3">Editar ${modelo.nombreModelo}</h1>
-					<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do">
+					<form method="POST" action="${pageContext.request.contextPath}/editarModelo.do" enctype="multipart/form-data">
 						<div class="form-row">
   							<div class="form-group">
   								<div class="form-group col-md-2">
@@ -129,7 +128,7 @@ function mostrar_control() {
 										    	<c:forEach var="tp" items="${tiposPred}" varStatus="loop">
 										    		<c:choose>
 										    			<c:when test="${tp.idTipoPrediccion == modelo.tipoPrediccion}">
-										    				<option selected="true" value=${tf.idTipoPrediccion}>${tp.idTipoPrediccion} - ${tp.nombre}
+										    				<option selected="true" value=${tp.idTipoPrediccion}>${tp.idTipoPrediccion} - ${tp.nombre}
 										    				</option>
 										    			</c:when>
 										    			<c:otherwise>
@@ -187,19 +186,20 @@ function mostrar_control() {
 									<button value="Cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>
   								</div>
   							</div>
-  						</div>
+  						
   						
 						<!-- Modal -->
 							<div class="modal fade" id="confirmacionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 							  <div class="modal-dialog" role="document">
 							    <div class="modal-content">
 							      <div class="modal-header">
-							        <h5 class="modal-title" id="exampleModalLabel">Se van a guardar los cambios introducidos. ¿Proceder?</h5>
+							        <h5 class="modal-title" id="exampleModalLabel">ATENCIÓN.</h5>
 							        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							          <span aria-hidden="true">&times;</span>
 							        </button>
 							      </div>
 							      <div class="modal-body">
+							      		 <h4 class="modal-title" id="exampleModalLabel">Se van a guardar los cambios introducidos. ¿Proceder?</h4>
 							      </div>
 							      <div class="modal-footer">
 							        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -209,6 +209,7 @@ function mostrar_control() {
 							  </div>
 							</div>
 						<!-- fin ventana modal -->
+						</div>
 					</form>
 				</div>
 				<div class ="col-2">

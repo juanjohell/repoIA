@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import es.ubu.ecosystemIA.modelo.Ficheros;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 @Transactional
@@ -14,6 +16,7 @@ public interface ModeloRnDao {
 	public ModeloRedConvolucional getModelo(Integer idModelo);
     public void nuevoModelo(ModeloRedConvolucional modelo);
     public void editarModelo(ModeloRedConvolucional modelo);
+    public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero);
     public void borrarModelo(ModeloRedConvolucional modelo);
     
 }

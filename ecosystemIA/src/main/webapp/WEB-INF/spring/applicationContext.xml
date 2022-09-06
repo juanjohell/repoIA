@@ -30,6 +30,7 @@
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
 		</property>                             
 		<property name="persistenceUnitName" value="ecosystemIAPU"></property>
+		
     </bean>
 	 
     <bean id="jpaAdapter"

@@ -8,7 +8,9 @@
 form {
 	background-color: #e6ffe6;
 }
-
+body {
+	background-color: #e6ffe6;
+}
 .img-responsive {
     display: block;
     height: auto;

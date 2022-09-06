@@ -1,5 +1,6 @@
 package es.ubu.ecosystemIA.db;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -9,6 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+
+import es.ubu.ecosystemIA.modelo.Ficheros;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,11 +61,16 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		logger.info("DAO: editar modelo " +modelo.getNombreModelo());
 		em.merge(modelo);
 	}
+	
+	@Transactional(timeout = 60)
+	@SuppressWarnings("unchecked")
+	public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero) {
+			em.merge(modelo);
+	}
+	
+	
 	@Transactional
 	public void borrarModelo(ModeloRedConvolucional modelo) {
 		em.remove(modelo);
 	}
-	
-	
-
 }

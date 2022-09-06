@@ -88,6 +88,13 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		this.modeloDao.editarModelo(modelo);
 	}
 	@Transactional
+	@Override
+	public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero) {
+		logger.info("ModeloDAO: update de "+modelo.getIdModelo()+" y fichero");
+		this.modeloDao.editarModelo(modelo, fichero);
+	}
+	
+	@Transactional
 	public ModeloRedConvolucional devuelveModelo(Integer idModelo) {
 		return this.modeloDao.getModelo(idModelo);
 	}

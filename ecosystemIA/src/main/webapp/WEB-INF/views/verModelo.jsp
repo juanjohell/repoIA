@@ -46,6 +46,30 @@
 				      					<s:input path="modelo.imageChannels" class="form-control" placeholder="Alto de imagen" name="imageChannels" id="imageChannels" readonly="true"/>
 				    				</div>
 				  				</div>
+				  				<div class="form-group">
+				  					<div class="form-group col-md-4">
+				  						<label for="tipoAlmacenamiento.idTipoAlmacenamiento">Fichero almacenado en</label>
+				      					<s:input path="tipoAlmacenamiento.nombre" class="form-control" placeholder="Tipo de almacenamiento" name="tipoAlmacenamiento" id="tipoAlmacenamiento" readonly="true"/>
+				  					</div>
+				  					<div class="form-group col-md-1">
+				  						<label for="tipoFichero.idTipoFichero">Tipo de fichero</label>
+				      					<s:input path="tipoFichero.nombreCorto" class="form-control" placeholder="Tipo de fichero" name="tipoFichero" id="tipoFichero" readonly="true"/>
+				  					</div>
+				  					<div class="form-group col-md-3">
+				  						<label for="tipoPrediccion.idTipoPrediccion">Tipo de predicción</label>
+				      					<s:input path="tipoPrediccion.nombre" class="form-control" placeholder="Tipo de prediccion" name="tipoPrediccion" id="tipoPrediccion" readonly="true"/>
+				  					</div>
+				  					<div class="form-group col-md-4">
+				  						<label for="tipoSalida.idTipoSalida">Tipo de salida del modelo</label>
+				      					<s:input path="tipoSalida.nombre" class="form-control" placeholder="Tipo de salida" name="tipoSalida" id="tipoSalida" readonly="true"/>
+				  					</div>
+				  				</div>
+				  				<div class="form-group">
+				  					<div class="form-group col-md-12">
+				  						<label for="modelo.pathToModel">Ruta al fichero</label>
+				      					<s:input path="modelo.pathToModel" class="form-control" placeholder="Ruta al fichero" name="pathToModel" id="pathToModel" readonly="true"/>
+				  					</div>
+				  				</div>
 				  			</div>
 				  			<a href="<c:url value='verEstructura.do?idModelo=${modelo.idModelo}' />" class="ver" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Ver">remove_red_eye</i></a>
 							<button value="cancelar" type="submit" name="cancelar"  id="cancelar" class="btn btn-primary">Volver</button>

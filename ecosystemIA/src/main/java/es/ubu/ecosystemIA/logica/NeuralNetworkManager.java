@@ -9,6 +9,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ubu.ecosystemIA.modelo.Ficheros;
 import es.ubu.ecosystemIA.modelo.Imagen;
 import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 @Transactional
@@ -19,6 +20,7 @@ public interface NeuralNetworkManager extends Serializable{
 	public void nuevoModelo(ModeloRedConvolucional modelo);
 	public void borrarModelo(ModeloRedConvolucional modelo);
 	public void editarModelo(ModeloRedConvolucional modelo);
+	public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero);
 	public void setMultilayerNetwork(ModeloRedConvolucional modelo);
 	public MultiLayerNetwork getMultilayerNetwork();
 	public void setComputationGraph(ModeloRedConvolucional modelo);

@@ -4,7 +4,12 @@ Created on Sat Aug 20 18:12:14 2022
 
 @author: juanjo
 """
-
+####################################################################
+# PARA TRANSFORMACION DE FICHERO TXT DE COORDENADAS EN FORMATO:
+#  class_id x,y,w,h
+#  A FORMATO XML:
+#  Xmin, Ymin, Xmax, Ymax
+####################################################################
 
 import os
 import cv2
@@ -12,8 +17,10 @@ from xml.dom.minidom import parseString
 from lxml.etree import Element, SubElement, tostring
 import numpy as np
 from os.path import join
+class_id = 0
 
 ## coco classes
+'''
 YOLO_CLASSES = ('botella','person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
                 'train', 'truck', 'boat', 'traffic light', 'fire', 'hydrant',
                 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
@@ -29,6 +36,11 @@ YOLO_CLASSES = ('botella','person', 'bicycle', 'car', 'motorcycle', 'airplane', 
                 'keyboard', 'cell phone', 'microwave oven', 'toaster', 'sink',
                 'refrigerator', 'book', 'clock', 'vase', 'scissors',
                 'teddy bear', 'hair drier', 'toothbrush')
+'''
+YOLO_CLASSES = ('botella')
+### TAMAÑOS DE IMAGEN PARA UAV-BD
+width_image = 342
+height_image = 342
 
 ## converts the normalized positions  into integer positions
 def unconvert(class_id, width, height, x, y, w, h):
@@ -42,26 +54,31 @@ def unconvert(class_id, width, height, x, y, w, h):
 
 
 ## path root folder
-ROOT = 'coco'
+## TRAIN
+#ROOT = '../../datasets/uav-bd/train/labels_txt/nombre_xywh/'
 
+## VAL
+ROOT = '../../datasets/uav-bd/val/labels_txt/nombre_xywh/'
 
 ## converts coco into xml 
 def xml_transform(root, classes):  
-    class_path  = join(root, 'labels')
+    #class_path  = join(root, 'labels')
+    class_path = root
     ids = list()
     l=os.listdir(class_path)
     
+    #se toma el nombre de la imagen del nombre del fichero de la etiqueta
     check = '.DS_Store' in l
     if check == True:
         l.remove('.DS_Store')
         
     ids=[x.split('.')[0] for x in l]   
-
-    annopath = join(root, 'labels', '%s.txt')
-    imgpath = join(root, 'images', '%s.jpg')
+    #annopath = join(root, 'labels', '%s.txt')
+    annopath = join(root, '%s.txt')
+    imgpath = join(root, '../../images', '%s.jpg')
     
-    os.makedirs(join(root, 'outputs'), exist_ok=True)
-    outpath = join(root, 'outputs', '%s.xml')
+    os.makedirs(join(root, '../pascal-voc'), exist_ok=True)
+    outpath = join(root, '../pascal-voc', '%s.xml')
 
     for i in range(len(ids)):
         img_id = ids[i] 
@@ -69,9 +86,9 @@ def xml_transform(root, classes):
             continue
         if os.path.exists(outpath % img_id):
             continue
-        print(imgpath % img_id)
+        #print(imgpath % img_id)
         img= cv2.imread(imgpath % img_id)
-        height, width, channels = img.shape # pega tamanhos e canais das images
+        height, width, channels = img.shape 
 
         node_root = Element('annotation')
         node_folder = SubElement(node_root, 'folder')
@@ -99,16 +116,28 @@ def xml_transform(root, classes):
         node_segmented.text = '0'
 
         target = (annopath % img_id)
+        #print(target)
+        
         if os.path.exists(target):
-            label_norm= np.genfromtxt(target, delimiter=' ')[:,:-1]
-            #label_norm= np.loadtxt(target).reshape(-1, 5)
-            for i in range(len(label_norm)):
-                labels_conv = label_norm[i]
-                new_label = unconvert(labels_conv[0], width, height, labels_conv[1], labels_conv[2], labels_conv[3], labels_conv[4])
+            with open(target) as file:
+                lines = file.readlines()
+                lines = [line.rstrip() for line in lines]
+                print('linea')
+                print(lines)
+            
+            for i in range(len(lines)):
+                labels_conv = lines[i].split(',')
+                print('array')
+                print (labels_conv)
+                   
+                #new_label = unconvert(labels_conv[0], width_image, height_image, labels_conv[1], labels_conv[2], labels_conv[3], labels_conv[4])
+                #new_label = (class_id,labels_conv[0],labels_conv[1],labels_conv[2],labels_conv[3])
+                new_label = labels_conv
+                print(new_label)
                 node_object = SubElement(node_root, 'object')
                 node_name = SubElement(node_object, 'name')
-                node_name.text = classes[new_label[0]]
-                
+                #node_name.text = classes[new_label[0]]
+                node_name.text = 'botella'
                 node_pose = SubElement(node_object, 'pose')
                 node_pose.text = 'Unspecified'
                 
@@ -119,21 +148,22 @@ def xml_transform(root, classes):
                 node_difficult.text = '0'
                 node_bndbox = SubElement(node_object, 'bndbox')
                 node_xmin = SubElement(node_bndbox, 'xmin')
-                node_xmin.text = str(new_label[1])
+                node_xmin.text = str(new_label[0])
                 node_ymin = SubElement(node_bndbox, 'ymin')
-                node_ymin.text = str(new_label[3])
+                node_ymin.text = str(new_label[1])
                 node_xmax = SubElement(node_bndbox, 'xmax')
                 node_xmax.text =  str(new_label[2])
                 node_ymax = SubElement(node_bndbox, 'ymax')
-                node_ymax.text = str(new_label[4])
+                node_ymax.text = str(new_label[3])
                 xml = tostring(node_root, pretty_print=True)  
                 dom = parseString(xml)
-        print(xml)  
+                
+        print(xml)
+        
         f =  open(outpath % img_id, "wb")
         #f = open(os.path.join(outpath, img_id), "w")
         #os.remove(target)
         f.write(xml)
-        f.close()     
-       
+        f.close()        
 
 xml_transform(ROOT, YOLO_CLASSES)

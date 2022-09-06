@@ -10,6 +10,8 @@
             String baseURL = (String) request.getAttribute(FileBaseController.PARAM_BASE_URL);
             String latestPhotoUpload = (String) request.getAttribute(FileUploadController.PARAM_LATESTPHOTO);
             String resultado = (String) request.getAttribute(FileUploadController.PARAM_RESULTADO);
+            String decode_resultado = (String) request.getAttribute(FileUploadController.PARAM_DECODE_RESULTADO);
+            String nombre_modelo = (String) request.getAttribute(FileUploadController.PARAM_NOMBRE_MODELO);
         %>
         <title>Subir Imagen de entrada para probar el modelo</title>
         <!-- BOOTSTRAP STYLES-->
@@ -22,8 +24,11 @@
             <div class="modal-content">
                 <div class="panel panel-primary" style="margin-bottom: 0px;">
                     <div class="panel-heading">
-                        ${modelo.nombreModelo}
-                        ${modelo.descripcion}
+                    <%if (nombre_modelo != null) { %>
+                        <%=nombre_modelo%> 
+                   <% }  else { %>
+                      ${modelo.nombre} ${modelo.descripcion}
+                    <% } %>
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -87,6 +92,11 @@
 							</div>
                          	 <%if (resultado != null && !"".equals(resultado)) {%>
                          	<div class="row">
+                         		<div class="col-md-12">
+                            		<div class="alert alert-success">
+  										<strong>Resultado: </strong> <%=decode_resultado%>
+									</div>
+                        		</div>
                             	<div class="col-md-12">
                             		<div class="alert alert-success">
   										<strong>Salida del modelo: </strong> <%=resultado%>

@@ -58,7 +58,9 @@ public class FileUploadController extends FileBaseController{
 
 	public static final String PARAM_LATESTPHOTO = "LATEST_PHOTO_PARAM";
 	public static final String PARAM_RESULTADO = "RESULTADO";
+	public static final String PARAM_DECODE_RESULTADO = "";
 	public static final String PARAM_ERROR = "ERROR";
+	public static final String PARAM_NOMBRE_MODELO = "MODELO";
 	public static final Integer SALIDA_UNIDIMENSIONAL = (int) 1; 
 	public static final Integer SALIDA_MULTIDIMENSIONAL = (int) 2;
 	public static final Integer CLASIFICACION = (int) 1; 
@@ -97,6 +99,7 @@ public class FileUploadController extends FileBaseController{
     @RequestMapping(value = "uploadImage.do", method = RequestMethod.GET)
     public String uploadPhotoForm(ModelMap model, HttpServletRequest request){
         model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
+        model.addAttribute(PARAM_NOMBRE_MODELO, this.modelManager.getModeloCargado().getNombreModelo()+" - " +this.modelManager.getModeloCargado().getDescripcion());
         return "usarModelo";
     }
      
@@ -136,6 +139,7 @@ public class FileUploadController extends FileBaseController{
         model.addAttribute(PARAM_LATESTPHOTO, latestUploadPhoto);
         model.addAttribute("modelo.nombreModelo", this.modelManager.getModeloCargado().getNombreModelo());
         model.addAttribute("modelo.descripcion", this.modelManager.getModeloCargado().getDescripcion());
+        model.addAttribute(PARAM_NOMBRE_MODELO, this.modelManager.getModeloCargado().getNombreModelo()+" - " +this.modelManager.getModeloCargado().getDescripcion());
         return "usarModelo";
     }  
     
@@ -188,8 +192,8 @@ public class FileUploadController extends FileBaseController{
 		INDArray[] multi_output = null;
 		INDArray output = null;
 		Map<String, INDArray> outputMap;
+        String texto_resultado = "error";
         String resultado = "error";
-      
        
         File dir = new File(rootPath + File.separator + "img");
         if (!dir.exists()) {
@@ -209,19 +213,19 @@ public class FileUploadController extends FileBaseController{
         		logger.info("SALIDA_UNIDIMENSIONAL");
         		output = this.modelManager.getMultilayerNetwork().output(input);
         		logger.info("output "+output.toString());
-        		resultado = utilsCnn.devuelve_categoria(output, categorias);
+        		texto_resultado = utilsCnn.devuelve_categoria(output, categorias);
         	}
         	// SI ES MULTIDIMENSIONAL (USAR COMPUTATIONGRAPH)
         	if (this.modelManager.getModeloCargado().getTipoSalida().intValue() == SALIDA_MULTIDIMENSIONAL) {
         		output = this.modelManager.getComputationGraph().outputSingle(false, input);
         		logger.info("SALIDA_MULTIDIMENSIONAL"+ output.toString());
         		//TODO:
-        		resultado = utilsCnn.decodificarPrediccionesImagenet(output);
-        		logger.info("resultado "+resultado.toString());
+        		texto_resultado = utilsCnn.decodificarPrediccionesImagenet(output, rangoGrosor);
+        		logger.info("resultado "+texto_resultado.toString());
         	}
         	//ANOTAMOS CATEGORIA EN LA IMAGEN
 			logger.info("imagen a anotar: "+ rutaImagenFinal.toString());
-			if (utilsCnn.rotulaImagen(resultado, rutaImagenOriginal, rutaImagenFinal, color))
+			if (utilsCnn.rotulaImagen(texto_resultado, rutaImagenOriginal, rutaImagenFinal, color))
 				latestUploadPhoto = nombre_imagen_anotada;
         }
         
@@ -252,6 +256,7 @@ public class FileUploadController extends FileBaseController{
         
        //url a la imagen 
         model.addAttribute(PARAM_BASE_URL, getBaseURL(request));
+        model.addAttribute(PARAM_NOMBRE_MODELO, this.modelManager.getModeloCargado().getNombreModelo()+" - " +this.modelManager.getModeloCargado().getDescripcion());
         //imagen
         model.addAttribute(PARAM_LATESTPHOTO, latestUploadPhoto);
         //nombre modelo
@@ -259,6 +264,7 @@ public class FileUploadController extends FileBaseController{
         model.addAttribute("modelo.descripcion", this.modelManager.getModeloCargado().getDescripcion());
         //MOSTRAMOS RESULTADO EN EL JSP
         model.addAttribute(PARAM_RESULTADO, resultado);
+        model.addAttribute(PARAM_DECODE_RESULTADO, texto_resultado);
         return "usarModelo";
     }
     

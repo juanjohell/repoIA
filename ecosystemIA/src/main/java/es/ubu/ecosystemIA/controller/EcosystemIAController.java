@@ -150,25 +150,35 @@ public class EcosystemIAController {
         modelo.setTipoSalida(tipoSalida);
         modelo.setPathToModel(pathToModel);
         
+        //Grabar cambios en modelo
         logger.info("Grabar cambios realizados en modelo "+ modelo.getNombreModelo());
         logger.info("Grabar cambios realizados en modelo con ID "+ modelo.getIdModelo().toString());
-        // edicion del modelo
-        this.modelManager.editarModelo(modelo);
-        logger.info("Grabado modelo "+ modelo.getIdModelo().toString());
+        
+        
+        String error = "";
         // Grabar fichero si procede:
         if (modelo.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
         	byte[] ArrBytes = null;
-        	try {
+			try {
 				ArrBytes = ficheroModelo.getBytes();
-				Ficheros fichero = new Ficheros();
-				fichero.setIdModelo(modelo.getIdModelo());
-				fichero.setFichero(ArrBytes);
-				this.ficherosManager.nuevoFichero(fichero);
-				logger.info("Grabado fichero binario para modelo");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				error = e.toString();
+				// se regresa al listado de modelos
+				//pasamos el parámetro now a la pagina jsp
+				return new ModelAndView("error", "mensaje", error);
 			}
+			Ficheros fichero = new Ficheros();
+			fichero.setIdModelo(idModelo);
+			fichero.setFichero(ArrBytes);
+			//this.ficherosManager.nuevoFichero(fichero);
+			this.modelManager.editarModelo(modelo,fichero);
+			logger.info("Grabado fichero binario para modelo");
+        }
+        else {
+        	// edicion del modelo
+            this.modelManager.editarModelo(modelo);
+            logger.info("Grabado modelo "+ modelo.getIdModelo().toString());
         }
         // se regresa al listado de modelos
         Map<String, Object> myModel = new HashMap<>();
@@ -265,8 +275,16 @@ public class EcosystemIAController {
 	public ModelAndView verModelo(@RequestParam String idModelo) {
 		logger.info("Consultando datos del modelo id "+idModelo);
 		ModeloRedConvolucional redconv = this.modelManager.devuelveModelo(Integer.valueOf(idModelo));
+		TipoAlmacenamiento tipoAlmacenamiento = this.tipoAlmacenamientoManager.devuelveTipoAlmacenamiento(redconv.getTipoAlmacenamiento());
+		TipoFichero tipoFichero = this.tipoFicheroManager.devuelveTipoFichero(redconv.getTipoFichero());
+		TipoPrediccion tipoPrediccion = this.tipoPrediccionManager.devuelveTipoPrediccion(redconv.getTipoPrediccion());
+		TipoSalida tipoSalida = this.tipoSalidaManager.devuelveTipoSalida(redconv.getTipoSalida());
 		ModelAndView model = new ModelAndView("verModelo");
 		model.addObject("modelo",redconv);
+		model.addObject("tipoAlmacenamiento", tipoAlmacenamiento);
+		model.addObject("tipoFichero", tipoFichero);
+		model.addObject("tipoPrediccion", tipoPrediccion);
+		model.addObject("tipoSalida", tipoSalida);
 		logger.info("modelo neuronal: "+redconv.getNombreModelo());
 		return model;
 	}

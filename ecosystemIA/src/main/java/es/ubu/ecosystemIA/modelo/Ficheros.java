@@ -26,7 +26,7 @@ public class Ficheros implements Serializable{
 	
 	@Lob
 	@Column(name="fichero")
-	private byte[] fichero;
+	private Lob fichero;
 
 	public int getIdFichero() {
 		return idFichero;
@@ -44,11 +44,11 @@ public class Ficheros implements Serializable{
 		this.idModelo = idModelo;
 	}
 
-	public byte[] getFichero() {
+	public Lob getFichero() {
 		return fichero;
 	}
 
-	public void setFichero(byte[] fichero) {
+	public void setFichero(Lob fichero) {
 		this.fichero = fichero;
 	}
 	

@@ -30,12 +30,11 @@ function mostrar_control() {
 <title>Nuevo modelo</title>
   	<body>
   		<div class="container">
-  			<h1 class="display-3">Añadir nuevo modelo</h1>
   			<div class="row">
- 				<div class ="col-2">
- 					<div>&nbsp;</div>
+ 				<div class ="col">
  				</div>
- 				<div class = "col-8">
+ 				<div class ="col-6">
+  					<h1 class="display-3">Añadir nuevo modelo</h1>
 							<form method="POST" action="${pageContext.request.contextPath}/nuevoModelo.do" enctype="multipart/form-data">
 								<div class="form-row">
 					  				<div class="form-group">
@@ -44,21 +43,15 @@ function mostrar_control() {
 					      					<s:input path="modelo.nombreModelo" class="form-control" name="nombreModelo" id="nombreModelo"/>
 					    				</div>
 					  				</div>
-					  			</div>
-					  			<div class="form-row">
 					  				<div class="form-group">
 					  					<div class="form-group col-md-12">
 					  						<label for="modelo.descripcion">Descripcion.</label>
 					      					<s:textarea path="modelo.descripcion" class="form-control" placeholder="Descripción del modelo" name="descripcion" id="descripcion"/>
 					  					</div>
 					  				</div>
-					  			</div>
-					  			<div class="form-row">
 					    			<div class="form-group col-md-12">
 					    				Características para la capa de entrada del modelo:
-					    			</div>
-					    		</div>
-					  			<div class="form-row">		  				
+					    			</div>	  				
 					  				<div class="form-group" id="datosEntradaModelo">
 					  					<div class="form-group col-md-2">
 					    					<label for="modelo.modelImageHeight">Alto de imagen.</label>
@@ -76,13 +69,9 @@ function mostrar_control() {
 					    					<div>&nbsp;</div>
 					    				</div>
 					    			</div>
-					    		</div>
-					    		<div class="form-row">
 					    			<div class="form-group col-md-12">
 					    				Características para la capa de salida del modelo:
 					    			</div>
-					    		</div>
-					    		<div class="form-row">
 					  				<div class="form-group" id="datosSalidaModelo">
 					    				<div class="form-group col-md-3">
 		    								<div class="input-group mb-3">
@@ -114,13 +103,9 @@ function mostrar_control() {
 					    					<div>&nbsp;</div>
 					    				</div>
 					  				</div>
-					  			</div>
-					  			<div class="form-row">
 					    			<div class="form-group col-md-12">
 					    				Características del fichero del modelo:
 					    			</div>
-					    		</div>
-					  			<div class="form-row">
 					  				<div class="form-group">
 					  					<div class="form-group col-md-3">
 		    								<div class="input-group mb-3">
@@ -161,8 +146,6 @@ function mostrar_control() {
 											</div>
 					    				</div>
 					  				</div>
-					  			</div>
-					  			<div class="form-row">
 					  				<div class="form-group">
 					  					<div class="form-group col-md-12">
 											<button value="Grabar" type="submit" name="grabar"  id="grabar" class="btn btn-primary">Grabar</button>
@@ -171,30 +154,31 @@ function mostrar_control() {
 											</button>
 										</div>
 					    			</div>
-					  			</div>
+					  			
 								<!-- Modal -->
 									<div class="modal fade" id="confirmacionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									  <div class="modal-dialog" role="document">
 									    <div class="modal-content">
 									      <div class="modal-header">
-									        <h5 class="modal-title" id="exampleModalLabel">Se perderán los datos introducidos. ¿Salir a modelos?</h5>
+									        <h5 class="modal-title" id="exampleModalLabel">ATENCIÓN.</h5>
 									        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									          <span aria-hidden="true">&times;</span>
 									        </button>
 									      </div>
 									      <div class="modal-body">
+									      <h4 class="modal-title" id="exampleModalLabel">Se perderán los datos introducidos. ¿Salir a modelos?</h4>
 									      </div>
 									      <div class="modal-footer">
-									        <button value="Grabar" type="submit" name="grabar" id="Cancelar" class="btn btn-primary">Si</button>
+									        <button value="Cancelar" type="submit" name="cancelar" id="cancelar" class="btn btn-primary">Si</button>
 									      </div>
 									    </div>
 									  </div>
 									</div>
 								<!-- fin ventana modal -->
+								</div>
 							</form>
 						</div>
-				<div class="col-2">
-					<div>&nbsp;</div>
+				<div class="col">
 				</div>
 			</div>
 		</div>

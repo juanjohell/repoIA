@@ -43,7 +43,9 @@ public class JPAFicherosRnDao implements FicherosRnDao {
 	@Transactional
 	 @SuppressWarnings("unchecked")
 	public void nuevoFichero(Ficheros fichero) {
-		em.merge(fichero);
+		em.joinTransaction();
+		if (em.isJoinedToTransaction())
+			em.persist(fichero);
 	}
 	
 	@Transactional
@@ -51,7 +53,9 @@ public class JPAFicherosRnDao implements FicherosRnDao {
 	public void editarFichero(Ficheros fichero) {
 		// TODO Auto-generated method stub
 		logger.info("DAO: editar fichero de modelo.");
-		em.merge(fichero);
+		em.joinTransaction();
+		if (em.isJoinedToTransaction())
+			em.merge(fichero);
 	}
 	@Transactional
 	public void borrarFichero(Ficheros fichero) {
