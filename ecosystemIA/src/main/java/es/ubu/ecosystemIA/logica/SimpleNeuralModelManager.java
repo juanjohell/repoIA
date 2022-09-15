@@ -6,6 +6,7 @@ import es.ubu.ecosystemIA.modelo.ModeloRedConvolucional;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -13,12 +14,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.persistence.Lob;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.logging.Log;
@@ -86,12 +90,6 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 		//model.setNombreModelo(modelo.getNombreModelo());
 		//model.setDescripcion(modelo.getDescripcion());
 		this.modeloDao.editarModelo(modelo);
-	}
-	@Transactional
-	@Override
-	public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero) {
-		logger.info("ModeloDAO: update de "+modelo.getIdModelo()+" y fichero");
-		this.modeloDao.editarModelo(modelo, fichero);
 	}
 	
 	@Transactional
@@ -182,15 +180,22 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
     	URL url=null;
     	InputStream is=null;
     	URLConnection connection=null;
-    	InputStream isFichero = null;
+    	Blob blobFichero = null;
     	Ficheros fichero = new Ficheros();
+    	InputStream isFichero = null;
     	
     	logger.info("tipo_almacenamiento :" + model.getTipoAlmacenamiento().toString());
     	// ALMACENADO EN BASE DE DATOS:
     	if (model.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
     		logger.info("BASE DE DATOS");
     		fichero = managerFicheros.devuelveFichero(model.getIdModelo());
-    		isFichero = new ByteArrayInputStream(fichero.getFichero());
+    		blobFichero = fichero.getFichero();
+    		try {
+				isFichero = blobFichero.getBinaryStream();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
     		try {
 				mlModel = KerasModelImport.importKerasSequentialModelAndWeights(isFichero);
 			} catch (IOException e) {
@@ -222,20 +227,18 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
     	}
 		//ALMACENAMIENTO EN FICHERO REMOTO (URL GITHUB)
 		if (model.getTipoAlmacenamiento() == ALMACENAM_URL) {
+			logger.info("FICHERO REMOTO");
 			try {
 				url = new URL(model.getPathToModel());
 				try {
-					connection = url.openConnection();
+					isFichero = new BufferedInputStream(url.openStream());
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				try {
-					isFichero = connection.getInputStream();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				logger.info("abierta conexion");
+				logger.info("leido contenido remoto");
 				try {
 					mlModel = KerasModelImport.importKerasSequentialModelAndWeights(isFichero);
 				} catch (IOException e) {
@@ -248,6 +251,7 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				logger.info("cargado modelo");
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -270,7 +274,12 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
        	// ALMACENADO EN BASE DE DATOS:
        	if (model.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
        		fichero = managerFicheros.devuelveFichero(model.getIdModelo());
-       		isFichero = new ByteArrayInputStream(fichero.getFichero());
+       		try {
+				isFichero = fichero.getFichero().getBinaryStream();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
        		try {
    				cgModel = KerasModelImport.importKerasModelAndWeights(isFichero);
    			} catch (IOException e) {
@@ -342,7 +351,12 @@ public class SimpleNeuralModelManager implements NeuralNetworkManager{
           	// ALMACENADO EN BASE DE DATOS:
           	if (model.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
           		fichero = managerFicheros.devuelveFichero(model.getIdModelo());
-          		isFichero = new ByteArrayInputStream(fichero.getFichero());
+          		try {
+					isFichero = fichero.getFichero().getBinaryStream();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
           		sdModel = SameDiff.importFrozenTF(isFichero);
           	}
           	

@@ -1,39 +1,42 @@
 package es.ubu.ecosystemIA.modelo;
 
 import java.io.Serializable;
+import java.sql.Blob;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name="ficheros")
 public class Ficheros implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
-	
+		
 	@Id
-	@Column(name="idFichero")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idFichero;
-	
-	@Column(name="idModelo")
+    @Column(name = "idModelo")
 	private int idModelo;
 	
 	@Lob
 	@Column(name="fichero")
-	private Lob fichero;
+	private Blob fichero;
 
-	public int getIdFichero() {
-		return idFichero;
+
+	public Blob getFichero() {
+		return fichero;
 	}
 
-	public void setIdFichero(int idFichero) {
-		this.idFichero = idFichero;
+	public void setFichero(Blob fichero) {
+		this.fichero = fichero;
 	}
 
 	public int getIdModelo() {
@@ -42,14 +45,6 @@ public class Ficheros implements Serializable{
 
 	public void setIdModelo(int idModelo) {
 		this.idModelo = idModelo;
-	}
-
-	public Lob getFichero() {
-		return fichero;
-	}
-
-	public void setFichero(Lob fichero) {
-		this.fichero = fichero;
 	}
 	
 }

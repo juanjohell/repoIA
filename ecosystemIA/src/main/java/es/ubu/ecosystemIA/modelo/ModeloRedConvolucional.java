@@ -3,12 +3,17 @@ package es.ubu.ecosystemIA.modelo;
 // BEAN DE LA ENTIDAD
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -62,6 +67,9 @@ public class ModeloRedConvolucional implements Serializable{
 	@Column(name="TIPO_PREDICCION")
 	private Integer tipoPrediccion;
 	
+	@OneToOne(cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_MODELO", referencedColumnName = "idModelo")
+    private Ficheros fichero;
 	
 	public Integer getIdModelo() {
 		return idModelo;
@@ -142,6 +150,14 @@ public class ModeloRedConvolucional implements Serializable{
 
 	public void setTipoPrediccion(Integer tipoPrediccion) {
 		this.tipoPrediccion = tipoPrediccion;
+	}
+	
+	public Ficheros getFichero() {
+		return fichero;
+	}
+
+	public void setFichero(Ficheros fichero) {
+		this.fichero = fichero;
 	}
 
 	public String toString() {

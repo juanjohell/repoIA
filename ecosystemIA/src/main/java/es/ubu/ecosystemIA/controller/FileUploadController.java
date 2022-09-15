@@ -188,7 +188,7 @@ public class FileUploadController extends FileBaseController{
 		
 		// TODO: Tratamiento segun tipo de modelo, categorias o clasificacion 
 		
-		// PRESENTAMOS IAMGEN AL MODELO Y RECOGEMOS RESPUESTA
+		// PRESENTAMOS IMAGEN AL MODELO Y RECOGEMOS RESPUESTA
 		INDArray[] multi_output = null;
 		INDArray output = null;
 		Map<String, INDArray> outputMap;

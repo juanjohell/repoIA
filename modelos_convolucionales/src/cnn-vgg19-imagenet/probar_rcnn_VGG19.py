@@ -17,7 +17,7 @@ import tensorflow as tf
 image_height = 342
 image_width = 342
 
-imagen_prueba = "persona"
+imagen_prueba = "bicicleta"
 extension = "jpg"
 img_dir = '../../datasets/pruebas/'   # directorios con las imagenes
 
@@ -50,11 +50,12 @@ processed_image = tf.keras.applications.vgg19.preprocess_input(image_batch.copy(
 # make bounding box predictions on the input image
 
 predictions = model.predict(processed_image)
-
+print(predictions)
 
 prediccion = tf.keras.applications.imagenet_utils.decode_predictions(
     predictions, top=5)
 
+print(prediccion)
 
 for prediction_id in range(len(prediccion[0])):
     print(prediccion[0][prediction_id])

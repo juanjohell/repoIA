@@ -41,13 +41,11 @@ xml_val_dir = "../../datasets/uav-bd/val/labels/"
 # initialize our initial learning rate, number of epochs to train
 # for, and the batch size
 
-<<<<<<< Upstream, based on branch 'master' of https://github.com/juanjohell/repoIA.git
 NUM_EPOCHS = 100
 BATCH_SIZE = 10
-=======
+
 NUM_EPOCHS = 10
 BATCH_SIZE = 100
->>>>>>> 28c4567 fuentes python-keras (sobre TensorFlow) para la generacion del modelo rcnn-vgg16
 
 extension=".jpg"
 

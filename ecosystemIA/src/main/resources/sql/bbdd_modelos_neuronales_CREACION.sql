@@ -61,12 +61,9 @@ CREATE TABLE IF NOT EXISTS `elementos_config` (
 -- Volcando estructura para tabla bbdd_modelos_neuronales.ficheros
 DROP TABLE IF EXISTS `ficheros`;
 CREATE TABLE IF NOT EXISTS `ficheros` (
-  `idFichero` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `idModelo` int(10) unsigned NOT NULL DEFAULT 0,
   `fichero` longblob NOT NULL,
-  PRIMARY KEY (`idFichero`),
-  KEY `FK_FICHERO_MODELOS` (`idModelo`),
-  CONSTRAINT `FK_FICHERO_MODELOS` FOREIGN KEY (`idModelo`) REFERENCES `modelos` (`ID_MODELO`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`idModelo`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='almacena ficheros binarios de gran tamaño, correspondientes a ficheros de almacenamiento de modelos neuroanales en diferentes formatos estándar como H5, pb, onnx, etc...';
 
 -- La exportación de datos fue deseleccionada.
@@ -95,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `modelos` (
   CONSTRAINT `FK2_TIPO_FICHERO` FOREIGN KEY (`TIPO_FICHERO`) REFERENCES `tipos_fichero` (`idTipoFichero`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK3_TIPO_SALIDA` FOREIGN KEY (`TIPO_SALIDA`) REFERENCES `tipo_salida` (`idTiposalida`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK4_TIPO_PREDICCION` FOREIGN KEY (`TIPO_PREDICCION`) REFERENCES `tipo_prediccion` (`idTipoPrediccion`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
 
 -- La exportación de datos fue deseleccionada.
 

@@ -35,7 +35,7 @@ function mostrar_control() {
  				</div>
  				<div class ="col-6">
   					<h1 class="display-3">Añadir nuevo modelo</h1>
-							<form method="POST" action="${pageContext.request.contextPath}/nuevoModelo.do" enctype="multipart/form-data">
+							<form method="POST" action="${pageContext.request.contextPath}/nuevoModelo.do" enctype="multipart/form-data" class ="card p-3 bg-light">
 								<div class="form-row">
 					  				<div class="form-group">
 					   				 	<div class="form-group col-md-12">

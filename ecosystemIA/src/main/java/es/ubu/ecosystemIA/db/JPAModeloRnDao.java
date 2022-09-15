@@ -62,12 +62,6 @@ public class JPAModeloRnDao implements ModeloRnDao {
 		em.merge(modelo);
 	}
 	
-	@Transactional(timeout = 60)
-	@SuppressWarnings("unchecked")
-	public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero) {
-			em.merge(modelo);
-	}
-	
 	
 	@Transactional
 	public void borrarModelo(ModeloRedConvolucional modelo) {

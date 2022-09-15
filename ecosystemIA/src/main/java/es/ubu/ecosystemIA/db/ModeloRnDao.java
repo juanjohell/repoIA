@@ -16,7 +16,6 @@ public interface ModeloRnDao {
 	public ModeloRedConvolucional getModelo(Integer idModelo);
     public void nuevoModelo(ModeloRedConvolucional modelo);
     public void editarModelo(ModeloRedConvolucional modelo);
-    public void editarModelo(ModeloRedConvolucional modelo, Ficheros fichero);
     public void borrarModelo(ModeloRedConvolucional modelo);
-    
+
 }

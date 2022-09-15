@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `categorias` (
   CONSTRAINT `FK_MODELOS` FOREIGN KEY (`ID_MODELO`) REFERENCES `modelos` (`ID_MODELO`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1 COMMENT='categorias de clasificación de imágenes de los diferentes modelos de redes neuronales';
 
--- Volcando datos para la tabla bbdd_modelos_neuronales.categorias: ~11 rows (aproximadamente)
+-- Volcando datos para la tabla bbdd_modelos_neuronales.categorias: ~9 rows (aproximadamente)
 DELETE FROM `categorias`;
 /*!40000 ALTER TABLE `categorias` DISABLE KEYS */;
 INSERT INTO `categorias` (`ID_ITEM`, `ID_MODELO`, `ID_ORDEN`, `NOMBRE_CATEGORIA`) VALUES
@@ -42,10 +42,7 @@ INSERT INTO `categorias` (`ID_ITEM`, `ID_MODELO`, `ID_ORDEN`, `NOMBRE_CATEGORIA`
 	(6, 1, 6, 'Perro'),
 	(7, 1, 7, 'Rana'),
 	(8, 1, 8, 'Caballo'),
-	(10, 1, 10, 'Camión'),
-	(11, 12, 1, 'Persona'),
-	(13, 12, 2, 'Bicicleta'),
-	(14, 12, 3, 'Coche');
+	(10, 1, 10, 'Camión');
 /*!40000 ALTER TABLE `categorias` ENABLE KEYS */;
 
 -- Volcando estructura para tabla bbdd_modelos_neuronales.config_modelo
@@ -86,12 +83,9 @@ INSERT INTO `elementos_config` (`idElemento`, `nombreElemento`) VALUES
 -- Volcando estructura para tabla bbdd_modelos_neuronales.ficheros
 DROP TABLE IF EXISTS `ficheros`;
 CREATE TABLE IF NOT EXISTS `ficheros` (
-  `idFichero` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `idModelo` int(10) unsigned NOT NULL DEFAULT 0,
   `fichero` longblob NOT NULL,
-  PRIMARY KEY (`idFichero`),
-  KEY `FK_FICHERO_MODELOS` (`idModelo`),
-  CONSTRAINT `FK_FICHERO_MODELOS` FOREIGN KEY (`idModelo`) REFERENCES `modelos` (`ID_MODELO`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`idModelo`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='almacena ficheros binarios de gran tamaño, correspondientes a ficheros de almacenamiento de modelos neuroanales en diferentes formatos estándar como H5, pb, onnx, etc...';
 
 -- Volcando datos para la tabla bbdd_modelos_neuronales.ficheros: ~0 rows (aproximadamente)
@@ -123,18 +117,16 @@ CREATE TABLE IF NOT EXISTS `modelos` (
   CONSTRAINT `FK2_TIPO_FICHERO` FOREIGN KEY (`TIPO_FICHERO`) REFERENCES `tipos_fichero` (`idTipoFichero`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK3_TIPO_SALIDA` FOREIGN KEY (`TIPO_SALIDA`) REFERENCES `tipo_salida` (`idTiposalida`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK4_TIPO_PREDICCION` FOREIGN KEY (`TIPO_PREDICCION`) REFERENCES `tipo_prediccion` (`idTipoPrediccion`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
 
 -- Volcando datos para la tabla bbdd_modelos_neuronales.modelos: ~5 rows (aproximadamente)
 DELETE FROM `modelos`;
 /*!40000 ALTER TABLE `modelos` DISABLE KEYS */;
 INSERT INTO `modelos` (`ID_MODELO`, `NOMBRE`, `DESCRIPCION`, `INPUT_HEIGHT`, `INPUT_WIDTH`, `INPUT_CHANNELS`, `FORMATO_MATRIZ_IMG`, `PATH_FICHERO`, `TIPO_ALMACENAMIENTO`, `TIPO_FICHERO`, `TIPO_PREDICCION`, `TIPO_SALIDA`) VALUES
-	(1, 'Cifar10', 'modelo de clasificación de imágenes entrenado con DATASET Cifar10, 100 Epochs', 32, 32, 3, NULL, 'modelos\\\\modelo_sencillo_cifar10_100epochs.h5', 2, 1, 1, 1),
-	(2, 'r-cnn_vgg16 entrenado con UAV-DB', 'modelo de reconocimiento de objetos en imágenes, basado en el modelo preentrenado VGG16', 224, 224, 3, NULL, 'modelos\\\\rcnn_VGG16_reconocimiento_botellas.h5', 2, 1, 2, 2),
-	(12, 'yolov5s', 'modelo YOLO 5 con uav-bd', 320, 320, 3, NULL, 'modelos\\\\yolov5s-last.h5', 2, 1, 2, 2),
+	(1, 'modelo secuencial sencillo Cifar10', 'modelo de clasificación de imágenes entrenado con DATASET Cifar10, 100 Epochs', 32, 32, 3, NULL, 'modelos\\\\modelo_sencillo_cifar10_100epochs.h5', 2, 1, 1, 1),
+	(2, 'r-cnn_vgg16 entrenado con UAV-DB', 'modelo de reconocimiento de objetos en imágenes, basado en el modelo preentrenado VGG16', 224, 224, 3, NULL, 'modelos\\\\r-cnn-vgg16-detector-residuos.h5', 2, 1, 2, 2),
 	(14, 'VGG19 Imagenet', 'VGG19 modelo de clasificación de imágenes entrenado con el dataset ImageNet', 224, 224, 3, NULL, 'modelos\\\\model_imagenet_vgg19.h5', 2, 1, 1, 2),
-	(15, 'r-cnn-vgg16 revisado', 'reconocimiento solo 10', 224, 224, 3, NULL, 'modelos\\\\detector.h5', 2, 1, 2, 2),
-	(21, 'Cifar10 remoto 100 epochs', 'Cifar 10 modelo en Git', 32, 32, 3, NULL, 'https://github.com/juanjohell/repoIA/blob/a6d07f8c6d71805d1d9776fe16d84aeb3179e53e/modelos_convolucionales/modelos_entrenados/cifar10_entrenado_10epochs.h5', 3, 1, 1, 1);
+	(21, 'Cifar10 remoto 100 epochs', 'Cifar 10 modelo en Git', 32, 32, 3, NULL, 'https://github.com/juanjohell/repoIA/blob/0adc5591f599b3988feb74d8d8c8bba441d8d942/modelos_convolucionales/modelos_entrenados/cifar10_entrenado_10epochs.h5', 1, 1, 1, 1);
 /*!40000 ALTER TABLE `modelos` ENABLE KEYS */;
 
 -- Volcando estructura para tabla bbdd_modelos_neuronales.tipos_almacenamiento

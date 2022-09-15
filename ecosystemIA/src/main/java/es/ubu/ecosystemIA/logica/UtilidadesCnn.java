@@ -256,8 +256,8 @@ public class UtilidadesCnn {
 	            	//graph.fill(new Rectangle(xmin, ymin, width, height));
 	            	//bordes del rectángulo:
 	            	graph.setStroke(new BasicStroke((float) rangoGrosor));
-	            	graph.drawRect(xmin, ymin, width, height);
 	            	
+	            	graph.drawRect(xmin, ymax, width, height);
 	            	graph.dispose();
             	}
             

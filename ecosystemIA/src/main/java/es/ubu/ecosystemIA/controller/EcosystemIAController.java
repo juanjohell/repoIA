@@ -1,18 +1,22 @@
 package es.ubu.ecosystemIA.controller;
 
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Lob;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
 import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
@@ -158,28 +162,35 @@ public class EcosystemIAController {
         String error = "";
         // Grabar fichero si procede:
         if (modelo.getTipoAlmacenamiento() == ALMACENAM_BASE_DATOS) {
-        	byte[] ArrBytes = null;
+        	Blob ArrBytes = null;
+        	byte[] contents = null;
+        	Blob blob = null;
 			try {
-				ArrBytes = ficheroModelo.getBytes();
-			} catch (IOException e) {
+				contents = ficheroModelo.getBytes();
+			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				error = e.toString();
-				// se regresa al listado de modelos
-				//pasamos el parámetro now a la pagina jsp
-				return new ModelAndView("error", "mensaje", error);
+				e1.printStackTrace();
 			}
+        	
+			try {
+				blob = new SerialBlob(contents);
+			} catch (SerialException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        
 			Ficheros fichero = new Ficheros();
-			fichero.setIdModelo(idModelo);
-			fichero.setFichero(ArrBytes);
-			//this.ficherosManager.nuevoFichero(fichero);
-			this.modelManager.editarModelo(modelo,fichero);
-			logger.info("Grabado fichero binario para modelo");
+			fichero.setFichero(blob);
+			modelo.setFichero(fichero);
         }
-        else {
-        	// edicion del modelo
-            this.modelManager.editarModelo(modelo);
-            logger.info("Grabado modelo "+ modelo.getIdModelo().toString());
-        }
+        
+        // edicion del modelo
+        this.modelManager.editarModelo(modelo);
+        logger.info("Grabado modelo "+ modelo.getIdModelo().toString());
+        
         // se regresa al listado de modelos
         Map<String, Object> myModel = new HashMap<>();
         myModel.put("listadoModelos", this.modelManager.getModelos());
