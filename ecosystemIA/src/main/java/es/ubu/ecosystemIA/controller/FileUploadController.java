@@ -192,8 +192,8 @@ public class FileUploadController extends FileBaseController{
 		INDArray[] multi_output = null;
 		INDArray output = null;
 		Map<String, INDArray> outputMap;
-        String texto_resultado = "error";
-        String resultado = "error";
+        String texto_resultado = " - ";
+        String resultado = " - ";
        
         File dir = new File(rootPath + File.separator + "img");
         if (!dir.exists()) {

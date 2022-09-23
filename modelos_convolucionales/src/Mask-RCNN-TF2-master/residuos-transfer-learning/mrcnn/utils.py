@@ -17,6 +17,7 @@ import tensorflow as tf
 import scipy
 import skimage.color
 import skimage.io
+
 import skimage.transform
 import urllib.request
 import shutil

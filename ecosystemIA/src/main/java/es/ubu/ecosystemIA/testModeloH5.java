@@ -1,9 +1,15 @@
 package es.ubu.ecosystemIA;
 
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 
+import javax.imageio.ImageIO;
+
+import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,26 +38,36 @@ public class testModeloH5 {
 		
 		//Importamos el modelo de red convolucional
 		URL resource = testModeloH5.class.getClassLoader().getResource("modelos\\modelo_sencillo_cifar10_100epochs.h5");
-		String ruta = Paths.get(resource.toURI()).toString();
-		ModeloRedConvolucional modeloCnn = new ModeloRedConvolucional();
-	    
+		String ruta_modelo = Paths.get(resource.toURI()).toString();
+		
+	    ModeloRedConvolucional modelo = new ModeloRedConvolucional();
+	    modelo.setModelImageHeight(IMAGE_MODEL_HEIGHT);
+	    modelo.setModelImageWidth(IMAGE_MODEL_WIDTH);
+	    modelo.setImageChannels(IMAGE_CHANNELS);
 		//leemos imagen
 		Imagen imagen = null;
 		resource = testModeloH5.class.getClassLoader().getResource("datos\\coche.jpg");
-		ruta = Paths.get(resource.toURI()).toString();
+		String ruta = Paths.get(resource.toURI()).toString();
 		imagen = new Imagen(ruta, IMAGE_MODEL_WIDTH, IMAGE_MODEL_HEIGHT, IMAGE_CHANNELS);
+		try {
+			BufferedImage img = ImageIO.read(new File(ruta));
+			imagen.setImg(img);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//resize
 		imagen.setImg(utils.resizeImage(imagen.getImg(), IMAGE_MODEL_WIDTH, IMAGE_MODEL_HEIGHT));
 		
 			try {
-				multilayerNetwork = managerModelos.cargaModeloH5(modeloCnn);
+				multilayerNetwork = KerasModelImport.importKerasSequentialModelAndWeights(ruta_modelo);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		 
 		// matriz de entrada al modelo
-		INDArray input = utils.devuelve_matriz_de_imagen_normalizada(imagen, modeloCnn,false);
+		INDArray input = utils.devuelve_matriz_de_imagen_normalizada(imagen, modelo,false);
 		// recogemos salida del modelo
         INDArray output = multilayerNetwork.output(input);
         System.out.println("Test " + output);

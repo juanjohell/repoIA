@@ -5,32 +5,34 @@ from numpy import zeros, asarray
 import mrcnn.utils
 import mrcnn.config
 import mrcnn.model
-
-class KangarooDataset(mrcnn.utils.Dataset):
+#numero de imagenes que conformaran el dataset de entrenamiento (80%)
+NUM_IMAGES_TRAIN = 1096
+class ResiduosDataset(mrcnn.utils.Dataset):
 
     def load_dataset(self, dataset_dir, is_train=True):
         # Adds information (image ID, image path, and annotation file path) about each image in a dictionary.
         self.add_class("dataset", 1, "botella")
-
         images_dir = dataset_dir + '/images/'
         annotations_dir = dataset_dir + '/annots/'
-        ficheros = 0
+        num_ficheros = 0
         for filename in os.listdir(images_dir):
-            image_id = filename
-            print(image_id)
+            num_ficheros = num_ficheros + 1
+            imagen_nombre = filename.split(".")[0]
 
-            if is_train and int(ficheros) >= 3250:  #el 80% de imagenes del dataset
+
+            if is_train and int(num_ficheros) >= NUM_IMAGES_TRAIN :  #el 80% de imagenes del dataset
                 continue
 
-            if not is_train and int(ficheros) < 3250:
+            if not is_train and int(num_ficheros) < NUM_IMAGES_TRAIN :
                 continue
-            
-            ficheros = ficheros + 1
+
             img_path = images_dir + filename
-            ann_path = annotations_dir + image_id + '.xml'
+            ann_path = annotations_dir + imagen_nombre + '.xml'
 
-            self.add_image('dataset', image_id=image_id, path=img_path, annotation=ann_path)
-
+            self.add_image('dataset', image_id=imagen_nombre, path=img_path, annotation=ann_path)
+            
+            
+            
     # Loads the binary masks for an image.
     def load_mask(self, image_id):
         info = self.image_info[image_id]
@@ -68,21 +70,21 @@ class KangarooDataset(mrcnn.utils.Dataset):
 
 class ResiduosConfig(mrcnn.config.Config):
     NAME = "residuos_cfg"
-
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
     
     NUM_CLASSES = 2
-
-    STEPS_PER_EPOCH = 131
+    #ATENCION STEPS_PER_EPOCH DEBE COINCIDIR CON LA DIVISION QUE SE HACE ENTRE TRAIN Y VAL
+    #MAS ARRIBA
+    STEPS_PER_EPOCH = NUM_IMAGES_TRAIN -1
 
 # Train
-train_dataset = KangarooDataset()
+train_dataset = ResiduosDataset()
 train_dataset.load_dataset(dataset_dir='residuos', is_train=True)
 train_dataset.prepare()
 
 # Validation
-validation_dataset = KangarooDataset()
+validation_dataset = ResiduosDataset()
 validation_dataset.load_dataset(dataset_dir='residuos', is_train=False)
 validation_dataset.prepare()
 
@@ -101,8 +103,10 @@ model.load_weights(filepath='mask_rcnn_coco.h5',
 model.train(train_dataset=train_dataset, 
             val_dataset=validation_dataset, 
             learning_rate=residuos_config.LEARNING_RATE, 
-            epochs=1, 
+            epochs=5, 
             layers='heads')
 
+model_w_path = 'Residuos_weights_mask_rcnn_trained.h5'
 model_path = 'Residuos_mask_rcnn_trained.h5'
-model.keras_model.save_weights(model_path)
+model.keras_model.save_weights(model_w_path)
+#model.keras_model.save(model_path)

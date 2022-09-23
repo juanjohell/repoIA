@@ -119,14 +119,14 @@ CREATE TABLE IF NOT EXISTS `modelos` (
   CONSTRAINT `FK4_TIPO_PREDICCION` FOREIGN KEY (`TIPO_PREDICCION`) REFERENCES `tipo_prediccion` (`idTipoPrediccion`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='almacena modelos de redes neuronales, sus características y ficheros asociados';
 
--- Volcando datos para la tabla bbdd_modelos_neuronales.modelos: ~5 rows (aproximadamente)
+-- Volcando datos para la tabla bbdd_modelos_neuronales.modelos: ~4 rows (aproximadamente)
 DELETE FROM `modelos`;
 /*!40000 ALTER TABLE `modelos` DISABLE KEYS */;
 INSERT INTO `modelos` (`ID_MODELO`, `NOMBRE`, `DESCRIPCION`, `INPUT_HEIGHT`, `INPUT_WIDTH`, `INPUT_CHANNELS`, `FORMATO_MATRIZ_IMG`, `PATH_FICHERO`, `TIPO_ALMACENAMIENTO`, `TIPO_FICHERO`, `TIPO_PREDICCION`, `TIPO_SALIDA`) VALUES
 	(1, 'modelo secuencial sencillo Cifar10', 'modelo de clasificación de imágenes entrenado con DATASET Cifar10, 100 Epochs', 32, 32, 3, NULL, 'modelos\\\\modelo_sencillo_cifar10_100epochs.h5', 2, 1, 1, 1),
-	(2, 'r-cnn_vgg16 entrenado con UAV-DB', 'modelo de reconocimiento de objetos en imágenes, basado en el modelo preentrenado VGG16', 224, 224, 3, NULL, 'modelos\\\\r-cnn-vgg16-detector-residuos.h5', 2, 1, 2, 2),
+	(2, 'r-cnn-vgg16-detector-residuos', 'modelo de reconocimiento de residuos en imágenes, basado en el modelo preentrenado VGG16', 224, 224, 3, NULL, 'modelos\\\\r-cnn-vgg16-detector-residuos.h5', 2, 1, 2, 2),
 	(14, 'VGG19 Imagenet', 'VGG19 modelo de clasificación de imágenes entrenado con el dataset ImageNet', 224, 224, 3, NULL, 'modelos\\\\model_imagenet_vgg19.h5', 2, 1, 1, 2),
-	(21, 'Cifar10 remoto 100 epochs', 'Cifar 10 modelo en Git', 32, 32, 3, NULL, 'https://github.com/juanjohell/repoIA/blob/0adc5591f599b3988feb74d8d8c8bba441d8d942/modelos_convolucionales/modelos_entrenados/cifar10_entrenado_10epochs.h5', 1, 1, 1, 1);
+	(23, 'modelo_fast_rcnn_detector_residuos', 'reconocimiento de residuos basado en fast-rcnn', 224, 224, 3, NULL, 'modelos\\\\modelo_fast_rcnn_detector_residuos.h5', 2, 1, 2, 2);
 /*!40000 ALTER TABLE `modelos` ENABLE KEYS */;
 
 -- Volcando estructura para tabla bbdd_modelos_neuronales.tipos_almacenamiento
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `tipos_almacenamiento` (
   PRIMARY KEY (`idTipoAlmacenamiento`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tipos de almacenamiento que pueden usarse para grabar los ficheros de los modelos neuronales. En base de datos, en sistema de ficheros del servidor, en google drive...';
 
--- Volcando datos para la tabla bbdd_modelos_neuronales.tipos_almacenamiento: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla bbdd_modelos_neuronales.tipos_almacenamiento: ~3 rows (aproximadamente)
 DELETE FROM `tipos_almacenamiento`;
 /*!40000 ALTER TABLE `tipos_almacenamiento` DISABLE KEYS */;
 INSERT INTO `tipos_almacenamiento` (`idTipoAlmacenamiento`, `nombre`) VALUES
