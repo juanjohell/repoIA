@@ -23,7 +23,7 @@ image_width = 224
 
 imagen_prueba = "1_Sand_000020_71_1"
 imagen_prueba = "1_Sand_000011_52_1"
-imagen_prueba = "1_Sand_000001_78_2"
+#imagen_prueba = "1_Sand_000001_78_2"
 extension = "jpg"
 sep="."
 img_dir = '../../datasets/uav-bd/val/images/'   # directorios con las imagenes

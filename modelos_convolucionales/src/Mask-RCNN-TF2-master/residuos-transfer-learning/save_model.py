@@ -9,6 +9,7 @@ import mrcnn.config
 import mrcnn.model
 import mrcnn.visualize
 import os
+import keras
 from tensorflow.keras.models import model_from_json
 
 # load the class label names from disk, one label per line
@@ -42,9 +43,9 @@ model.load_weights(filepath="Residuos_weights_mask_rcnn_trained.h5",
 model_json = model.to_json()
 with open("Residuos_mask_rcnn_trained.json", "w") as json_file:
     json_file.write(model_json)
+    
+keras.models.save_model(model.keras_model,"Residuos_mask_rcnn_trained.h5")
 
-modelo = model_from_json("Residuos_mask_rcnn_trained.json")
-modelo.load_weights("Residuos_weights_mask_rcnn_trained.h5")
-modelo.save("Residuos_mask_rcnn_trained.h5")
+#modelo.save("Residuos_mask_rcnn_trained.h5")
 
 

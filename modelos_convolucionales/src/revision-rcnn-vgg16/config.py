@@ -9,6 +9,8 @@ Created on Sat Aug 27 18:17:38 2022
 
 @author: jjhb01
 """
+NOMBRE_MODELO = "rcnn_VGG16_reconocimiento_botellas.h5"
+NOMBRE_MODELO = "r-cnn-vgg16-detector-residuos.h5"
 
 # import the necessary packages
 import os
@@ -25,7 +27,8 @@ ANNOTS_PATH_VAL = os.path.sep.join([BASE_PATH, "etiquetas_val_botellas_r-cnn-vgg
 # directorio para las salidas
 BASE_OUTPUT = "output"
 # nombre de elementos a generar en la salida
-MODEL_PATH = os.path.sep.join([BASE_OUTPUT, "detector_residuos.h5"])
+MODEL_PATH = os.path.sep.join([BASE_OUTPUT, NOMBRE_MODELO])
+
 PLOT_PATH = os.path.sep.join([BASE_OUTPUT, "plot.png"])
 TEST_FILENAMES = os.path.sep.join([BASE_OUTPUT, "test_images.txt"])
 
