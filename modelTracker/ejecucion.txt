@@ -1,0 +1,3 @@
+cd C:\personal\estudios\grado\UNIR\Grado\TFG\Proyecto
+set FLASK_APP=app.py
+python -m flask run
