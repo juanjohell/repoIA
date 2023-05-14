@@ -5,7 +5,7 @@ Created on Thu May 11 13:32:34 2023
 @author: jjhb01
 """
 
-crear_tabla_modelos = '''CREATE TABLE "Modelo" (
+crear_tabla_modelos = '''CREATE TABLE "Modelos" (
     "id_modelo" INTEGER NOT NULL UNIQUE,
     "id_uso" INTEGER NOT NULL,
     "id_optimizer"	INTEGER NOT NULL,
@@ -16,7 +16,7 @@ crear_tabla_modelos = '''CREATE TABLE "Modelo" (
 	"input_shape"	TEXT,
 	PRIMARY KEY("id_modelo"),
 	FOREIGN KEY("id_optimizer") REFERENCES "Optimizer"("id_optimizer"),
-    FOREIGN KEY("id_uso") REFERENCES "Usos"("id_uso"),
+    FOREIGN KEY("id_uso") REFERENCES "Usos"("id_uso")
 );'''
 
 crear_tabla_optimizer = '''CREATE TABLE "Optimizer" (

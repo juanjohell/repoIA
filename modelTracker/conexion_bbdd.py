@@ -4,12 +4,12 @@ Created on Thu May 11 13:22:12 2023
 
 @author: jjhb01
 """
-from application.app.sql.modelo_bbdd import *
+from sql.modelo_bbdd import *
 import sqlite3
 from sqlite3 import Error
 import sys
 
-path = f'{sys.path[0]}/gestion_modelos.sqlite'
+path = f'{sys.path[0]}/bbdd/gestion_modelos.sqlite'
 
 def create_connection(path):
     connection = None
