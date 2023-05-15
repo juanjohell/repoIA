@@ -39,3 +39,16 @@ def extrae_info_de_modelo(nombre_fichero):
                           'amsgrad': amsgrad, 'lc_config': layer_config}
 
     return params
+
+# CARGA_MODELO: carga en memoria (model_load) uno de los modelos almacenados en la carpeta
+# /modelos. para ello se le pasa como parámetro el nombre del modelo a cargar
+def carga_modelo(nombre_modelo):
+    p = Path(sys.path[0])
+    filepath = Path(p.parent.joinpath('modelos')
+    ruta_completa = filepath.joinpath(nombre_fichero)
+    if not filepath.exists():
+        return f'Error: el archivo {nombre_fichero} no existe'
+     saved_model = keras.models.load_model(
+    "my_model", custom_objects={"CustomModel": CustomModel}
+)
+    return saved_model

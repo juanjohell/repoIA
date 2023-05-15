@@ -57,7 +57,9 @@ def predict():
     img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
 
     return render_template('index.html', prediction=img_str)
-
+@app.route('/cargamodelo', methods=['GET'])
+def carga_modelo():
+    return render_template('cargamodelo.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
