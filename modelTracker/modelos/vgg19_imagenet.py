@@ -40,7 +40,7 @@ def predecir(img_path):
     print('Predicción:', decode_predictions(preds, top=3)[0])
 
 
-#predecir('./imagenes/gato.jpg')
+predecir('./imagenes/gato.jpg')
 
 def datos_modelo(model):
     config = model.get_config()

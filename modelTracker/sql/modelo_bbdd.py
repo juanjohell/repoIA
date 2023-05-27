@@ -10,17 +10,18 @@ crear_tabla_modelos = '''CREATE TABLE "Modelos" (
     "id_uso" INTEGER NOT NULL,
     "id_optimizer"	INTEGER NOT NULL,
 	"nombre"	TEXT NOT NULL,
-	"familia"	TEXT NOT NULL,
+	"id_familia"	TEXT NOT NULL,
     "descripcion"	TEXT,
 	"depth"	INTEGER,
 	"input_shape"	TEXT,
 	PRIMARY KEY("id_modelo"),
-	FOREIGN KEY("id_optimizer") REFERENCES "Optimizer"("id_optimizer"),
+	FOREIGN KEY("id_optimizer") REFERENCES "Optimizer"("id_optimizador"),
+	FOREIGN KEY("id_familia") REFERENCES "FamiliaModelo"("id_familia"),
     FOREIGN KEY("id_uso") REFERENCES "Usos"("id_uso")
 );'''
 
-crear_tabla_optimizer = '''CREATE TABLE "Optimizer" (
-	"id_optimizer"	INTEGER NOT NULL UNIQUE,
+crear_tabla_optimizador = '''CREATE TABLE "Optimizador" (
+	"id_optimizador"	INTEGER NOT NULL UNIQUE,
     "optimizer_type"	TEXT NOT NULL,
 	"learning_rate"	REAL NOT NULL,
 	"amsgrad"	INTEGER NOT NULL,
@@ -39,6 +40,14 @@ crear_tabla_usos = '''CREATE TABLE "Usos" (
 	PRIMARY KEY("id_uso")
 );'''
 
+crear_tabla_familia_modelo = '''CREATE TABLE "FamiliaModelo" (
+    "id_familia" INTEGER NOT NULL UNIQUE,
+	"nombre"	TEXT NOT NULL,
+    "descripcion"	TEXT,
+	"depth"	INTEGER,
+	"input_shape"	TEXT,
+	PRIMARY KEY("id_familia")
+);'''
 # REALIZA UNA INSERCIÓN EN LA TABLA DE optimizadores Y
 # RETORNA EL ID ASIGNADO AL REGISTRO.
 
@@ -79,4 +88,3 @@ def insert_tabla_modelos(conn, params):
     conn.commit()
 
     return cursor_obj.lastrowid
-    

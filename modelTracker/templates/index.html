@@ -1,19 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>Clasificación de imágenes con VGG19</title>
+  <title>modelTracker</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <script src="../static/js/bootstrap.min.js"></script>
+  <style>
+    .jumbotron {
+      background-image: url("../static/imagenes/modelTracker.png");
+      background-size: cover;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .jumbotron h1 {
+      font-size: 48px;
+      margin-bottom: 30px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      font-size: 24px;
+      margin: 10px;
+      padding: 15px 30px;
+      width: 300px;
+    }
+  </style>
 </head>
 <body>
-	<h1>Clasificación de imágenes con VGG19</h1>
-	<form method="POST" action="/clasificar" enctype="multipart/form-data">
-		<label for="image">Seleccione una imagen:</label><br>
-		<input type="file" id="image" name="image"><br><br>
-		<input type="submit" value="clasificar">
-	</form>
-	{% if prediction %}
-		<h2>Resultado de la clasificación:</h2>
-		<img src="data:image/png;base64,{{ prediction }}" />
-	{% endif %}
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="display-4">Bienvenido a modelTracker</h1>
+      <p class="lead">Una aplicación para la gestión y uso de modelos de deep learning</p>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('seleccionar_modelo') }}" class="btn btn-primary">Seleccionar modelo para inferencia</a>
+        <a href="{{ url_for('cargar_modelo') }}" class="btn btn-primary">Gestionar Modelos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

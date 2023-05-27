@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Clasificación de imágenes con VGG19</title>
+</head>
+<body>
+	<h1>Clasificación de imágenes con VGG19</h1>
+	<form method="POST" action="/clasificar" enctype="multipart/form-data">
+		<label for="image">Seleccione una imagen:</label><br>
+		<input type="file" id="image" name="image"><br><br>
+		<input type="submit" value="clasificar">
+	</form>
+	{% if prediction %}
+		<h2>Resultado de la clasificación:</h2>
+		<img src="data:image/png;base64,{{ prediction }}" />
+	{% endif %}
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cargar Modelo desde fichero</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <script src="../static/js/bootstrap.min.js"></script>
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-4">Cargar Modelo desde fichero</h1>
+    {% if error %}
+      <div class="alert alert-danger mt-4">{{ error }}</div>
+    {% endif %}
+    <!-- FORMULARIO PARA LA CARGA DE UN MODELO DESDE UN FICHERO -->
+    <form id="upload-form" action="/extraer_config_modelo" method="post" enctype="multipart/form-data" class="mt-4">
+      <div class="mb-3">
+        <label for="file" class="form-label">Seleccionar archivo Keras:</label>
+        <input class="form-control" type="file" name="file" id="file">
+      </div>
+      <button type="submit" class="btn btn-primary">Cargar</button>
+    </form>
+    <!--   -->
+
+    <div id="model-info" {% if not mostrar_datos %} class="hidden mt-4"{% endif %}>
+
+      <h2>Información del Modelo</h2>
+      <!-- FORMULARIO CON LA INFO DEL MODELO -->
+      <form method="POST">
+        <div class="mb-3">
+          <label for="nombre" class="form-label">Nombre:</label>
+          <input class="form-control" type="text" id="nombre" name="nombre" value="{{ datos_modelo.nombre | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="descripcion" class="form-label">Descripción:</label>
+          <input class="form-control" type="text" id="descripcion" name="descripcion">
+        </div>
+        <div class="mb-3">
+          <label for="depth" class="form-label">Depth:</label>
+          <input class="form-control" type="text" id="depth" name="depth" value="{{ datos_modelo.depth | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="input-shape" class="form-label">Input Shape:</label>
+          <input class="form-control" type="text" id="input-shape" name="input-shape" value="{{ datos_modelo.input_shape  | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="optimizer-type" class="form-label">Optimizer Type:</label>
+          <input class="form-control" type="text" id="optimizer-type" name="optimizer-type" value="{{ datos_modelo['optimizer-type']  | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="learning-rate" class="form-label">Learning Rate:</label>
+          <input class="form-control" type="text" id="learning-rate" name="learning-rate" value="{{ datos_modelo['learning-rate']  | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="b1" class="form-label">Beta 1:</label>
+          <input class="form-control" type="text" id="b1" name="b1" value="{{ datos_modelo.b1 | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="b2" class="form-label">Beta 2:</label>
+          <input class="form-control" type="text" id="b2" name="b2" value="{{ datos_modelo.b2 | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="epsilon" class="form-label">Epsilon:</label>
+          <input class="form-control" type="text" id="epsilon" name="epsilon" value="{{ datos_modelo.epsilon | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="amsgrad" class="form-label">Amsgrad:</label>
+          <input class="form-control" type="text" id="amsgrad" name="amsgrad" value="{{ datos_modelo.amsgrad | default('')}}">
+        </div>
+        <div class="mb-3">
+          <label for="decay" class="form-label">Decay:</label>
+          <input class="form-control" type="text" id="decay" name="decay" value="{{ datos_modelo.decay | default('')}}">
+        </div>
+    </form>
+      <!-- -->
+      </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.getElementById("upload-form").addEventListener("submit", function(event) {
+      event.preventDefault(); // Evitar envío del formulario
+
+      // Obtener el valor del campo de entrada para el nombre del fichero
+     // Obtener el objeto de archivo seleccionado
+      var fileInput = document.getElementById('file');
+      var file = fileInput.files[0];
+
+      // Crear objeto FormData y adjuntar el archivo
+      var formData = new FormData();
+      formData.append('file', file);
+      console.log("JavaScript se está ejecutando")
+      // Solicitud AJAX usando fetch:
+      // RELLENAR CAMPOS DEL FORMULARIO
+      fetch("/extraer_config_modelo", {  // debe estar mapeado en app.py
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Llenar los campos del formulario de información del modelo con los datos recibidos
+          console.log("Cargar datos en formulario");
+          var datos_modelo = JSON.parse(data);
+          document.getElementById("nombre").value = datos_modelo.nombre;
+          document.getElementById("depth").value = datos_modelo.depth;
+          document.getElementById("input-shape").value = datos_modelo.input_shape;
+          document.getElementById("optimizer-type").value = datos_modelo.optimizer_type;
+          document.getElementById("learning-rate").value = datos_modelo.learning_rate;
+          document.getElementById("b1").value = datos_modelo.b1;
+          document.getElementById("b2").value = datos_modelo.b2;
+          document.getElementById("epsilon").value = datos_modelo.epsilon;
+          document.getElementById("amsgrad").value = datos_modelo.amsgrad;
+          document.getElementById("lc_config").value = datos_modelo.lc_config;
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+    });
+</script>
+</body>
+</html>
