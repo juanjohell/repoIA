@@ -37,19 +37,15 @@ def seleccionar_modelo():
 
 @app.route('/cargar_modelo', methods=['GET'])
 def cargar_modelo():
-    #inicialmente no tenemos datos del modelo
-    mostrar_datos = False  # Variable que indica si se deben mostrar los datos o no
-    datos_modelo = {}  # Define una variable datos_modelo vacía o con valores predeterminados
-    return render_template('cargarModelo.html', datos_modelo=datos_modelo, mostrar_datos=mostrar_datos)
+    return render_template('cargarModelo.html')
 
 @app.route('/extraer_config_modelo', methods=['POST'])
 def extraer_config_modelo():
     fichero = request.files['file']
     datos_modelo = extrae_info_de_modelo(fichero)
-    datos_modelo_json = jsonify(datos_modelo)
-    mostrar_datos = True  # Variable que indica si se deben mostrar los datos o no
-    print(datos_modelo_json)
-    return render_template('cargarModelo.html', datos_modelo=datos_modelo_json, mostrar_datos=mostrar_datos)
+    datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
+    print(datos_json)
+    return jsonify(datos_modelo)
 
 @app.route('/clasificar', methods=['POST'])
 def predict():

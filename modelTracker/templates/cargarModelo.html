@@ -26,101 +26,121 @@
       <button type="submit" class="btn btn-primary">Cargar</button>
     </form>
     <!--   -->
+    <!-- IMAGEN DE CARGA -->
+    <div id="loading" class="hidden mt-4">
+      <div class="spinner-border text-warning" role="status">
+        <span class="sr-only">Leyendo datos...</span>
+      </div>
+    </div>
+     <!--   -->
 
-    <div id="model-info" {% if not mostrar_datos %} class="hidden mt-4"{% endif %}>
-
+    <div id="model-info" class="hidden mt-4">
       <h2>Información del Modelo</h2>
       <!-- FORMULARIO CON LA INFO DEL MODELO -->
-      <form method="POST">
-        <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre:</label>
-          <input class="form-control" type="text" id="nombre" name="nombre" value="{{ datos_modelo.nombre | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="descripcion" class="form-label">Descripción:</label>
-          <input class="form-control" type="text" id="descripcion" name="descripcion">
-        </div>
-        <div class="mb-3">
-          <label for="depth" class="form-label">Depth:</label>
-          <input class="form-control" type="text" id="depth" name="depth" value="{{ datos_modelo.depth | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="input-shape" class="form-label">Input Shape:</label>
-          <input class="form-control" type="text" id="input-shape" name="input-shape" value="{{ datos_modelo.input_shape  | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="optimizer-type" class="form-label">Optimizer Type:</label>
-          <input class="form-control" type="text" id="optimizer-type" name="optimizer-type" value="{{ datos_modelo['optimizer-type']  | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="learning-rate" class="form-label">Learning Rate:</label>
-          <input class="form-control" type="text" id="learning-rate" name="learning-rate" value="{{ datos_modelo['learning-rate']  | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="b1" class="form-label">Beta 1:</label>
-          <input class="form-control" type="text" id="b1" name="b1" value="{{ datos_modelo.b1 | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="b2" class="form-label">Beta 2:</label>
-          <input class="form-control" type="text" id="b2" name="b2" value="{{ datos_modelo.b2 | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="epsilon" class="form-label">Epsilon:</label>
-          <input class="form-control" type="text" id="epsilon" name="epsilon" value="{{ datos_modelo.epsilon | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="amsgrad" class="form-label">Amsgrad:</label>
-          <input class="form-control" type="text" id="amsgrad" name="amsgrad" value="{{ datos_modelo.amsgrad | default('')}}">
-        </div>
-        <div class="mb-3">
-          <label for="decay" class="form-label">Decay:</label>
-          <input class="form-control" type="text" id="decay" name="decay" value="{{ datos_modelo.decay | default('')}}">
-        </div>
-    </form>
+        <!-- FORMULARIO CON LA INFO DEL MODELO -->
+        <form method="POST">
+          <div class="row">
+            <div class="col-md-5 mb-3">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input class="form-control" type="text" id="nombre" name="nombre" value="{% if data and data.nombre %}{{ data.nombre }}{% endif %}">
+            </div>
+            <div class="col-md-5 mb-3">
+              <label for="input_shape" class="form-label">Input Shape:</label>
+              <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if data and data.input_shape %}{{ data.input_shape }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-10 mb-3">
+              <label for="descripcion" class="form-label">Descripción:</label>
+              <input class="form-control" type="text" id="descripcion" name="descripcion" value="{% if data and data.descripcion %}{{ data.descripcion }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label for="depth" class="form-label">Depth:</label>
+              <input class="form-control" type="text" id="depth" name="depth" value="{% if data and data.depth %}{{ data.depth }}{% endif %}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="optimizer_type" class="form-label">Optimizer Type:</label>
+              <input class="form-control" type="text" id="optimizer_type" name="optimizer_type" value="{% if data and data.optimizer_type %}{{ data.optimizer_type }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="learning_rate" class="form-label">Learning Rate:</label>
+              <input class="form-control" type="text" id="learning_rate" name="learning_rate" value="{% if data and data.learning_rate %}{{ data.learning_rate }}{% endif %}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="beta1" class="form-label">Beta 1:</label>
+              <input class="form-control" type="text" id="beta1" name="beta1" value="{% if data and data.beta1 %}{{ data.beta1 }}{% endif %}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="beta2" class="form-label">Beta 2:</label>
+              <input class="form-control" type="text" id="beta2" name="beta2" value="{% if data and data.beta2 %}{{ data.beta2 }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label for="epsilon" class="form-label">Epsilon:</label>
+              <input class="form-control" type="text" id="epsilon" name="epsilon" value="{% if data and data.epsilon %}{{ data.epsilon }}{% endif %}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="amsgrad" class="form-label">Amsgrad:</label>
+              <input class="form-control" type="text" id="amsgrad" name="amsgrad" value="{% if data and data.amsgrad %}{{ data.amsgrad }}{% endif %}">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="decay" class="form-label">Decay:</label>
+              <input class="form-control" type="text" id="decay" name="decay" value="{% if data and data.decay %}{{ data.decay }}{% endif %}">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Grabar en el sistema</button>
+        </form>
       <!-- -->
       </div>
   </div>
 
   <!-- JavaScript -->
-  <script>
-    document.getElementById("upload-form").addEventListener("submit", function(event) {
-      event.preventDefault(); // Evitar envío del formulario
+    <script>
+          document.getElementById("upload-form").addEventListener("submit", async function(event) {
+          event.preventDefault();
+          document.getElementById("loading").classList.remove("hidden");
+          var fileInput = document.getElementById('file');
+          var file = fileInput.files[0];
 
-      // Obtener el valor del campo de entrada para el nombre del fichero
-     // Obtener el objeto de archivo seleccionado
-      var fileInput = document.getElementById('file');
-      var file = fileInput.files[0];
+          var formData = new FormData();
+          formData.append('file', file);
 
-      // Crear objeto FormData y adjuntar el archivo
-      var formData = new FormData();
-      formData.append('file', file);
-      console.log("JavaScript se está ejecutando")
-      // Solicitud AJAX usando fetch:
-      // RELLENAR CAMPOS DEL FORMULARIO
-      fetch("/extraer_config_modelo", {  // debe estar mapeado en app.py
-        method: "POST",
-        body: formData
-      })
-        .then(response => response.json())
-        .then(data => {
-          // Llenar los campos del formulario de información del modelo con los datos recibidos
-          console.log("Cargar datos en formulario");
-          var datos_modelo = JSON.parse(data);
-          document.getElementById("nombre").value = datos_modelo.nombre;
-          document.getElementById("depth").value = datos_modelo.depth;
-          document.getElementById("input-shape").value = datos_modelo.input_shape;
-          document.getElementById("optimizer-type").value = datos_modelo.optimizer_type;
-          document.getElementById("learning-rate").value = datos_modelo.learning_rate;
-          document.getElementById("b1").value = datos_modelo.b1;
-          document.getElementById("b2").value = datos_modelo.b2;
-          document.getElementById("epsilon").value = datos_modelo.epsilon;
-          document.getElementById("amsgrad").value = datos_modelo.amsgrad;
-          document.getElementById("lc_config").value = datos_modelo.lc_config;
-        })
-        .catch(error => {
-          console.error("Error:", error);
+          try {
+              const response = await fetch("/extraer_config_modelo", {
+              method: "POST",
+              body: formData
+            });
+            if (response.ok) {
+              var data = await response.json();
+              // MOSTRAR FORMULARIO DE DATOS DEL MODELO
+              document.getElementById("model-info").classList.remove("hidden");
+
+              console.log(data); // Verificar el contenido de la respuesta JSON en la consola
+              console.log(data.nombre);
+              document.getElementById("nombre").value = data.nombre;
+              document.getElementById("depth").value = data.depth;
+              document.getElementById("input_shape").value = data.input_shape;
+              document.getElementById("optimizer_type").value = data.optimizer_type;
+              document.getElementById("learning_rate").value = data.learning_rate;
+              document.getElementById("b1").value = data.b1;
+              document.getElementById("b2").value = data.b2;
+              document.getElementById("epsilon").value = data.epsilon;
+              document.getElementById("amsgrad").value = data.amsgrad;
+                  // OCULTAR FORMULARIO DE MANEJO DE FICHERO E IMAGEN DE CARGA
+                  document.getElementById("upload-form").classList.add("hidden");
+                  document.getElementById("loading").classList.add("hidden");
+            } else {
+              console.error("Error de respuesta:", response.status);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
         });
-    });
-</script>
+  </script>
 </body>
 </html>

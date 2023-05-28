@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from os import path
 from tensorflow import keras
 from tensorflow.keras.models import load_model
-
+from flask import jsonify
 import app
 
 # Función para extraccion de metadatos de un modelo h5 pasado por parámetro
@@ -60,7 +60,7 @@ def extrae_info_de_modelo(fichero):
                   'lc_id': None, 'decay': decay,
                   'learning_rate': learning_rate, 'b1': b1, 'b2': b2, 'epsilon': epsilon,
                   'amsgrad': amsgrad, 'lc_config': layer_config}
-    #print(parametros)
+    print(parametros)
     return parametros
 
 # CARGA_MODELO: carga en memoria (model_load) uno de los modelos almacenados en la carpeta
