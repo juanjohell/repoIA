@@ -9,9 +9,10 @@ import sqlite3
 from sqlite3 import Error
 import sys
 
+#ruta a la base de datos de aplicación
 path = f'{sys.path[0]}/bbdd/gestion_modelos.sqlite'
 
-def create_connection(path):
+def create_connection():
     connection = None
     try:
         connection = sqlite3.connect(path)
@@ -21,11 +22,10 @@ def create_connection(path):
 
     return connection
 
-connection = create_connection(path)
-
-# Crear las tablas de la base de datos
-
-cursor_obj = connection.cursor() 
-cursor_obj.execute(crear_tabla_usos)
-cursor_obj.execute(crear_tabla_optimizer)
-cursor_obj.execute(crear_tabla_modelos)
+def crea_base_de_datos():
+    connection = create_connection(path)
+    # Crear las tablas de la base de datos
+    cursor_obj = connection.cursor()
+    cursor_obj.execute(crear_tabla_usos)
+    cursor_obj.execute(crear_tabla_optimizer)
+    cursor_obj.execute(crear_tabla_modelos)

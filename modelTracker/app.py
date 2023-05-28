@@ -16,6 +16,7 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 #from modelos.vgg19_imagenet import get_vgg19_model
 from gestion_modelos import extrae_info_de_modelo
+from conexion_bbdd import create_connection
 
 
 app = Flask(__name__)
@@ -46,6 +47,28 @@ def extraer_config_modelo():
     datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
     print(datos_json)
     return jsonify(datos_modelo)
+
+@app.route('/insertar_modelo', methods=['POST'])
+def insertar_modelo():
+    # Obtener los datos del formulario
+    nombre = request.form.get('nombre')
+    depth = request.form.get('depth')
+    input_shape = request.form.get('input_shape')
+    # Otros datos que falta por obtenerse del formulario
+
+    # Conectar a la base de datos SQLite3
+    conn = create_connection()
+
+    # Llamar a la función de inserción y obtener el último ID insertado
+    last_row_id = insert_tabla_modelos(conn, (nombre, depth, input_shape))
+    # Cerrar la conexión a la base de datos
+    conn.close()
+
+    # Realizar cualquier otra operación o redireccionamiento necesario
+
+    # Retornar una respuesta al cliente
+    return 'Modelo insertado correctamente. Último ID insertado: {}'.format(last_row_id)
+
 
 @app.route('/clasificar', methods=['POST'])
 def predict():
