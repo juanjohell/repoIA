@@ -50,7 +50,7 @@ def crea_base_de_datos():
     insert_tabla_familia_modelo(connection,fila)
 
     # Tabla Modelos, se inserta el modelo de ejemplo de la aplicación
-    fila = (1,1, "vgg19_imagenet.h4", 1, "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)")
+    fila = (1,1, "vgg19_imagenet.h5", 1, "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)")
     insert_tabla_modelos(connection,fila)
 
-crea_base_de_datos()
+#crea_base_de_datos()

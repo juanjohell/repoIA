@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>modelTracker</title>
+  <title>{% block title %}{% endblock %}</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="../static/css/bootstrap.min.css">
   <script src="../static/js/bootstrap.min.js"></script>
   <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+  <style>
     .jumbotron {
       background-image: url("../static/imagenes/modelTracker.png");
       background-size: cover;
-      height: 600px;
+      height: 300px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -34,16 +39,11 @@
 <body>
   <div class="jumbotron">
     <div class="container">
-      <h1 class="display-4">Bienvenido a modelTracker</h1>
+      <h1 class="display-4">modelTracker</h1>
       <p class="lead">Una aplicación para la gestión y uso de modelos de deep learning</p>
-      <div class="d-grid gap-2">
-        <a href="{{ url_for('seleccionar_modelo') }}" class="btn btn-primary">Realizar inferencia</a>
-        <a href="{{ url_for('cargar_modelo') }}" class="btn btn-primary">Gestionar Modelos</a>
-      </div>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.2/dist/js/bootstrap.bundle.min.js"></script>
+  {% block content %}{% endblock %}
 </body>
 </html>

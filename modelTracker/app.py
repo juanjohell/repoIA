@@ -32,9 +32,10 @@ app.logger.setLevel(logging.DEBUG)
 @app.route('/')
 def index():
     return render_template('index.html')
-@app.route('/seleccionar_modelo', methods=['GET'])
-def seleccionar_modelo():
-    return render_template('realizarInferencia.html')
+
+#@app.route('/seleccionar_modelo', methods=['GET'])
+#def seleccionar_modelo():
+#    return render_template('realizarInferencia.html')
 
 @app.route('/cargar_modelo', methods=['GET'])
 def cargar_modelo():
@@ -68,6 +69,24 @@ def insertar_modelo():
 
     # Retornar una respuesta al cliente
     return 'Modelo insertado correctamente. Último ID insertado: {}'.format(last_row_id)
+
+#SELECCIONAR UN MODELO DE LA TABLA DE MODELOS
+@app.route('/seleccionar_modelo')
+def seleccionar_modelo():
+    # Conectar a la base de datos SQLite3
+        # Conectar a la base de datos SQLite3
+    conn = create_connection()
+    #conn.row_factory = sqlite3.Row
+
+    # Obtener los modelos de la tabla "Modelos"
+    cursor = conn.execute('SELECT nombre, descripcion FROM Modelos')
+    modelos = cursor.fetchall()
+
+    # Cerrar la conexión a la base de datos
+    conn.close()
+
+    # Renderizar la plantilla HTML y pasar los modelos como contexto
+    return render_template('seleccionarModelo.html', modelos=modelos)
 
 
 @app.route('/clasificar', methods=['POST'])

@@ -1,0 +1,21 @@
+{% extends "doc_base.html" %}
+
+{% block title %}Seleccionar modelo para inferencia{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Modelos</h1>
+  <form action="/submit" method="post">
+    <div class="form-group">
+      <label for="modelo">Seleccionar modelo:</label>
+      <select class="form-control" id="modelo" name="modelo">
+        {% for modelo in modelos %}
+          <option value="{{ modelo['nombre'] }}">{{ modelo['nombre'] }} - {{ modelo['descripcion'] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <br>
+    <button class="btn btn-primary" type="submit">Enviar</button>
+  </form>
+</div>
+{% endblock %}
