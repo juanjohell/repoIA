@@ -5,17 +5,31 @@
 {% block content %}
 <div class="container">
   <h1>Modelos</h1>
-  <form action="/submit" method="post">
-    <div class="form-group">
-      <label for="modelo">Seleccionar modelo:</label>
-      <select class="form-control" id="modelo" name="modelo">
-        {% for modelo in modelos %}
-          <option value="{{ modelo['nombre'] }}">{{ modelo['nombre'] }} - {{ modelo['descripcion'] }}</option>
-        {% endfor %}
-      </select>
+
+    <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for modelo in modelos %}
+            <tr>
+              <td>{{ modelo['id_modelo'] }}</td>
+              <td>{{ modelo['nombre'] }}</td>
+              <td>{{ modelo['descripcion'] }}</td>
+              <td>
+                  <a href="/realizar_inferencia?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                      <i class="material-icons">visibility</i>
+                  </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
     </div>
-    <br>
-    <button class="btn btn-primary" type="submit">Enviar</button>
-  </form>
 </div>
 {% endblock %}

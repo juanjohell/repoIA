@@ -1,19 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Clasificación de imágenes con VGG19</title>
-</head>
-<body>
-	<h1>Clasificación de imágenes con VGG19</h1>
-	<form method="POST" action="/clasificar" enctype="multipart/form-data">
-		<label for="image">Seleccione una imagen:</label><br>
-		<input type="file" id="image" name="image"><br><br>
-		<input type="submit" value="clasificar">
-	</form>
-	{% if prediction %}
-		<h2>Resultado de la clasificación:</h2>
-		<img src="data:image/png;base64,{{ prediction }}" />
-	{% endif %}
-</body>
-</html>
+{% extends 'doc_base.html' %}
+
+{% block title %}
+  Inferencia con modelo {{modelo.nombre}}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h1 class="mt-4 mb-3">Realizar inferencia con modelo {{modelo.nombre}}</h1>
+        <p>{{modelo.descripcion}}</p>
+
+        <form method="POST" action="/inferir_con_modelo" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="image">Seleccione una imagen:</label>
+            <input type="file" id="image" name="image" class="form-control-file">
+          </div>
+          <button type="submit" class="btn btn-primary">Clasificar</button>
+        </form>
+
+        {% if prediction %}
+          <h2 class="mt-4">Resultado de la clasificación:</h2>
+          <img src="data:image/png;base64,{{ prediction }}" class="img-fluid">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
