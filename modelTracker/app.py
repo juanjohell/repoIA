@@ -47,9 +47,8 @@ def index():
 @app.route('/realizar_inferencia', methods=['GET'])
 def realizar_inferencia():
     id_modelo = request.args.get('id_modelo')
-    #session['modelo_seleccionado'] = Modelo.devuelve_modelo_por_id(id_modelo)
     modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
-    datos_modelo = ()
+    session['modelo_seleccionado'] = modelo_seleccionado.to_json()
     return render_template('realizarInferencia.html', modelo=modelo_seleccionado)
 
 @app.route('/cargar_modelo', methods=['GET'])

@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import json
 
 #ruta a la base de datos de aplicación
 path = f'{sys.path[0]}/bbdd/gestion_modelos.sqlite'
@@ -81,3 +82,13 @@ class Modelo:
         else:
             return None
 
+    # Estas funciones de serialización en json son
+    # para permitir usar un objeto de esta clase en
+    # variables de sesion
+    def to_json(self):
+        return json.dumps(self.__dict__)
+
+    @staticmethod
+    def from_json(json_str):
+        model_dict = json.loads(json_str)
+        return Modelo(**model_dict)
