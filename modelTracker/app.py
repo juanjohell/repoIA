@@ -118,7 +118,9 @@ def inferir_con_modelo():
     x = preprocess_input(x)
 
     # Realizar la clasificación utilizando el modelo
-    path_fichero_modelo = path_modelos + session.get('modelo_seleccionado').nombre
+    modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
+    path_fichero_modelo = path_modelos + modelo_seleccionado.nombre
+    print(path_fichero_modelo)
     model = load_model(path_fichero_modelo)
     preds = model.predict(x)
     result = decode_predictions(preds, top=3)[0]
@@ -133,7 +135,8 @@ def inferir_con_modelo():
     img_with_text.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
 
-    return render_template('realizarInferencia.html', prediction=img_str)
+    return render_template('realizarInferencia.html', prediction=img_str, modelo=session.get('modelo_seleccionado'))
+
 @app.route('/cargamodelo', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
