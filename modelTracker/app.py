@@ -9,7 +9,7 @@ import io
 import sys
 import base64
 import logging
-
+import os
 import json
 import sqlite3
 from PIL import Image, ImageDraw
