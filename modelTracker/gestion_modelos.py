@@ -15,9 +15,7 @@ from flask import Flask, url_for
 #
 
 
-
-UPLOAD_FOLDER = path(sys.path[0]).parent.joinpath('modelos')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = path(sys.path[0]).parent.joinpath('modelos')
 
 
 def extrae_info_de_modelo(fichero):
