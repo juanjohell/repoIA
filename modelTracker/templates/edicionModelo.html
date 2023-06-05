@@ -1,0 +1,79 @@
+{% extends "doc_base.html" %}
+
+{% block title %}Editar datos del modelo {{modelo.nombre}} {% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card p-4 shadow">
+
+    <h2>Información del Modelo</h2>
+      <!-- FORMULARIO CON LA INFO DEL MODELO -->
+        <form method="POST" action="/editar_modelo_bbdd">
+          <div class="row">
+            <div class="col-md-1 mb-3">
+              <label for="id_modelo" class="form-label">ID:</label>
+              <input class="form-control" type="text" id="id_modelo" name="id_modelo" value="{% if modelo and modelo.id_modelo %}{{ modelo.id_modelo }}{% endif %}">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input class="form-control" type="text" id="nombre" name="nombre" value="{% if modelo and modelo.nombre %}{{ modelo.nombre }}{% endif %}">
+            </div>
+            <div class="col-md-5 mb-3">
+              <label for="input_shape" class="form-label">Input Shape:</label>
+              <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if modelo and modelo.input_shape %}{{ modelo.input_shape }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-10 mb-3">
+              <label for="descripcion" class="form-label">Descripción:</label>
+              <input class="form-control" type="text" id="descripcion" name="descripcion" value="{% if modelo and modelo.descripcion %}{{ modelo.descripcion }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label for="depth" class="form-label">Depth:</label>
+              <input class="form-control" type="text" id="depth" name="depth" value="{% if modelo and modelo.depth %}{{ modelo.depth }}{% endif %}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="optimizer_type" class="form-label">Optimizer Type:</label>
+              <input class="form-control" type="text" id="optimizer_type" name="optimizer_type" value="{% if modelo and modelo.optimizer_type %}{{ modelo.optimizer_type }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="learning_rate" class="form-label">Learning Rate:</label>
+              <input class="form-control" type="text" id="learning_rate" name="learning_rate" value="{% if modelo and modelo.learning_rate %}{{ modelo.learning_rate }}{% endif %}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="beta1" class="form-label">Beta 1:</label>
+              <input class="form-control" type="text" id="beta1" name="beta1" value="{% if modelo and modelo.beta1 %}{{ modelo.beta1 }}{% endif %}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="beta2" class="form-label">Beta 2:</label>
+              <input class="form-control" type="text" id="beta2" name="beta2" value="{% if modelo and modelo.beta2 %}{{ modelo.beta2 }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label for="epsilon" class="form-label">Epsilon:</label>
+              <input class="form-control" type="text" id="epsilon" name="epsilon" value="{% if modelo and modelo.epsilon %}{{ modelo.epsilon }}{% endif %}">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="amsgrad" class="form-label">Amsgrad:</label>
+              <input class="form-control" type="text" id="amsgrad" name="amsgrad" value="{% if modelo and modelo.amsgrad %}{{ modelo.amsgrad }}{% endif %}">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="decay" class="form-label">Decay:</label>
+              <input class="form-control" type="text" id="decay" name="decay" value="{% if modelo and modelo.decay %}{{ modelo.decay }}{% endif %}">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col-md-12">
+                  <button type="submit" class="btn btn-primary">Grabar cambios.</button>
+              </div>
+          </div>
+        </form>
+      <!-- -->
+  </div>
+</div>
+{% endblock %}

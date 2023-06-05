@@ -5,39 +5,38 @@ Created on Wed Feb 22 18:01:38 2023
 @author: jjhb01
 """
 from flask import Flask, render_template, request, jsonify, session
-from keras.preprocessing import image
-from keras.applications.vgg19 import preprocess_input, decode_predictions
-import numpy as np
 import io
 import sys
 import base64
 import logging
+
 import json
 import sqlite3
-from PIL import Image, ImageDraw, ImageFont
-from gestion_modelos import extrae_info_de_modelo
-from conexion_bbdd import create_connection
-from sql.modelo_bbdd import insert_tabla_modelos
+from PIL import Image, ImageDraw
+from gestion_modelos import extrae_info_de_modelo, almacenar_fichero
+from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input, decode_predictions
 from keras.models import load_model
 import numpy as np
-import os
 
 app = Flask(__name__)
 
 #clave para el manejo seguro de sesiones
 app.secret_key = 'XJ9s&3u$er7M*?3Hv!Rt@3y^Z6#jGq2'
 
+#CONFIGURACION
 # Configuración de los logs en la consola
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
 
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'modelos')
+
 # Cargar el modelo VGG19 pre-entrenado
 #model = get_vgg19_model()
 
-#ruta al reccurso de los modelos
+#ruta al recurso de los modelos
 path_modelos = f'{sys.path[0]}/modelos/'
 
 @app.route('/')
@@ -51,6 +50,10 @@ def realizar_inferencia():
     session['modelo_seleccionado'] = modelo_seleccionado.to_json()
     return render_template('realizarInferencia.html', modelo=modelo_seleccionado)
 
+@app.route('/administrar_modelos', methods=['GET'])
+def administrar_modelos():
+    return render_template('administrarModelos.html')
+
 @app.route('/cargar_modelo', methods=['GET'])
 def cargar_modelo():
     return render_template('cargarModelo.html')
@@ -59,8 +62,9 @@ def cargar_modelo():
 def extraer_config_modelo():
     fichero = request.files['file']
     datos_modelo = extrae_info_de_modelo(fichero)
-    datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
-    print(datos_json)
+    almacenar_fichero(fichero)
+    #datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
+    #print(datos_json)
     return jsonify(datos_modelo)
 
 @app.route('/insertar_modelo', methods=['POST'])
@@ -71,34 +75,60 @@ def insertar_modelo():
     input_shape = request.form.get('input_shape')
     # Otros datos que falta por obtenerse del formulario
 
-    # Conectar a la base de datos SQLite3
-    conn = create_connection()
-
     # Llamar a la función de inserción y obtener el último ID insertado
-    last_row_id = insert_tabla_modelos(conn, (nombre, depth, input_shape))
-    # Cerrar la conexión a la base de datos
-    conn.close()
+    last_row_id = insert_tabla_modelos((nombre, depth, input_shape))
+
     # Retornar una respuesta al cliente
     return 'Modelo insertado correctamente. Último ID insertado: {}'.format(last_row_id)
 
-#SELECCIONAR UN MODELO DE LA TABLA DE MODELOS
+# SELECCIONAR UN MODELO DE LA TABLA DE MODELOS PARA ELLO SE
+# MUESTRA UN LISTADO CON TODOS LOS DISPONIBLES
 @app.route('/seleccionar_modelo')
 def seleccionar_modelo():
-    # Conectar a la base de datos SQLite3
-        # Conectar a la base de datos SQLite3
-    conn = create_connection()
-    #se configura la conexión para que devuelva filas
-    # como objetos de tipo Row, lo que permitirá acceder
-    # a los campos por nombre en lugar de por índice.
-    conn.row_factory = sqlite3.Row
-    cursor = conn.execute('SELECT id_modelo, nombre, descripcion FROM Modelos')
-    modelos = cursor.fetchall()
-    # Cerrar la conexión a la base de datos
-    conn.close()
-
+    modelos = listado_modelos()
     # Renderizar la plantilla HTML y pasar los modelos como contexto
     return render_template('seleccionarModelo.html', modelos=modelos)
 
+@app.route('/lista_editar_modelos')
+def lista_editar_modelos():
+    modelos = listado_modelos()
+    # Renderizar la plantilla HTML y pasar los modelos como contexto
+    return render_template('listaEdicionModelos.html', modelos=modelos)
+
+# Se muestran los datos asociados a un modelo en
+# un formulario listos para su edición
+@app.route('/editar_modelo', methods=['GET'])
+def editar_modelo():
+    id_modelo = request.args.get('id_modelo')
+    modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
+    session['modelo_seleccionado'] = modelo_seleccionado.to_json()
+    return render_template('edicionModelo.html', modelo=modelo_seleccionado)
+
+# toma los datos editados y realiza la actualización en bbdd
+@app.route('/editar_modelo_bbdd', methods=['POST'])
+def editar_modelo_bbdd():
+    # carga de datos editados en formulario:
+    params = {
+        'id_uso': request.form.get('id_uso'),
+        'id_optimizer': request.form.get('id_optimizer'),
+        'nombre': request.form.get('nombre'),
+        'id_familia': request.form.get('id_familia'),
+        'descripcion': request.form.get('descripcion'),
+        'depth': request.form.get('depth'),
+        'input_shape': request.form.get('input_shape'),
+        'id_modelo': request.form.get('id_modelo')
+    }
+
+    result = editar_tabla_modelo(params)
+    if result:
+        mensaje = 'La actualización se ha realizado de forma correcta'
+    else:
+        mensaje = 'No se ha realizado ninguna operación'
+    resultado = {
+        'mensaje': mensaje,
+        'url': 'lista_editar_modelos'
+    }
+    return render_template('mensaje.html', resultado=resultado)
 
 @app.route('/inferir_con_modelo', methods=['POST'])
 def inferir_con_modelo():
@@ -137,25 +167,13 @@ def inferir_con_modelo():
 
     return render_template('realizarInferencia.html', prediction=img_str, modelo=session.get('modelo_seleccionado'))
 
-@app.route('/cargamodelo', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # Guardar el archivo cargado en el servidor
-        archivo = request.files['file']
-        nombre_fichero = archivo.filename
-        ruta_completa = app.config['UPLOAD_FOLDER'].joinpath(nombre_fichero)
-        archivo.save(ruta_completa)
-
-        # Extraer la información del modelo y guardarla en la tabla SQLite
-        conn = sqlite3.connect('nombre_db.sqlite')
-        params = {}
-        params = extrae_info_de_modelo(ruta_completa)
-        insert_tabla_modelos(conn, params)
-        conn.close()
-
-        return 'Archivo cargado con éxito'
-
-    return render_template('upload.html')
+@app.route('/mostrar_mensaje', methods=['GET'])
+def mostrar_mensaje():
+    resultado = {
+        'mensaje': request.args.get('mensaje'),
+        'url': request.args.get('url')
+    }
+    return render_template('mensaje.html', resultado=resultado)
 
 if __name__ == '__main__':
     app.run(debug=True)

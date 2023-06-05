@@ -15,8 +15,8 @@ import app
 
 
 
-#UPLOAD_FOLDER = path(sys.path[0]).parent.joinpath('modelos')
-#app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+UPLOAD_FOLDER = path(sys.path[0]).parent.joinpath('modelos')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def extrae_info_de_modelo(fichero):
@@ -63,5 +63,21 @@ def extrae_info_de_modelo(fichero):
     print(parametros)
     return parametros
 
-# CARGA_MODELO: carga en memoria (model_load) uno de los modelos almacenados en la carpeta
-# /modelos. para ello se le pasa como parámetro el nombre del modelo a cargar
+# SALVA FICHERO EN SISTEMA DE FICHEROS DE LA APLICACION
+def almacenar_fichero(archivo):
+    nombre_fichero = archivo.filename
+    ruta_completa = app.config['UPLOAD_FOLDER'].joinpath(nombre_fichero)
+
+    #ANTES DE ALMACENAR SE DEBE COMPROBAR QUE NO ESTÁ EN EL SISTEMA DE ARCHIVOS
+    if os.path.exists(ruta_completa):
+     #redirigimos a la página de mensajes
+        resultado = {
+            'mensaje': 'El archivo ya existe en el sistema de ficheros de la aplicación con ése nombre',
+            'url': 'cargar_modelo'
+        }
+        with app.test_client() as client:
+            url = url_for('/mostrar_mensaje', resultado=resultado)
+            response = client.get(url)
+            print(response.data.decode())
+
+    archivo.save(ruta_completa)

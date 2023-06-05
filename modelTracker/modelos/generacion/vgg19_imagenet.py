@@ -26,7 +26,7 @@ def get_vgg19_model(model_file_path='./vgg19_imagenet.h5'):
 
 def predecir(img_path):
     # Importar el modelo pre-entrenado VGG19
-    model = get_vgg19_model('vgg19_imagenet.h5')
+    model = get_vgg19_model('../vgg19_imagenet.h5')
     
     # Cargar una imagen y preprocesarla para que sea compatible con el modelo
 
@@ -40,7 +40,7 @@ def predecir(img_path):
     print('Predicción:', decode_predictions(preds, top=3)[0])
 
 
-predecir('imagenes_test/gato.jpg')
+predecir('../imagenes_test/gato.jpg')
 
 def datos_modelo(model):
     config = model.get_config()

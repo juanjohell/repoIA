@@ -1,0 +1,18 @@
+{% extends 'doc_base.html' %}
+
+{% block title %}
+Administración de modelos.
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card p-4 shadow">
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('lista_editar_modelos') }}" class="btn btn-primary">Editar modelos.</a>
+        <a href="{{ url_for('cargar_modelo') }}" class="btn btn-primary">Agregar modelo.</a>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+

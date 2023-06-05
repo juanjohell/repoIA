@@ -1,0 +1,18 @@
+{% extends 'doc_base.html' %}
+
+{% block title %}
+Administración de modelos.
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card p-4 shadow">
+    <div class="alert alert-success mt-4" role="alert">
+      {% if resultado and resultado.mensaje %}{{ resultado.mensaje }}{% endif %}
+   </div>
+    <a href="{{ url_for(resultado.url) }}"  class="btn btn-primary">Volver.</a>
+  </div>
+</div>
+
+
+{% endblock %}
