@@ -8,6 +8,7 @@ from tensorflow import keras
 from tensorflow.keras.models import load_model
 from flask import jsonify
 import app
+from flask import Flask, url_for
 
 # Función para extraccion de metadatos de un modelo h5 pasado por parámetro
 # Los ficheros deben estar en la subcarpeta modelos del proyecto.
