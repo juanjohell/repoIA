@@ -92,3 +92,7 @@ class Modelo:
     def from_json(json_str):
         model_dict = json.loads(json_str)
         return Modelo(**model_dict)
+    def por_nombre(nombre):
+        return Modelo(
+            nombre = nombre
+        )

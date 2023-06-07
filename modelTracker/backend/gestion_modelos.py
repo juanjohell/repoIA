@@ -2,8 +2,8 @@
 # FUNCIONALIDAD:  funciones de gestión de los modelos neuronales
 import sys
 import os
-from werkzeug.utils import secure_filename
-from os import path
+
+from pathlib import Path
 from tensorflow import keras
 from tensorflow.keras.models import load_model
 from flask import jsonify
@@ -13,18 +13,14 @@ from flask import Flask, url_for
 # Función para extraccion de metadatos de un modelo h5 pasado por parámetro
 # Los ficheros deben estar en la subcarpeta modelos del proyecto.
 #
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = f'{sys.path[0]}/modelos/'
 
 
-app.config['UPLOAD_FOLDER'] = path(sys.path[0]).parent.joinpath('modelos')
+def extrae_info_de_modelo(nombre_fichero):
 
-
-def extrae_info_de_modelo(fichero):
-    if not fichero:
-        return {'error': f'Error: el archivo {fichero} no existe'}
-    # Guardar el archivo en el sistema de archivos
-    nombre_fichero = secure_filename(fichero.filename)
-    ruta_fichero = os.path.join('./modelos/', nombre_fichero)
-    fichero.save(ruta_fichero)
+    # Comprobar existencia
+    ruta_fichero = app.config['UPLOAD_FOLDER'] + nombre_fichero
 
     # Carga el modelo Keras en formato h5
     #saved_model = keras.models.load_model(ruta_fichero)
@@ -65,18 +61,17 @@ def extrae_info_de_modelo(fichero):
 # SALVA FICHERO EN SISTEMA DE FICHEROS DE LA APLICACION
 def almacenar_fichero(archivo):
     nombre_fichero = archivo.filename
-    ruta_completa = app.config['UPLOAD_FOLDER'].joinpath(nombre_fichero)
+    ruta_completa = app.config['UPLOAD_FOLDER'] + (nombre_fichero)
+    archivo.save(ruta_completa)
 
+
+    ruta_completa = str(app.config['UPLOAD_FOLDER'] + (nombre_fichero))
+    ruta_completa = "../modelos/" + nombre_fichero
+    print(ruta_completa)
     #ANTES DE ALMACENAR SE DEBE COMPROBAR QUE NO ESTÁ EN EL SISTEMA DE ARCHIVOS
     if os.path.exists(ruta_completa):
-     #redirigimos a la página de mensajes
-        resultado = {
-            'mensaje': 'El archivo ya existe en el sistema de ficheros de la aplicación con ése nombre',
-            'url': 'cargar_modelo'
-        }
-        with app.test_client() as client:
-            url = url_for('/mostrar_mensaje', resultado=resultado)
-            response = client.get(url)
-            print(response.data.decode())
+        return False
+    else:
+        archivo.save(ruta_completa)
+        return True
 
-    archivo.save(ruta_completa)

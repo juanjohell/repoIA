@@ -5,20 +5,20 @@ Created on Wed Feb 22 18:01:38 2023
 @author: jjhb01
 """
 from flask import Flask, render_template, request, jsonify, session
+import json
 import io
 import sys
 import base64
 import logging
 import os
-import json
-import sqlite3
 from PIL import Image, ImageDraw
-from gestion_modelos import extrae_info_de_modelo, almacenar_fichero
+from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
 from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input, decode_predictions
 from keras.models import load_model
+from werkzeug.utils import secure_filename
 import numpy as np
 
 app = Flask(__name__)
@@ -30,8 +30,6 @@ app.secret_key = 'XJ9s&3u$er7M*?3Hv!Rt@3y^Z6#jGq2'
 # Configuración de los logs en la consola
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
-
-app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'modelos')
 
 # Cargar el modelo VGG19 pre-entrenado
 #model = get_vgg19_model()
@@ -54,29 +52,43 @@ def realizar_inferencia():
 def administrar_modelos():
     return render_template('administrarModelos.html')
 
-@app.route('/cargar_modelo', methods=['GET'])
+@app.route('/cargar_modelo')
 def cargar_modelo():
-    return render_template('cargarModelo.html')
+    return render_template('cargarFichero.html')
 
-@app.route('/extraer_config_modelo', methods=['POST'])
-def extraer_config_modelo():
-    fichero = request.files['file']
-    datos_modelo = extrae_info_de_modelo(fichero)
-    almacenar_fichero(fichero)
-    #datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
-    #print(datos_json)
+@app.route('/salvar_fichero', methods=['GET', 'POST'])
+def mostrar_form_datos_fichero():
+    # Guardar el archivo cargado en el servidor
+    archivo = request.files['file']
+    nombre_fichero = archivo.filename
+    ruta_completa = path_modelos+nombre_fichero
+    archivo.save(ruta_completa)
+    session['nombre_fichero'] = nombre_fichero
+    return render_template('resultadoCargaFichero.html')
+
+@app.route('/salvar_y_extraer_config_modelo', methods=['GET', 'POST'])
+def salvar_y_extraer_config_modelo():
+    datos_modelo = extrae_info_de_modelo(session['nombre_fichero'])
+    datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
+    print(datos_json)
     return jsonify(datos_modelo)
 
 @app.route('/insertar_modelo', methods=['POST'])
 def insertar_modelo():
     # Obtener los datos del formulario
-    nombre = request.form.get('nombre')
-    depth = request.form.get('depth')
-    input_shape = request.form.get('input_shape')
-    # Otros datos que falta por obtenerse del formulario
+    # carga de datos editados en formulario:
+    params = {
+        #'id_uso': request.form.get('id_uso'),
+        #'id_optimizer': request.form.get('id_optimizer'),
+        'nombre': request.form.get('nombre'),
+        #'id_familia': request.form.get('id_familia'),
+        'descripcion': request.form.get('descripcion'),
+        'depth': request.form.get('depth'),
+        'input_shape': request.form.get('input_shape')
+    }
 
     # Llamar a la función de inserción y obtener el último ID insertado
-    last_row_id = insert_tabla_modelos((nombre, depth, input_shape))
+    last_row_id = insert_tabla_modelos(params)
 
     # Retornar una respuesta al cliente
     return 'Modelo insertado correctamente. Último ID insertado: {}'.format(last_row_id)

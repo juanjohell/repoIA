@@ -2,10 +2,6 @@ import unittest
 
 from app import app
 from unittest.mock import patch, MagicMock
-from flask import Flask
-from flask.testing import FlaskClient
-from gestion_modelos import extrae_info_de_modelo
-import sys
 import os
 
 nombre_fichero = 'vgg19_imagenet.h5'

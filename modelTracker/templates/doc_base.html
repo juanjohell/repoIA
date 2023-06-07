@@ -7,6 +7,8 @@
   <script src="../static/js/bootstrap.min.js"></script>
   <!-- Incluimos la biblioteca de iconos de Google para los botonoes -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <!-- se incluye jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     .hidden {
       display: none;
@@ -28,17 +30,26 @@
       font-size: 48px;
       margin-bottom: 30px;
     }
-
+    .max-width-70 {
+      max-width: 70%;
+    }
   </style>
 </head>
 <body>
   <div class="jumbotron">
     <div class="container">
-      <h1 class="display-4">modelTracker</h1>
-      <p class="lead">Una aplicación para la gestión y uso de modelos de deep learning</p>
+      <div class="row align-items-left">
+        <div class="col-md-3">
+          <img src="../static/imagenes/rubik.png" alt="modelTrack" class="img-fluid max-width-70">
+        </div>
+      <div class="col-md-9">
+        <h1 class="display-4">modelTracker</h1>
+        <p class="lead">Una aplicación para la gestión y uso de modelos de deep learning</p>
+      </div>
     </div>
   </div>
-
+  </div>
   {% block content %}{% endblock %}
 </body>
+<br><br>
 </html>
