@@ -4,7 +4,7 @@ Created on Wed Feb 22 18:01:38 2023
 
 @author: jjhb01
 """
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import json
 import io
 import sys
@@ -41,6 +41,10 @@ path_modelos = f'{sys.path[0]}/modelos/'
 def index():
     return render_template('index.html')
 
+@app.route('/menu_inicial')
+def menu_inicial():
+    return render_template('menuInicial.html')
+
 @app.route('/realizar_inferencia', methods=['GET'])
 def realizar_inferencia():
     id_modelo = request.args.get('id_modelo')
@@ -57,7 +61,7 @@ def cargar_modelo():
     return render_template('cargarFichero.html')
 
 @app.route('/salvar_fichero', methods=['GET', 'POST'])
-def mostrar_form_datos_fichero():
+def salvar_fichero():
     # Guardar el archivo cargado en el servidor
     archivo = request.files['file']
     nombre_fichero = archivo.filename
@@ -77,21 +81,21 @@ def salvar_y_extraer_config_modelo():
 def insertar_modelo():
     # Obtener los datos del formulario
     # carga de datos editados en formulario:
-    params = {
+    params = (
         #'id_uso': request.form.get('id_uso'),
         #'id_optimizer': request.form.get('id_optimizer'),
-        'nombre': request.form.get('nombre'),
+        request.form.get('nombre'),
         #'id_familia': request.form.get('id_familia'),
-        'descripcion': request.form.get('descripcion'),
-        'depth': request.form.get('depth'),
-        'input_shape': request.form.get('input_shape')
-    }
+        request.form.get('descripcion'),
+        request.form.get('depth'),
+        request.form.get('input_shape')
+    )
 
     # Llamar a la función de inserción y obtener el último ID insertado
     last_row_id = insert_tabla_modelos(params)
 
     # Retornar una respuesta al cliente
-    return 'Modelo insertado correctamente. Último ID insertado: {}'.format(last_row_id)
+    return redirect(url_for('/seleccionar_modelo'))
 
 # SELECCIONAR UN MODELO DE LA TABLA DE MODELOS PARA ELLO SE
 # MUESTRA UN LISTADO CON TODOS LOS DISPONIBLES

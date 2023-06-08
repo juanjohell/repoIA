@@ -38,11 +38,10 @@
   <div class="jumbotron">
     <div class="container">
       <img src="../static/imagenes/rubik.png" alt="modelTrack" class="img-fluid max-width-70">
-      <h1 class="display-4">Bienvenido a modelTracker</h1>
-      <p class="lead">Una aplicación para la gestión y uso de modelos de deep learning</p>
-      <div class="d-grid gap-2">
-        <a href="{{ url_for('seleccionar_modelo') }}" class="btn btn-primary">Realizar inferencia</a>
-        <a href="{{ url_for('administrar_modelos') }}" class="btn btn-primary">Administrar Modelos</a>
+      <h1 class="display-3">Bienvenido a modelTracker</h1>
+      <h3 class="lead">Una aplicación para la gestión y uso de modelos de deep learning</h3>
+      <div class="d-grid gap-1">
+        <a href="{{ url_for('menu_inicial') }}" class="btn btn-primary">Comenzar</a>
       </div>
     </div>
   </div>

@@ -7,13 +7,17 @@ Created on Thu May 11 13:32:34 2023
 import sqlite3
 from sqlite3 import Error
 import sys
+import os
 
-#ruta a la base de datos de aplicación
-path = f'{sys.path[0]}/bbdd/gestion_modelos.sqlite'
+# Obtener la ruta absoluta a la carpeta que contiene el archivo de base de datos
+folder_path = os.path.abspath('bbdd')
+# Combinar la ruta absoluta de la carpeta con el nombre del archivo de base de datos
+path = os.path.join(folder_path, 'gestion_modelos.sqlite')
 
 def create_connection():
     connection = None
     try:
+        print(path)
         connection = sqlite3.connect(path)
         print("Conectado a la base de datos SQLite3")
     except Error as e:
@@ -21,47 +25,46 @@ def create_connection():
 
     return connection
 
+def existe_bbdd():
+    return os.path.exists(path)
+
 crear_tabla_modelos = '''CREATE TABLE "Modelos" (
-    "id_modelo" INTEGER NOT NULL UNIQUE,
-    "id_uso" INTEGER NOT NULL,
+    "id_modelo" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "id_uso" INTEGER,
     "id_optimizer"	INTEGER,
 	"nombre"	TEXT NOT NULL,
-	"id_familia"	TEXT NOT NULL,
+	"id_familia"	TEXT,
     "descripcion"	TEXT,
 	"depth"	INTEGER,
 	"input_shape"	TEXT,
-	PRIMARY KEY("id_modelo"),
 	FOREIGN KEY("id_optimizer") REFERENCES "Optimizador"("id_optimizador"),
 	FOREIGN KEY("id_familia") REFERENCES "FamiliaModelo"("id_familia"),
     FOREIGN KEY("id_uso") REFERENCES "Usos"("id_uso")
 );'''
 
 crear_tabla_optimizador = '''CREATE TABLE "Optimizador" (
-	"id_optimizador" INTEGER NOT NULL UNIQUE,
+	"id_optimizador" INTEGER PRIMARY KEY AUTOINCREMENT,
     "optimizer_type" TEXT NOT NULL,
 	"learning_rate"	REAL,
 	"amsgrad" INTEGER,
 	"decay"	REAL,
 	"b1"	REAL,
 	"b2"	REAL,
-	"epsilon"	REAL,
-	PRIMARY KEY("id_optimizador")
+	"epsilon"	REAL
 );'''
 
 crear_tabla_usos = '''CREATE TABLE "Usos" (
-	"id_uso"	INTEGER NOT NULL UNIQUE,
+	"id_uso"	INTEGER PRIMARY KEY AUTOINCREMENT,
     "nombre"	TEXT NOT NULL,
-    "descripcion"	TEXT,
-	PRIMARY KEY("id_uso")
+    "descripcion"	TEXT
 );'''
 
 crear_tabla_familia_modelo = '''CREATE TABLE "FamiliaModelo" (
-    "id_familia" INTEGER NOT NULL UNIQUE,
+    "id_familia" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"nombre"	TEXT NOT NULL,
     "descripcion"	TEXT,
 	"depth"	INTEGER,
-	"input_shape"	TEXT,
-	PRIMARY KEY("id_familia")
+	"input_shape"	TEXT
 );'''
 # REALIZA UNA INSERCIÓN EN LA TABLA DE optimizadores Y
 # RETORNA EL ID ASIGNADO AL REGISTRO.
@@ -98,7 +101,7 @@ def insert_tabla_modelos(params):
     # Conectar a la base de datos SQLite3
     conn = create_connection()
     cursor_obj = conn.cursor()
-    cursor_obj.execute(sql, (params['nombre'], params['descripcion'], params['depth'], params['input_shape']))
+    cursor_obj.execute(sql, params)
     conn.commit()
     # Cerrar la conexión a la base de datos
     conn.close()
