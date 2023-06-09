@@ -95,7 +95,7 @@ def insertar_modelo():
     last_row_id = insert_tabla_modelos(params)
 
     # Retornar una respuesta al cliente
-    return redirect(url_for('/seleccionar_modelo'))
+    return redirect(url_for('seleccionar_modelo'))
 
 # SELECCIONAR UN MODELO DE LA TABLA DE MODELOS PARA ELLO SE
 # MUESTRA UN LISTADO CON TODOS LOS DISPONIBLES

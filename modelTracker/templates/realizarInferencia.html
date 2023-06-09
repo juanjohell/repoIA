@@ -21,7 +21,14 @@
 
         {% if prediction %}
           <h2 class="mt-4">Resultado de la clasificación:</h2>
-          <img src="data:image/png;base64,{{ prediction }}" class="img-fluid">
+          <div class="container">
+            <div class="card mt-4">
+              <img src="data:image/png;base64,{{ prediction }}" class="card-img-top img-fluid rounded mx-auto d-block">
+              <div class="card-body text-center">
+                <a href="ruta_para_guardar_imagen.jpg" class="btn btn-primary" download>Guardar imagen</a>
+              </div>
+            </div>
+          </div>
         {% endif %}
       </div>
     </div>

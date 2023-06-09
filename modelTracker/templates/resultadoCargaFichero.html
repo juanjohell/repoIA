@@ -27,8 +27,10 @@ Inspección y carga del modelo
                 <input class="form-control" type="text" id="nombre" name="nombre" value="{% if data and data.nombre %}{{ data.nombre }}{% endif %}">
               </div>
               <div class="col-md-5 mb-3">
-                <label for="input_shape" class="form-label">Input Shape:</label>
-                <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if data and data.input_shape %}{{ data.input_shape }}{% endif %}">
+              <label for="input_shape" class="form-label">Input Shape:</label>
+                <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if data and data.input_shape %}{{ data.input_shape }}{% endif %}" pattern="\(\d+,\d+,\d+\)" required title="Formato de la imagen de entrada, con la dimensión de los tres dimensiones (numero,numero,numero)">
+                  <div class="invalid-feedback">El formato debe ser (entero, entero, entero).</div>
+                  <div class="form-text custom-bg-yellow p-2 rounded">Input Shape recoge el formato que tienen las matrices multidimensionales en que se transforman las imágenes a tratar por el modelo.</div>
               </div>
             </div>
             <div class="row">
