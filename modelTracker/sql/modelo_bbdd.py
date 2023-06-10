@@ -150,3 +150,4 @@ def listado_modelos():
     # Cerrar la conexión a la base de datos
     conn.close()
     return modelos
+

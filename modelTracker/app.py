@@ -13,6 +13,7 @@ import logging
 import os
 from PIL import Image, ImageDraw
 from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
+from backend.inferencia import clasificar_imagen, obtener_estructura
 from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
@@ -31,8 +32,6 @@ app.secret_key = 'XJ9s&3u$er7M*?3Hv!Rt@3y^Z6#jGq2'
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
 
-# Cargar el modelo VGG19 pre-entrenado
-#model = get_vgg19_model()
 
 #ruta al recurso de los modelos
 path_modelos = f'{sys.path[0]}/modelos/'
@@ -50,7 +49,15 @@ def realizar_inferencia():
     id_modelo = request.args.get('id_modelo')
     modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
     session['modelo_seleccionado'] = modelo_seleccionado.to_json()
-    return render_template('realizarInferencia.html', modelo=modelo_seleccionado)
+    return render_template('realizarInferencia.html', modelo=modelo_seleccionado, mostrar_barra_progreso=True)
+
+@app.route('/ver_estructura', methods=['GET'])
+def ver_estructura():
+    id_modelo = request.args.get('id_modelo')
+    modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
+    session['modelo_seleccionado'] = modelo_seleccionado.to_json()
+    img_str = obtener_estructura()
+    return render_template('infoModelo.html', modelo=modelo_seleccionado, img_str=img_str)
 
 @app.route('/administrar_modelos', methods=['GET'])
 def administrar_modelos():
@@ -94,7 +101,7 @@ def insertar_modelo():
     # Llamar a la función de inserción y obtener el último ID insertado
     last_row_id = insert_tabla_modelos(params)
 
-    # Retornar una respuesta al cliente
+    # Retornar una respuesta al usuario
     return redirect(url_for('seleccionar_modelo'))
 
 # SELECCIONAR UN MODELO DE LA TABLA DE MODELOS PARA ELLO SE
@@ -146,42 +153,22 @@ def editar_modelo_bbdd():
     }
     return render_template('mensaje.html', resultado=resultado)
 
+@app.route('/eliminar_modelo', methods=['GET'])
+def eliminar_modelo():
+    id_modelo = request.args.get('id_modelo')
+    modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
+    modelo_seleccionado.eliminar_modelo()
+    # Retornar al listado de modelos
+    return redirect(url_for('seleccionar_modelo'))
+
+# INFERENCIA
 @app.route('/inferir_con_modelo', methods=['POST'])
 def inferir_con_modelo():
     # Obtener la imagen enviada por el usuario
     img = request.files['image'].read()
+    img_str, resultado = clasificar_imagen(img)
 
-    # Convertir la imagen a un objeto de imagen PIL
-    pil_img = Image.open(io.BytesIO(img))
-
-    # Preprocesar la imagen para que sea compatible con el modelo
-    # seleccionado actualmente
-    pil_img = Image.open(io.BytesIO(img))
-    # aqui hay que obtener el input_shape del modelo
-    pil_img = pil_img.resize((224, 224))  # Cambiar dimensiones de la imagen
-    x = image.img_to_array(pil_img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-
-    # Realizar la clasificación utilizando el modelo
-    modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
-    path_fichero_modelo = path_modelos + modelo_seleccionado.nombre
-    print(path_fichero_modelo)
-    model = load_model(path_fichero_modelo)
-    preds = model.predict(x)
-    result = decode_predictions(preds, top=3)[0]
-
-    # Crear una imagen con la clasificación
-    img_with_text = pil_img.copy()
-    img_draw = ImageDraw.Draw(img_with_text)
-    img_draw.text((10, 10), str(result), fill=(255, 0, 0))
-
-    # Codificar la imagen con la clasificación en formato base64 para mostrarla en la página web
-    buffered = io.BytesIO()
-    img_with_text.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
-
-    return render_template('realizarInferencia.html', prediction=img_str, modelo=session.get('modelo_seleccionado'))
+    return render_template('realizarInferencia.html', prediction=img_str, modelo=session['modelo_seleccionado'], mostrar_barra_progreso=False, rsultado=resultado)
 
 @app.route('/mostrar_mensaje', methods=['GET'])
 def mostrar_mensaje():

@@ -96,3 +96,9 @@ class Modelo:
         return Modelo(
             nombre = nombre
         )
+
+    def eliminar_modelo(self):
+        conn = create_connection()
+        cursor = conn.execute('DELETE FROM Modelos WHERE id_modelo = ?', (self.id_modelo,))
+        conn.commit()
+        conn.close()
