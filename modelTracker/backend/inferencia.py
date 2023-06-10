@@ -69,10 +69,24 @@ def clasificar_imagen(imagen):
 
 def obtener_estructura():
     modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
-    buffered = io.BytesIO()
-    plot_model(modelo_seleccionado, to_file=buffered, show_shapes=True, show_layer_names=True)
-    #ponemos el cursor al inicio del objeto:
-    buffered.seek(0)
-    #lo transformamos para su transmisión:
-    img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
+    path_fichero_modelo = os.path.join(path_modelos, modelo_seleccionado.nombre)
+    print(path_fichero_modelo)
+    #CARGA DEL MODELO
+    # CARGA DEL MODELO
+    model = load_model(path_fichero_modelo)
+
+    # Guardar la imagen en un archivo temporal
+    temp_file = "model_plot.png"
+    plot_model(model, to_file=temp_file, show_shapes=True, show_layer_names=True)
+
+    # Leer el contenido del archivo en una cadena
+    with open(temp_file, "rb") as file:
+        img_bytes = file.read()
+
+    # Convertir a base64
+    img_str = base64.b64encode(img_bytes).decode("ascii")
+
+    # Eliminar el archivo temporal
+    os.remove(temp_file)
+
     return (img_str)

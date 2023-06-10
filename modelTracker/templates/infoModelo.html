@@ -4,13 +4,12 @@
 {% endblock %}
    Información del modelo
 {% block content %}
-         <h2 class="mt-4">Estructura del modelo :</h2>
-        <div class="form-text custom-bg-yellow p-2 rounded">
+         <h4 class="mt-4">Estructura del modelo :</h4>
           {% if resultado %}{{ resultado }}{% endif %}
         </div>
           <div class="container">
             <div class="card mt-4">
-              <img src="data:image/png;base64,{{ img_str }}" class="card-img-top img-fluid rounded mx-auto d-block">
+              <img src="data:image/png;base64,{{ img_str }}" class="card-img-top img-fluid rounded mx-auto d-block" style="height: 50%; width: auto;">
               <div class="card-body text-center">
                 <a href="" class="btn btn-primary" download>Guardar imagen</a>
               </div>
