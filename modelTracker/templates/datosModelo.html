@@ -1,0 +1,101 @@
+{% extends "doc_base.html" %}
+
+{% block title %}Datos del modelo {{modelo.nombre}}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card p-4 shadow">
+
+    <h3 class="mb-4 text-dark font-weight-bold">Información del Modelo</h3>
+
+    <div class="row">
+      <div class="col-md-1 mb-3">
+        <strong>ID:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.id_modelo %}{{ modelo.id_modelo }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <strong>Nombre:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.nombre %}{{ modelo.nombre }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-5 mb-3">
+        <strong>Input Shape:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.input_shape %}{{ modelo.input_shape }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-10 mb-3">
+        <strong>Descripción:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.descripcion %}{{ modelo.descripcion }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <strong>Depth:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.depth %}{{ modelo.depth }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <strong>Optimizer Type:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.optimizer_type %}{{ modelo.optimizer_type }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <strong>Learning Rate:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.learning_rate %}{{ modelo.learning_rate }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-3 mb-3">
+        <strong>Beta 1:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.beta1 %}{{ modelo.beta1 }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-3 mb-3">
+        <strong>Beta 2:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.beta2 %}{{ modelo.beta2 }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <strong>Epsilon:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.epsilon %}{{ modelo.epsilon }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-3 mb-3">
+        <strong>Amsgrad:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.amsgrad %}{{ modelo.amsgrad }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <strong>Decay:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.decay %}{{ modelo.decay }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+

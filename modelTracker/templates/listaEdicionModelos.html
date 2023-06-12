@@ -27,14 +27,36 @@
                   </a>
               </td>
               <td>
-                  <a href="/eliminar_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
-                      <i class="material-icons">delete</i>
-                  </a>
+                  <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#confirmModal{{ modelo['id_modelo'] }}">
+                    <i class="material-icons">delete</i>
+                  </button>
               </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
     </div>
-</div>
-{% endblock %}
+    <!-- Modal de confirmación para eliminar el modelo -->
+      {% for modelo in modelos %}
+      <div class="modal fade" id="confirmModal{{ modelo['id_modelo'] }}" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel{{ modelo['id_modelo'] }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel{{ modelo['id_modelo'] }}">Confirmar eliminación</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>¿Estás seguro de que deseas eliminar el modelo {{ modelo['nombre'] }}?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <a href="/eliminar_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-danger">Eliminar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endblock %}

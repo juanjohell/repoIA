@@ -118,6 +118,12 @@ def lista_editar_modelos():
     # Renderizar la plantilla HTML y pasar los modelos como contexto
     return render_template('listaEdicionModelos.html', modelos=modelos)
 
+@app.route('/datos_modelo', methods=['GET'])
+def datos_modelo():
+    id_modelo = request.args.get('id_modelo')
+    modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
+    return render_template('datosModelo.html', modelo=modelo_seleccionado)
+
 # Se muestran los datos asociados a un modelo en
 # un formulario listos para su edición
 @app.route('/editar_modelo', methods=['GET'])
@@ -153,6 +159,7 @@ def editar_modelo_bbdd():
     }
     return render_template('mensaje.html', resultado=resultado)
 
+
 @app.route('/eliminar_modelo', methods=['GET'])
 def eliminar_modelo():
     id_modelo = request.args.get('id_modelo')
@@ -167,8 +174,7 @@ def inferir_con_modelo():
     # Obtener la imagen enviada por el usuario
     img = request.files['image'].read()
     img_str, resultado = clasificar_imagen(img)
-
-    return render_template('realizarInferencia.html', prediction=img_str, modelo=session['modelo_seleccionado'], mostrar_barra_progreso=False, rsultado=resultado)
+    return render_template('realizarInferencia.html', prediction=img_str, modelo=session['modelo_seleccionado'], mostrar_barra_progreso=False, resultado=resultado)
 
 @app.route('/mostrar_mensaje', methods=['GET'])
 def mostrar_mensaje():
