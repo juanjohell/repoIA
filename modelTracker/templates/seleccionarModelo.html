@@ -5,36 +5,42 @@
 {% block content %}
 <div class="container">
   <h1>Modelos</h1>
-
-    <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for modelo in modelos %}
-            <tr>
-              <td>{{ modelo['id_modelo'] }}</td>
-              <td>{{ modelo['nombre'] }}</td>
-              <td>{{ modelo['descripcion'] }}</td>
-              <td>
-                  <a href="/realizar_inferencia?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
-                      <i class="material-icons">play_arrow</i>
-                  </a>
-              </td>
-              <td>
-                  <a href="/ver_estructura?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
-                      <i class="material-icons">visibility</i>
-                  </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+    <div class="card p-4 shadow">
+        <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for modelo in modelos %}
+                <tr>
+                  <td>{{ modelo['id_modelo'] }}</td>
+                  <td>{{ modelo['nombre'] }}</td>
+                  <td>{{ modelo['descripcion'] }}</td>
+                  <td>
+                      <a href="/realizar_inferencia?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                          <i class="material-icons">play_arrow</i>
+                      </a>
+                  </td>
+                  <td>
+                      <a href="/ver_estructura?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                          <i class="material-icons">layers</i>
+                      </a>
+                  </td>
+                  <td>
+                      <a href="/datos_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                          <i class="material-icons">visibility</i>
+                      </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
