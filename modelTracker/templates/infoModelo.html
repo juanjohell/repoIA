@@ -4,15 +4,19 @@
 {% endblock %}
    Información del modelo
 {% block content %}
-         <h4 class="mt-4">Estructura del modelo :</h4>
-          {% if resultado %}{{ resultado }}{% endif %}
+<div class="container">
+    <div class="card p-4 shadow">
+      <h4 class="mt-4">Estructura del modelo:</h4>
+      {% if resultado %}{{ resultado }}{% endif %}
+      <div class="card mt-4">
+        <div id="image-container">
+          <img src="data:image/png;base64,{{ img_str }}" alt="Imagen" id="imagen" class="card-img-top rounded mx-auto d-block">
         </div>
-          <div class="container">
-            <div class="card mt-4">
-              <img src="data:image/png;base64,{{ img_str }}" class="card-img-top img-fluid rounded mx-auto d-block" style="height: 50%; width: auto;">
-              <div class="card-body text-center">
-                <a href="" class="btn btn-primary" download>Guardar imagen</a>
-              </div>
-            </div>
-          </div>
+        <div class="card-body text-center">
+          <a href="mapa{{modelo.nombre}}.jpg" class="btn btn-secondary btn-lg btn-block" download>Guardar imagen</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}

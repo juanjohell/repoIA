@@ -6,122 +6,140 @@ Inspección y carga del modelo
 
 {% block content %}
   <div class="container">
-    <h1 class="mt-4">Configuración del modelo</h1>
-    {% if error %}
-      <div class="alert alert-danger mt-4">{{ error }}</div>
-    {% endif %}
-    <!-- BARRA DE PROGRESO -->
-    <div id="progress-container" class="progress mt-4" style="display: none;">
-      <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-      </div>
-    </div>
-
-    <!-- FORMULARIO CON LA INFO DEL MODELO -->
-      <div id="model-info" class="hidden mt-4">
-        <h2>Información del Modelo</h2>
-
-          <form method="POST" id="form_info_modelo" action="/insertar_modelo">
-            <div class="row">
-              <div class="col-md-5 mb-3">
-                <label for="nombre" class="form-label">Nombre:</label>
-                <input class="form-control" type="text" id="nombre" name="nombre" value="{% if data and data.nombre %}{{ data.nombre }}{% endif %}">
-              </div>
-              <div class="col-md-5 mb-3">
-              <label for="input_shape" class="form-label">Input Shape:</label>
-                <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if data and data.input_shape %}{{ data.input_shape }}{% endif %}" pattern="\(\d+,\d+,\d+\)" required title="Formato de la imagen de entrada, con la dimensión de los tres dimensiones (numero,numero,numero)">
-                  <div class="invalid-feedback">El formato debe ser (entero, entero, entero).</div>
-                  <div class="form-text custom-bg-yellow p-2 rounded">Input Shape recoge el formato que tienen las matrices multidimensionales en que se transforman las imágenes a tratar por el modelo.</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-10 mb-3">
-                <label for="descripcion" class="form-label">Descripción:</label>
-                <input class="form-control" type="text" id="descripcion" name="descripcion" value="{% if data and data.descripcion %}{{ data.descripcion }}{% endif %}">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 mb-3">
-                <label for="depth" class="form-label">Depth:</label>
-                <input class="form-control" type="text" id="depth" name="depth" value="{% if data and data.depth %}{{ data.depth }}{% endif %}">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="optimizer_type" class="form-label">Optimizer Type:</label>
-                <input class="form-control" type="text" id="optimizer_type" name="optimizer_type" value="{% if data and data.optimizer_type %}{{ data.optimizer_type }}{% endif %}">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4 mb-3">
-                <label for="learning_rate" class="form-label">Learning Rate:</label>
-                <input class="form-control" type="text" id="learning_rate" name="learning_rate" value="{% if data and data.learning_rate %}{{ data.learning_rate }}{% endif %}">
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="beta1" class="form-label">Beta 1:</label>
-                <input class="form-control" type="text" id="beta1" name="beta1" value="{% if data and data.beta1 %}{{ data.beta1 }}{% endif %}">
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="beta2" class="form-label">Beta 2:</label>
-                <input class="form-control" type="text" id="beta2" name="beta2" value="{% if data and data.beta2 %}{{ data.beta2 }}{% endif %}">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 mb-3">
-                <label for="epsilon" class="form-label">Epsilon:</label>
-                <input class="form-control" type="text" id="epsilon" name="epsilon" value="{% if data and data.epsilon %}{{ data.epsilon }}{% endif %}">
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="amsgrad" class="form-label">Amsgrad:</label>
-                <input class="form-control" type="text" id="amsgrad" name="amsgrad" value="{% if data and data.amsgrad %}{{ data.amsgrad }}{% endif %}">
-              </div>
-              <div class="col-md-4 mb-3">
-                <label for="decay" class="form-label">Decay:</label>
-                <input class="form-control" type="text" id="decay" name="decay" value="{% if data and data.decay %}{{ data.decay }}{% endif %}">
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary">Grabar en el sistema</button>
-          </form>
-
+    <div class="card p-4 shadow">
+        <h2 class="mt-4">Configuración del modelo</h2>
+        {% if error %}
+          <div class="alert alert-danger mt-4">{{ error }}</div>
+        {% endif %}
+        <!-- BARRA DE PROGRESO -->
+        <div id="progress-container" class="progress mt-4" style="display: none;">
+          <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="60" aria-valuemax="100">
+          </div>
         </div>
-    <!--          -->
-        <script>
-          $(document).ready(function() {
-            var progressBar = $('#progress-bar');
-            var progressContainer = $('#progress-container');
 
-            // Mostrar la barra de progreso
-            progressContainer.show();
+        <!-- FORMULARIO CON LA INFO DEL MODELO -->
+          <div id="model-info" class="hidden mt-4">
+            <h3>Información del Modelo</h3>
 
-            // Realizar la solicitud AJAX para obtener los datos
-            $.ajax({
-              url: '/salvar_y_extraer_config_modelo',
-              type: 'POST',
-              data: new FormData($('#form_info_modelo')[0]),
-              cache: false,
-              contentType: false,
-              processData: false,
-              success: function(response) {
-                // Mostrar el formulario
-                $('#model-info').removeClass('hidden');
-                // Ocultar la barra de progreso después de recibir los datos
-                progressContainer.hide();
+              <form method="POST" id="form_info_modelo" action="/insertar_modelo">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-8 mb-3">
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <input class="form-control-plaintext" type="text" id="nombre" name="nombre" value="{% if data and data.nombre %}{{ data.nombre }}{% endif %}">
+                            <div class="form-text custom-bg-yellow p-2 rounded">Nombre del fichero h5 para recuperarlo cuando lo precise la aplicación.</div>
+                          </div>
+                          <div class="col-md-2 mb-3">
+                            <label for="input_shape" class="form-label">Input Shape:</label>
+                            <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if data and data.input_shape %}{{ data.input_shape }}{% endif %}" pattern="\(\d+,\d+,\d+\)" required title="Formato de la imagen de entrada, con la dimensión de los tres dimensiones (numero,numero,numero)">
+                            <div class="invalid-feedback">El formato debe ser (entero, entero, entero).</div>
+                            <div class="form-text custom-bg-yellow p-2 rounded">Input Shape recoge el formato que tienen las matrices multidimensionales en que se transforman las imágenes a tratar por el modelo.</div>
+                          </div>
+                          <div class="col-md-2 mb-3">
+                            <label for="depth" class="form-label">Depth:</label>
+                            <input class="form-control" type="text" id="depth" name="depth" value="{% if data and data.depth %}{{ data.depth }}{% endif %}">
+                            <div class="form-text custom-bg-yellow p-2 rounded">Depth (profundidad), es el número de capas que presenta la arquitectura del modelo.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-8 mb-3">
+                            <label for="descripcion" class="form-label">Descripción:</label>
+                            <input class="form-control" type="text" id="descripcion" name="descripcion" value="{% if data and data.descripcion %}{{ data.descripcion }}{% endif %}" required>
+                            <div class="form-text custom-bg-yellow p-2 rounded">Introduce una descripción que ayude posteriormente a tener claro el tipo de modelo y para qué se usa.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-8 mb-3">
+                            <label for="optimizer_type" class="form-label">Optimizer Type:</label>
+                            <input class="form-control" type="text" id="optimizer_type" name="optimizer_type" value="{% if data and data.optimizer_type %}{{ data.optimizer_type }}{% endif %}">
+                          </div>
+                          <div class="col-md-2 mb-3">
+                            <label for="learning_rate" class="form-label">Learning Rate:</label>
+                            <input class="form-control" type="text" id="learning_rate" name="learning_rate" value="{% if data and data.learning_rate %}{{ data.learning_rate }}{% endif %}">
+                          </div>
+                          <div class="col-md-2 mb-3">
+                            <label for="amsgrad" class="form-label">Amsgrad:</label>
+                            <input class="form-control" type="text" id="amsgrad" name="amsgrad" value="{% if data and data.amsgrad %}{{ data.amsgrad }}{% endif %}">
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-2 mb-3">
+                            <label for="decay" class="form-label">Decay:</label>
+                            <input class="form-control" type="text" id="decay" name="decay" value="{% if data and data.decay %}{{ data.decay }}{% endif %}">
+                          </div>
+                          <div class="col-md-2 mb-3">
+                            <label for="beta1" class="form-label">Beta 1:</label>
+                            <input class="form-control" type="text" id="beta1" name="beta1" value="{% if data and data.beta1 %}{{ data.beta1 }}{% endif %}">
+                          </div>
+                          <div class="col-md-2 mb-3">
+                            <label for="beta2" class="form-label">Beta 2:</label>
+                            <input class="form-control" type="text" id="beta2" name="beta2" value="{% if data and data.beta2 %}{{ data.beta2 }}{% endif %}">
+                          </div>
+                          <div class="col-md-3 mb-3">
+                            <label for="epsilon" class="form-label">Epsilon:</label>
+                            <input class="form-control" type="text" id="epsilon" name="epsilon" value="{% if data and data.epsilon %}{{ data.epsilon }}{% endif %}">
+                          </div>
+                          <div class="col-md-3 mb-3">
+                            <label for="decay" class="form-label">Decay:</label>
+                            <input class="form-control" type="text" id="decay" name="decay" value="{% if data and data.decay %}{{ data.decay }}{% endif %}">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-lg btn-block">Grabar en el sistema</button>
+                  </form>
+            </div>
+        <!--          -->
+            <script>
+              $(document).ready(function() {
+                var progressBar = $('#progress-bar');
+                var progressContainer = $('#progress-container');
 
-                // Actualizar el contenido de la página con los datos recibidos
-                $('#nombre').val(response.nombre || '');
-                $('#input_shape').val(response.input_shape || '');
-                $('#depth').val(response.depth || '');
-                $('#optimizer_type').val(response.optimizer_type|| '');
-                $('#learning_rate').val(response.learning_rate || '');
-                $('#b1').val(response.b1 || '');
-                $('#b2').val(response.b2 || '');
-                $('#epsilon').val(response.epsilon || '');
-                $('#amsgrad').val(response.amsgrad || '');
+                // Mostrar la barra de progreso
+                progressContainer.show();
 
-              },
-              error: function() {
-                // Manejar el error en caso de que la solicitud falle
-              }
-            });
-          });
-      </script>
+                // Realizar la solicitud AJAX para obtener los datos
+                $.ajax({
+                  url: '/salvar_y_extraer_config_modelo',
+                  type: 'POST',
+                  data: new FormData($('#form_info_modelo')[0]),
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  success: function(response) {
+                    // Mostrar el formulario
+                    $('#model-info').removeClass('hidden');
+                    // Ocultar la barra de progreso después de recibir los datos
+                    progressContainer.hide();
+
+                    // Actualizar el contenido de la página con los datos recibidos
+                    $('#nombre').val(response.nombre || '');
+                    $('#input_shape').val(response.input_shape || '');
+                    $('#depth').val(response.depth || '');
+                    $('#optimizer_type').val(response.optimizer_type|| '');
+                    $('#learning_rate').val(response.learning_rate || '');
+                    $('#b1').val(response.b1 || '');
+                    $('#b2').val(response.b2 || '');
+                    $('#epsilon').val(response.epsilon || '');
+                    $('#amsgrad').val(response.amsgrad || '');
+
+                  },
+                  error: function() {
+                    // Manejar el error en caso de que la solicitud falle
+                  }
+                });
+              });
+          </script>
+      </div>
     </div>
 
     <!--   -->

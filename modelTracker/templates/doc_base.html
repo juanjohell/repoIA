@@ -3,15 +3,13 @@
 <head>
   <title>{% block title %}{% endblock %}</title>
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  
   <!-- Incluimos la biblioteca de iconos de Google para los botonoes -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <!-- se incluye jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     .hidden {
       display: none;
@@ -21,7 +19,6 @@
     .jumbotron {
       background-image: url("../static/imagenes/modelTracker.png");
       background-size: cover;
-      height: 150px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -33,8 +30,8 @@
       font-size: 48px;
       margin-bottom: 30px;
     }
-    .max-width-70 {
-      max-width: 70%;
+    .max-width-60 {
+      max-width: 60%;
     }
     /* Estilos para la botonera */
     .btn-toolbar {
@@ -43,7 +40,7 @@
     }
 
     .btn-group .btn {
-      background-color: #e9e9e9;
+      background-color: #343a40;
       margin-right: 5px;
     }
     .custom-bg-yellow {
@@ -51,6 +48,13 @@
       border: 1px solid #ffecb3;
       color: #856404;
     }
+
+    .image-container {
+      overflow: auto;
+      max-width: 100%;
+      height: 500px;
+    }
+
   </style>
 </head>
 <body>
@@ -58,33 +62,37 @@
     <div class="container">
       <div class="row align-items-left">
         <div class="col-md-3 align-items-right">
-          <img src="../static/imagenes/rubik.png" alt="modelTrack" class="img-fluid max-width-70">
+          <img src="../static/imagenes/rubik.png" alt="modelTrack" class="img-fluid max-width-60">
         </div>
         <div class="col-md-9">
-          <p></p>
+          <br><br>
           <h1 class="display-4">modelTracker</h1>
           <p class="lead">Una aplicación para la gestión y uso de modelos de deep learning</p>
           <!-- menu superior de la aplicación -->
           <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group mr-2" role="group" aria-label="Navigation">
-              <a class="btn btn-primary bg-info" href="{{ url_for('index') }}" role="button">
-                <i class="material-icons">home</i>
-              </a>
-              <a class="btn btn-primary bg-info" href="{{ url_for('seleccionar_modelo') }}" role="button">
-                <i class="material-icons">visibility</i>
-              </a>
-              <a class="btn btn-primary bg-info" href="{{ url_for('lista_editar_modelos') }}" role="button">
-                <i class="material-icons">edit</i>
-              </a>
-              <a class="btn btn-primary bg-info" href="{{ url_for('menu_inicial') }}" role="button">
-                <i class="material-icons">menu</i>
-              </a>
+              <div class="btn-group mr-2" role="group" aria-label="Navigation">
+                <a class="btn btn-secondary" href="{{ url_for('index') }}" role="button" title="Inicio">
+                  <i class="material-icons">home</i>
+                </a>
+                <a class="btn btn-secondary" href="{{ url_for('seleccionar_modelo') }}" role="button" title="Realizar inferencia">
+                  <i class="material-icons">visibility</i>
+                </a>
+                <a class="btn btn-secondary" href="{{ url_for('lista_editar_modelos') }}" role="button" title="Editar modelos">
+                  <i class="material-icons">edit</i>
+                </a>
+                <a class="btn btn-secondary" href="{{ url_for('administrar_modelos') }}" role="button" title="Administrar modelos">
+                  <i class="material-icons">settings</i>
+                </a>
+                <a class="btn btn-secondary" href="{{ url_for('menu_inicial') }}" role="button" title="Menú inicial">
+                  <i class="material-icons">menu</i>
+                </a>
+              </div>
             </div>
-          </div>
         </div>
     </div>
   </div>
   </div>
+  <br><br><br>
   {% block content %}{% endblock %}
 </body>
 <br><br>

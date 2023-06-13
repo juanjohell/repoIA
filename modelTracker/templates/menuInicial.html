@@ -5,10 +5,12 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container">
-      <div class="d-grid gap-2">
-        <a href="{{ url_for('seleccionar_modelo') }}" class="btn btn-primary">Realizar inferencia</a>
-        <a href="{{ url_for('administrar_modelos') }}" class="btn btn-primary">Administrar Modelos</a>
+  <div class="container-sm">
+      <div class="card p-4 shadow">
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('seleccionar_modelo') }}" class="btn btn-secondary btn-lg btn-block">Realizar inferencia</a>
+            <a href="{{ url_for('administrar_modelos') }}" class="btn btn-secondary btn-lg btn-block">Administrar Modelos</a>
+        </div>
       </div>
-  </div>
+</div>
 {% endblock %}
