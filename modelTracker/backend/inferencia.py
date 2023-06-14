@@ -72,7 +72,6 @@ def obtener_estructura():
     path_fichero_modelo = os.path.join(path_modelos, modelo_seleccionado.nombre)
     print(path_fichero_modelo)
     #CARGA DEL MODELO
-    # CARGA DEL MODELO
     model = load_model(path_fichero_modelo)
 
     # Guardar la imagen en un archivo temporal
