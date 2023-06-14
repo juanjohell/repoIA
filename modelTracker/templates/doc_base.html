@@ -14,8 +14,7 @@
     .hidden {
       display: none;
     }
-  </style>
-  <style>
+
     .jumbotron {
       background-image: url("../static/imagenes/modelTracker.png");
       background-size: cover;
@@ -49,10 +48,13 @@
       color: #856404;
     }
 
-    .image-container {
+    #image-container-outer {
       overflow: auto;
-      max-width: 100%;
-      height: 500px;
+      max-height: 500px; /* Ajusta la altura máxima según tus necesidades */
+    }
+
+    #image-container-inner {
+      display: inline-block;
     }
 
   </style>

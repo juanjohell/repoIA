@@ -7,43 +7,45 @@
 {% block content %}
   <div class="container">
     <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <h3 class="mt-4 mb-3 text-dark font-weight-bold">Realizar inferencia con modelo {{modelo.nombre}}</h3>
-          <p class="text-dark font-italic">{{modelo.descripcion}}</p>
+      <div class="card p-4 shadow">
+          <div class="col-md-6 offset-md-3">
+            <h3 class="mt-4 mb-3 text-dark font-weight-bold">Realizar inferencia con modelo {{modelo.nombre}}</h3>
+              <p class="text-dark font-italic">{{modelo.descripcion}}</p>
 
-        <form method="POST" action="/inferir_con_modelo" enctype="multipart/form-data" class="needs-validation" novalidate>
-          <div class="mb-3">
-            <label for="image" class="form-label">Seleccione una imagen:</label>
-              <input type="file" id="image" name="image" class="form-control-file" required>
-              <div class="invalid-feedback">Por favor, seleccione una imagen.</div>
-          </div>
-          <button id="submit-button" type="submit" class="btn btn-primary">Clasificar</button>
-        </form>
-
-        <!-- barra de progreso mientras se realiza la inferencia -->
-        {% if not ocultar_barra_progreso %}
-        <div id="progress-bar" class="progress mb-4 hidden">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-          <span class="progress-text">Analizando la imagen</span>
-        </div>
-        {% endif %}
-        <!-- -->
-        {% if prediction %}
-          <h2 class="mt-4">Resultado de la clasificación:</h2>
-        <div class="form-text custom-bg-yellow p-2 rounded">
-          {% if resultado %}{{ resultado }}{% endif %}
-        </div>
-          <div class="container">
-            <div class="card mt-4">
-              <img src="data:image/png;base64,{{ prediction }}" class="card-img-top img-fluid rounded mx-auto d-block">
-              <div class="card-body text-center">
-                <a href="ruta_para_guardar_imagen.jpg" class="btn btn-primary" download>Guardar imagen</a>
+            <form method="POST" action="/inferir_con_modelo" enctype="multipart/form-data" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label for="image" class="form-label">Seleccione una imagen:</label>
+                  <input type="file" id="image" name="image" class="form-control-file" required>
+                  <div class="invalid-feedback">Por favor, seleccione una imagen.</div>
               </div>
+              <button id="submit-button" type="submit" class="btn btn-secondary btn-lg btn-block">Presentar al modelo</button>
+            </form>
+
+            <!-- barra de progreso mientras se realiza la inferencia -->
+            {% if not ocultar_barra_progreso %}
+            <div id="progress-bar" class="progress mb-4 hidden">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="50" aria-valuemax="100"></div>
+              <span class="progress-text">Analizando la imagen...</span>
             </div>
+            {% endif %}
+            <!-- -->
+            {% if prediction %}
+              <h2 class="mt-4">Resultado de la clasificación:</h2>
+            <div class="form-text custom-bg-yellow p-2 rounded">
+              {% if resultado %}{{ resultado }}{% endif %}
+            </div>
+              <div class="container">
+                <div class="card mt-4">
+                  <img src="data:image/png;base64,{{ prediction }}" class="card-img-top img-fluid rounded mx-auto d-block">
+                  <div class="card-body text-center">
+                    <a href="{{modelo.nombre}}_resultado.jpg" class="btn btn-secondary btn-lg btn-block" download>Guardar imagen</a>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
           </div>
-        {% endif %}
+        </div>
       </div>
-    </div>
   </div>
   <script>
       document.getElementById('submit-button').addEventListener('click', function() {
