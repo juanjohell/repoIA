@@ -6,55 +6,32 @@ from keras.models import load_model
 import numpy as np
 import os
 
-
-def get_vgg19_model(model_file_path):
+# GENERACIÓN DE FICHEROS H5 DE DIFERENTES MODELOS NEURONALES
+# KERAS PREENTRENADOS EN IMAGENET.
+def get_model(model_file_path, model_name):
     model = None
-
-    # Check if weights file exists
     if os.path.exists(model_file_path):
         # Load model from file
         model = load_model(model_file_path)
     else:
-        # Create new model with pre-trained weights
-        model = VGG19(weights='imagenet', include_top=True)
+        # Create new model with pre-trained weights based on model_name
+        if model_name == 'vgg19':
+            model = VGG19(weights='imagenet', include_top=True)
+        elif model_name == 'inceptionv3':
+            model = InceptionV3(weights='imagenet', include_top=True)
+        elif model_name == 'mobilenetv2':
+            model = MobileNetV2(weights='imagenet', include_top=True)
+        else:
+            raise ValueError(f"Invalid model name: {model_name}")
 
         # Save model to file
         model.save(model_file_path)
 
     return model
 
-def get_inceptionV3(model_file_path):
-    model = None
 
-    # Check if weights file exists
-    if os.path.exists(model_file_path):
-        # Load model from file
-        model = load_model(model_file_path)
-    else:
-        # Create new model with pre-trained weights
-        model = InceptionV3(weights='imagenet', include_top=True)
-
-        # Save model to file
-        model.save(model_file_path)
-
-    return model
-
-def get_mobileNetV2(model_file_path):
-    model = None
-
-    # Check if weights file exists
-    if os.path.exists(model_file_path):
-        # Load model from file
-        model = load_model(model_file_path)
-    else:
-        # Create new model with pre-trained weights
-        model = MobileNetV2(weights='imagenet', include_top=True)
-
-        # Save model to file
-        model.save(model_file_path)
-
-    return model
-
+# Esta funcion es solo para predecir por fuera de la aplicación y debuggear
+# los ficheros generados:
 def predecir(img_path):
     # Importar el modelo pre-entrenado VGG19
 
