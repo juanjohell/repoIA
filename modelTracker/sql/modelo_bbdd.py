@@ -9,12 +9,16 @@ from sqlite3 import Error
 import sys
 import os
 
-# Obtener la ruta absoluta a la carpeta que contiene el archivo de base de datos
-folder_path = os.path.abspath('bbdd')
-# Combinar la ruta absoluta de la carpeta con el nombre del archivo de base de datos
-path = os.path.join(folder_path, 'gestion_modelos.sqlite')
-
-def create_connection():
+# Obtener la ruta absoluta del archivo actual
+archivo_actual = os.path.abspath(__file__)
+#Obtener la ruta al nodo padre del archivo actual
+nodo_padre = os.path.dirname(archivo_actual)
+# Obtener la ruta al abuelo del archivo actual
+modelTracker_path = os.path.dirname(nodo_padre)
+modelTracker_path = os.path.join(modelTracker_path, 'bbdd')
+path = os.path.join(modelTracker_path, 'gestion_modelos.sqlite')
+def create_connection(path = path):
+    print(path)
     connection = None
     try:
         print(path)
@@ -25,20 +29,21 @@ def create_connection():
 
     return connection
 
-def existe_bbdd():
-    return os.path.exists(path)
 
 crear_tabla_modelos = '''CREATE TABLE "Modelos" (
     "id_modelo" INTEGER PRIMARY KEY AUTOINCREMENT,
     "id_uso" INTEGER,
     "id_optimizer"	INTEGER,
 	"nombre"	TEXT NOT NULL,
-	"id_familia"	TEXT,
+	"id_familia"	INTEGER,
+	"id_dataset"    INTEGER,
     "descripcion"	TEXT,
 	"depth"	INTEGER,
 	"input_shape"	TEXT,
+	"output_format" TEXT,
 	FOREIGN KEY("id_optimizer") REFERENCES "Optimizador"("id_optimizador"),
 	FOREIGN KEY("id_familia") REFERENCES "FamiliaModelo"("id_familia"),
+	FOREIGN KEY("id_dataset") REFERENCES "Datasets"("id_dataset"),
     FOREIGN KEY("id_uso") REFERENCES "Usos"("id_uso")
 );'''
 
@@ -59,6 +64,13 @@ crear_tabla_usos = '''CREATE TABLE "Usos" (
     "descripcion"	TEXT
 );'''
 
+crear_tabla_datasets = '''CREATE TABLE "Datasets" (
+	"id_dataset"	INTEGER PRIMARY KEY AUTOINCREMENT,
+    "nombre"	TEXT NOT NULL,
+    "descripcion"	TEXT,
+    "num_items"    INTEGER
+);'''
+
 crear_tabla_familia_modelo = '''CREATE TABLE "FamiliaModelo" (
     "id_familia" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"nombre"	TEXT NOT NULL,
@@ -72,6 +84,8 @@ crear_tabla_familia_modelo = '''CREATE TABLE "FamiliaModelo" (
 def insert_tabla_usos(params):
     sql = '''INSERT OR IGNORE INTO USOS (NOMBRE, DESCRIPCION)
     VALUES (?,?)'''
+    print("path insertar_tabla_usos")
+    print(modelTracker_path)
     conn = create_connection()
     cursor_obj = conn.cursor()
     cursor_obj.execute(sql,params)
@@ -96,8 +110,8 @@ def insert_tabla_optimizador(params):
 # RETORNA EL ID ASIGNADO AL REGISTRO.
 
 def insert_tabla_modelos(params):
-    sql = '''INSERT OR IGNORE INTO MODELOS (NOMBRE, DESCRIPCION, DEPTH, INPUT_SHAPE)
-             VALUES (?, ?, ?, ?)'''
+    sql = '''INSERT OR IGNORE INTO MODELOS (NOMBRE, DESCRIPCION, DEPTH, INPUT_SHAPE, ID_DATASET)
+             VALUES (?, ?, ?, ?, ?)'''
     # Conectar a la base de datos SQLite3
     conn = create_connection()
     cursor_obj = conn.cursor()
@@ -138,6 +152,16 @@ def insert_tabla_familia_modelo(params):
     conn.close()
     return cursor_obj.lastrowid
 
+def insert_tabla_datasets(params):
+    sql = '''INSERT OR IGNORE INTO DATASETS (NOMBRE, DESCRIPCION, NUM_ITEMS) VALUES (?,?,?)'''
+
+    conn = create_connection()
+    cursor_obj = conn.cursor()
+    cursor_obj.execute(sql,params)
+    conn.commit()
+    conn.close()
+    return cursor_obj.lastrowid
+
 # DEVUELVE UN LISTADO DE TODOS LOS MODELOS
 def listado_modelos():
     sql = '''SELECT id_modelo, nombre, descripcion FROM Modelos'''
@@ -151,3 +175,14 @@ def listado_modelos():
     conn.close()
     return modelos
 
+def listado_datasets():
+    sql = '''SELECT id_dataset, nombre, descripcion, num_items FROM Datasets'''
+    conn = create_connection()
+     # como objetos de tipo Row, lo que permitirá acceder
+     # a los campos por nombre en lugar de por índice.
+    conn.row_factory = sqlite3.Row
+    cursor = conn.execute(sql)
+    datasets = cursor.fetchall()
+    # Cerrar la conexión a la base de datos
+    conn.close()
+    return datasets

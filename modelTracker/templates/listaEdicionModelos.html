@@ -4,38 +4,39 @@
 
 {% block content %}
 <div class="container">
-  <h1>Modelos</h1>
-
-    <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for modelo in modelos %}
-            <tr>
-              <td>{{ modelo['id_modelo'] }}</td>
-              <td>{{ modelo['nombre'] }}</td>
-              <td>{{ modelo['descripcion'] }}</td>
-              <td>
-                  <a href="/editar_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
-                      <i class="material-icons">edit</i>
-                  </a>
-              </td>
-              <td>
-                  <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#confirmModal{{ modelo['id_modelo'] }}">
-                    <i class="material-icons">delete</i>
-                  </button>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
+  <h2>Modelos</h2>
+      <div class="card p-4 shadow">
+        <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for modelo in modelos %}
+                <tr>
+                  <td>{{ modelo['id_modelo'] }}</td>
+                  <td>{{ modelo['nombre'] }}</td>
+                  <td>{{ modelo['descripcion'] }}</td>
+                  <td>
+                      <a href="/editar_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                          <i class="material-icons">edit</i>
+                      </a>
+                  </td>
+                  <td>
+                      <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#confirmModal{{ modelo['id_modelo'] }}">
+                        <i class="material-icons">delete</i>
+                      </button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div> <!-- tabla responsive -->
+      </div>
     <!-- Modal de confirmación para eliminar el modelo -->
       {% for modelo in modelos %}
       <div class="modal fade" id="confirmModal{{ modelo['id_modelo'] }}" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel{{ modelo['id_modelo'] }}" aria-hidden="true">
@@ -58,5 +59,12 @@
         </div>
       </div>
       {% endfor %}
-    </div>
-    {% endblock %}
+
+</div>
+<!-- Código JavaScript para inicializar las ventanas modales -->
+<script>
+  $(document).ready(function() {
+    $('.modal').modal();
+  });
+</script>
+{% endblock %}

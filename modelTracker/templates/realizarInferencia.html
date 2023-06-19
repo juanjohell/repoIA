@@ -38,7 +38,7 @@
                 <div class="card mt-4">
                   <img src="data:image/png;base64,{{ prediction }}" class="card-img-top img-fluid rounded mx-auto d-block">
                   <div class="card-body text-center">
-                    <a href="{{modelo.nombre}}_resultado.jpg" class="btn btn-secondary btn-lg btn-block" download>Guardar imagen</a>
+                    <a id="download-link" href="{{ image_path }}" class="btn btn-secondary btn-lg btn-block" download>Guardar imagen</a>
                   </div>
                 </div>
               </div>
@@ -52,5 +52,14 @@
         var progressBar = document.getElementById('progress-bar');
         progressBar.classList.remove('hidden');
       });
+
+      // Obtener la referencia al enlace de descarga
+    const downloadLink = document.getElementById('download-link');
+
+    // Agregar un evento de clic al botón
+    downloadLink.addEventListener('click', function() {
+        downloadLink.download = "{{ modelo.nombre }}_resultado.jpg";
+    });
   </script>
+
 {% endblock %}

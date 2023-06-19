@@ -5,13 +5,23 @@ Created on Thu May 11 13:22:12 2023
 @author: jjhb01
 """
 from sql.modelo_bbdd import *
+import os
 
-# Obtener la ruta absoluta a la carpeta que contiene el archivo de base de datos
-folder_path = os.path.abspath('bbdd')
+#Ruta a modelTracker
+# Obtener la ruta absoluta del archivo actual
+archivo_actual = os.path.abspath(__file__)
+
+# Obtener la ruta al nodo padre del archivo actual
+nodo_padre = os.path.dirname(archivo_actual)
+# Obtener la ruta al abuelo del archivo actual
+modelTracker_path = os.path.dirname(nodo_padre)
+modelTracker_path = os.path.join(modelTracker_path, 'bbdd')
+
 # Combinar la ruta absoluta de la carpeta con el nombre del archivo de base de datos
-path = os.path.join(folder_path, 'gestion_modelos.sqlite')
+path = os.path.join(modelTracker_path, 'gestion_modelos.sqlite')
 
 def crea_base_de_datos(path):
+    print(modelTracker_path)
     connection = create_connection(path)
     # Crear las tablas de la base de datos
     cursor_obj = connection.cursor()
@@ -19,6 +29,7 @@ def crea_base_de_datos(path):
     cursor_obj.execute(crear_tabla_usos)
     cursor_obj.execute(crear_tabla_optimizador)
     cursor_obj.execute(crear_tabla_familia_modelo)
+    cursor_obj.execute(crear_tabla_datasets)
     cursor_obj.execute(crear_tabla_modelos)
     connection.commit()
 
@@ -38,9 +49,15 @@ def crea_base_de_datos(path):
     fila = ("VGG19","Modelo vgg19", 26, "(224,224,3)")
     insert_tabla_familia_modelo(fila)
 
+    #Tabla datasets
+    fila = ("Imagenet","dataset imagenet", 1000)
+    insert_tabla_datasets(fila)
+    fila = ("Cifar10","dataset cifar10", 10)
+    insert_tabla_datasets(fila)
+
     # Tabla Modelos, se inserta el modelo de ejemplo de la aplicación
     fila = ("vgg19_imagenet.h5", "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)")
     insert_tabla_modelos(fila)
 
-if not existe_bbdd(path):
+if not os.path.exists(path):
     crea_base_de_datos(path)

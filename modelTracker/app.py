@@ -14,7 +14,7 @@ import os
 from PIL import Image, ImageDraw
 from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
 from backend.inferencia import clasificar_imagen, obtener_estructura
-from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
+from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo, listado_datasets
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input, decode_predictions
@@ -75,14 +75,24 @@ def salvar_fichero():
     ruta_completa = path_modelos+nombre_fichero
     archivo.save(ruta_completa)
     session['nombre_fichero'] = nombre_fichero
-    return render_template('resultadoCargaFichero.html')
+    datasets = listado_datasets()
+    return render_template('resultadoCargaFichero.html', datasets = datasets)
 
 @app.route('/salvar_y_extraer_config_modelo', methods=['GET', 'POST'])
 def salvar_y_extraer_config_modelo():
     datos_modelo = extrae_info_de_modelo(session['nombre_fichero'])
-    datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
-    print(datos_json)
-    return jsonify(datos_modelo)
+    #datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
+    #print(datos_json)
+
+    # Convertir los valores float32 a float64 para la serialización JSON
+    datos_modelo_converted = {}
+    for key, value in datos_modelo.items():
+        if isinstance(value, np.float32):
+            datos_modelo_converted[key] = np.float64(value)
+        else:
+            datos_modelo_converted[key] = value
+
+    return jsonify(datos_modelo_converted)
 
 @app.route('/insertar_modelo', methods=['POST'])
 def insertar_modelo():
@@ -95,7 +105,8 @@ def insertar_modelo():
         #'id_familia': request.form.get('id_familia'),
         request.form.get('descripcion'),
         request.form.get('depth'),
-        request.form.get('input_shape')
+        request.form.get('input_shape'),
+        request.form.get('id_dataset')
     )
 
     # Llamar a la función de inserción y obtener el último ID insertado

@@ -25,7 +25,7 @@ Inspección y carga del modelo
                     <div class="row">
                       <div class="col-md-12">
                         <div class="row">
-                          <div class="col-md-8 mb-3">
+                          <div class="col-md-6 mb-3">
                             <label for="nombre" class="form-label">Nombre:</label>
                             <input class="form-control-plaintext" type="text" id="nombre" name="nombre" value="{% if data and data.nombre %}{{ data.nombre }}{% endif %}">
                             <div class="form-text custom-bg-yellow p-2 rounded">Nombre del fichero h5 para recuperarlo cuando lo precise la aplicación.</div>
@@ -41,6 +41,17 @@ Inspección y carga del modelo
                             <input class="form-control" type="text" id="depth" name="depth" value="{% if data and data.depth %}{{ data.depth }}{% endif %}">
                             <div class="form-text custom-bg-yellow p-2 rounded">Depth (profundidad), es el número de capas que presenta la arquitectura del modelo.</div>
                           </div>
+                          <!-- desplegable con los datasets almacenados -->
+                          <div class="col-md-2 mb-3">
+                              <div class="dropdown">
+                                <select class="form-select" id="dataset-select">
+                                  {% for dataset in datasets %}
+                                  <option value="{{ dataset.id_dataset }}">{{ dataset.nombre }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+                            </div>
+                          <!--  -->
                         </div>
                       </div>
                     </div>
@@ -73,8 +84,6 @@ Inspección y carga del modelo
                         </div>
                         <div class="row">
                           <div class="col-md-2 mb-3">
-                            <label for="decay" class="form-label">Decay:</label>
-                            <input class="form-control" type="text" id="decay" name="decay" value="{% if data and data.decay %}{{ data.decay }}{% endif %}">
                           </div>
                           <div class="col-md-2 mb-3">
                             <label for="beta1" class="form-label">Beta 1:</label>

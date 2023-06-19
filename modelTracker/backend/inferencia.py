@@ -53,6 +53,9 @@ def clasificar_imagen(imagen):
     #CARGA DEL MODELO
     model = load_model(path_fichero_modelo)
     preds = model.predict(x)
+
+    # En FUNCION DEL DATASET DEL MODELO SE USA UN DECODE U OTRO
+
     result = decode_predictions(preds, top=3)[0]
 
     # Crear una imagen con la clasificación

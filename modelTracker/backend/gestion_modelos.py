@@ -29,7 +29,8 @@ def extrae_info_de_modelo(nombre_fichero):
 
     # Recuperamos valores que definen el modelo
     depth = len(config['layers'])
-    input_shape = config['layers'][0]['config']['batch_input_shape']
+    input_shape_inic = config['layers'][0]['config']['batch_input_shape']
+    input_shape = '({})'.format(', '.join(str(dim) for dim in input_shape_inic[1:]))
     optimizer = None
     optimizer_type = None
     learning_rate = None
@@ -42,13 +43,34 @@ def extrae_info_de_modelo(nombre_fichero):
     if saved_model.optimizer:
         optimizer = saved_model.optimizer.get_config()
         optimizer_type = optimizer['name']
-        learning_rate = optimizer['learning_rate']
-        b1 = optimizer['beta_1']
-        b2 = optimizer['beta_2']
-        epsilon = optimizer['epsilon']
-        amsgrad = optimizer['amsgrad']
-        decay = optimizer['decay']
-        layer_config = config['layers']
+        try:
+            learning_rate = optimizer['learning_rate']
+        except KeyError:
+            learning_rate = None
+        try:
+            b1 = optimizer['beta_1']
+        except KeyError:
+            b1 = None
+        try:
+            b2 = optimizer['beta_2']
+        except KeyError:
+            b2 = None
+        try:
+            epsilon = optimizer['epsilon']
+        except KeyError:
+            epsilon = None
+        try:
+            amsgrad = optimizer['amsgrad']
+        except KeyError:
+            amsgrad = None
+        try:
+            decay = optimizer['decay']
+        except KeyError:
+            decay = None
+        try:
+            layer_config = config['layers']
+        except KeyError:
+            layer_config = None
 
     parametros = {'nombre': nombre_fichero, 'depth': depth, 'input_shape': input_shape,
                   'optimizer_type': optimizer_type, 'optimizer_id': None,
