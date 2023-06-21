@@ -44,7 +44,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="confirmModalLabel{{ modelo['id_modelo'] }}">Confirmar eliminación</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -52,7 +52,7 @@
               <p>¿Estás seguro de que deseas eliminar el modelo {{ modelo['nombre'] }}?</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               <a href="/eliminar_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-danger">Eliminar</a>
             </div>
           </div>
@@ -62,7 +62,7 @@
 
 </div>
 <!-- Código JavaScript para inicializar las ventanas modales -->
-<!-- Código JavaScript para inicializar las ventanas modales -->
+
 <script>
   var modals = [].slice.call(document.querySelectorAll('.modal'));
   var modalList = modals.map(function (modal) {
