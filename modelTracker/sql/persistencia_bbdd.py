@@ -15,8 +15,24 @@ def create_connection():
 
     return connection
 
+class Dataset:
+    def __init__(self, id_dataset=None, nombre=None, descripcion=None, num_items=None):
+        self.id_dataset = id_dataset
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.num_items = num_items
+
+    @staticmethod
+    def from_row(row):
+        return Dataset(
+            id_dataset=row['id_dataset'],
+            nombre=row['nombre'],
+            descripcion=row['descripcion'],
+            num_items=row['num_items']
+        )
+
 class Modelo:
-    def __init__(self, id_modelo=None, id_uso=None, id_optimizer=None, nombre=None, id_familia=None, descripcion=None, depth=None, input_shape=None):
+    def __init__(self, id_modelo=None, id_uso=None, id_optimizer=None, nombre=None, id_familia=None, descripcion=None, depth=None, input_shape=None, output_format=None, id_dataset=None):
         self.id_modelo = id_modelo
         self.id_uso = id_uso
         self.id_optimizer = id_optimizer
@@ -25,6 +41,8 @@ class Modelo:
         self.descripcion = descripcion
         self.depth = depth
         self.input_shape = input_shape
+        self.output_format = output_format
+        self.id_dataset = id_dataset
 
     @staticmethod
     def from_row(row):
@@ -36,7 +54,9 @@ class Modelo:
             id_familia=row['id_familia'],
             descripcion=row['descripcion'],
             depth=row['depth'],
-            input_shape=row['input_shape']
+            input_shape=row['input_shape'],
+            output_format=['output_format'],
+            id_dataset=row['id_dataset']
         )
 
     @staticmethod
@@ -60,11 +80,11 @@ class Modelo:
 
         if self.id_modelo is None:
             # Insertar nuevo registro
-            cursor.execute('INSERT INTO Modelos (id_uso, id_optimizer, nombre, id_familia, descripcion, depth, input_shape) VALUES (?, ?, ?, ?, ?, ?, ?)', (self.id_uso, self.id_optimizer, self.nombre, self.id_familia, self.descripcion, self.depth, self.input_shape))
+            cursor.execute('INSERT INTO Modelos (id_uso, id_optimizer, nombre, id_familia, descripcion, depth, input_shape, output_format, id_dataset) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', (self.id_uso, self.id_optimizer, self.nombre, self.id_familia, self.descripcion, self.depth, self.input_shape, self.output_format, self.id_dataset))
             self.id_modelo = cursor.lastrowid
         else:
             # Actualizar registro existente
-            cursor.execute('UPDATE Modelos SET id_uso=?, id_optimizer=?, nombre=?, id_familia=?, descripcion=?, depth=?, input_shape=? WHERE id_modelo=?', (self.id_uso, self.id_optimizer, self.nombre, self.id_familia, self.descripcion, self.depth, self.input_shape, self.id_modelo))
+            cursor.execute('UPDATE Modelos SET id_uso=?, id_optimizer=?, nombre=?, id_familia=?, descripcion=?, depth=?, input_shape=?, output_format=?, id_dataset=? WHERE id_modelo=?', (self.id_uso, self.id_optimizer, self.nombre, self.id_familia, self.descripcion, self.depth, self.input_shape, self.output_format, self.id_dataset, self.id_modelo))
 
         conn.commit()
         conn.close()
@@ -79,6 +99,18 @@ class Modelo:
         if row is not None:
             modelo = Modelo.from_row(row)
             return modelo
+        else:
+            return None
+
+    def devuelve_dataset(self):
+        conn = create_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.execute('SELECT * FROM Datasets WHERE id_dataset = ?', (self.id_dataset,))
+        row = cursor.fetchone()
+        conn.close()
+        if row is not None:
+            dataset = Dataset.from_row(row)
+            return dataset
         else:
             return None
 

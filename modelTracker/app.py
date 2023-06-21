@@ -98,19 +98,14 @@ def salvar_y_extraer_config_modelo():
 def insertar_modelo():
     # Obtener los datos del formulario
     # carga de datos editados en formulario:
-    params = (
-        #'id_uso': request.form.get('id_uso'),
-        #'id_optimizer': request.form.get('id_optimizer'),
-        request.form.get('nombre'),
-        #'id_familia': request.form.get('id_familia'),
-        request.form.get('descripcion'),
-        request.form.get('depth'),
-        request.form.get('input_shape'),
-        request.form.get('id_dataset')
-    )
 
-    # Llamar a la función de inserción y obtener el último ID insertado
-    last_row_id = insert_tabla_modelos(params)
+    modelo = Modelo(nombre=request.form.get('nombre'),
+                    descripcion=request.form.get('descripcion'),
+                    depth=request.form.get('depth'),
+                    input_shape=request.form.get('input_shape'),
+                    id_dataset=request.form.get('dataset-select')
+                    )
+    modelo.guardar()
 
     # Retornar una respuesta al usuario
     return redirect(url_for('seleccionar_modelo'))
@@ -142,28 +137,22 @@ def editar_modelo():
     id_modelo = request.args.get('id_modelo')
     modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
     session['modelo_seleccionado'] = modelo_seleccionado.to_json()
-    return render_template('edicionModelo.html', modelo=modelo_seleccionado)
+    datasets = listado_datasets()
+    return render_template('edicionModelo.html', modelo=modelo_seleccionado, datasets=datasets)
 
 # toma los datos editados y realiza la actualización en bbdd
 @app.route('/editar_modelo_bbdd', methods=['POST'])
 def editar_modelo_bbdd():
     # carga de datos editados en formulario:
-    params = {
-        'id_uso': request.form.get('id_uso'),
-        'id_optimizer': request.form.get('id_optimizer'),
-        'nombre': request.form.get('nombre'),
-        'id_familia': request.form.get('id_familia'),
-        'descripcion': request.form.get('descripcion'),
-        'depth': request.form.get('depth'),
-        'input_shape': request.form.get('input_shape'),
-        'id_modelo': request.form.get('id_modelo')
-    }
-
-    result = editar_tabla_modelo(params)
-    if result:
-        mensaje = 'La actualización se ha realizado de forma correcta'
-    else:
-        mensaje = 'No se ha realizado ninguna operación'
+    modelo = Modelo(id_modelo=request.form.get('id_modelo'),
+                    nombre=request.form.get('nombre'),
+                    descripcion=request.form.get('descripcion'),
+                    depth=request.form.get('depth'),
+                    input_shape=request.form.get('input_shape'),
+                    id_dataset=request.form.get('dataset-select')
+                    )
+    modelo.guardar()
+    mensaje = 'La actualización se ha realizado de forma correcta'
     resultado = {
         'mensaje': mensaje,
         'url': 'lista_editar_modelos'

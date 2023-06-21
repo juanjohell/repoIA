@@ -62,9 +62,11 @@
 
 </div>
 <!-- Código JavaScript para inicializar las ventanas modales -->
+<!-- Código JavaScript para inicializar las ventanas modales -->
 <script>
-  $(document).ready(function() {
-    $('.modal').modal();
+  var modals = [].slice.call(document.querySelectorAll('.modal'));
+  var modalList = modals.map(function (modal) {
+    return new bootstrap.Modal(modal);
   });
 </script>
 {% endblock %}

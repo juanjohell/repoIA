@@ -6,22 +6,34 @@
 <div class="container">
   <div class="card p-4 shadow">
 
-    <h3>Información del Modelo</h3>
+    <h3>Edición de información del Modelo {{modelo.nombre}}</h3>
       <!-- FORMULARIO CON LA INFO DEL MODELO -->
         <form method="POST" action="/editar_modelo_bbdd">
           <div class="row">
             <div class="col-md-1 mb-3">
               <label for="id_modelo" class="form-label">ID:</label>
-              <input class="form-control" type="text" id="id_modelo" name="id_modelo" value="{% if modelo and modelo.id_modelo %}{{ modelo.id_modelo }}{% endif %}">
+              <input class="form-control" type="text" id="id_modelo" name="id_modelo" value="{% if modelo and modelo.id_modelo %}{{ modelo.id_modelo }}{% endif %}" readonly>
             </div>
             <div class="col-md-4 mb-3">
               <label for="nombre" class="form-label">Nombre:</label>
               <input class="form-control" type="text" id="nombre" name="nombre" value="{% if modelo and modelo.nombre %}{{ modelo.nombre }}{% endif %}">
             </div>
-            <div class="col-md-5 mb-3">
+            <div class="col-md-3 mb-3">
               <label for="input_shape" class="form-label">Input Shape:</label>
               <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if modelo and modelo.input_shape %}{{ modelo.input_shape }}{% endif %}">
             </div>
+            <!-- desplegable con los datasets almacenados -->
+            <div class="col-md-2 mb-3">
+              <label for="dataset-select" class="form-label">Dataset:</label>
+              <div class="dropdown">
+                <select class="form-select" id="dataset-select" name="dataset-select">
+                  {% for dataset in datasets %}
+                  <option value="{{ dataset.id_dataset }}" {% if dataset.id_dataset == modelo.id_dataset %}selected{% endif %}>{{ dataset.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <!--  -->
           </div>
           <div class="row">
             <div class="col-md-10 mb-3">
@@ -69,7 +81,7 @@
           </div>
           <div class="row">
               <div class="col-md-12">
-                  <button type="submit" class="btn btn-primary">Grabar cambios.</button>
+                  <button type="submit" class="btn btn-secondary btn-lg btn-block">Grabar cambios.</button>
               </div>
           </div>
         </form>

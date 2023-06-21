@@ -20,7 +20,6 @@ Inspección y carga del modelo
         <!-- FORMULARIO CON LA INFO DEL MODELO -->
           <div id="model-info" class="hidden mt-4">
             <h3>Información del Modelo</h3>
-
               <form method="POST" id="form_info_modelo" action="/insertar_modelo">
                     <div class="row">
                       <div class="col-md-12">
@@ -43,8 +42,9 @@ Inspección y carga del modelo
                           </div>
                           <!-- desplegable con los datasets almacenados -->
                           <div class="col-md-2 mb-3">
+                              <label for="dataset-select" class="form-label">Dataset:</label>
                               <div class="dropdown">
-                                <select class="form-select" id="dataset-select">
+                                <select class="form-select" id="dataset-select" name="dataset-select">
                                   {% for dataset in datasets %}
                                   <option value="{{ dataset.id_dataset }}">{{ dataset.nombre }}</option>
                                   {% endfor %}
@@ -105,8 +105,8 @@ Inspección y carga del modelo
                       </div>
                     </div>
                     <button type="submit" class="btn btn-secondary btn-lg btn-block">Grabar en el sistema</button>
-                  </form>
-            </div>
+              </form>
+          </div>
         <!--          -->
             <script>
               $(document).ready(function() {

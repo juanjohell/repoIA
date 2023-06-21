@@ -21,10 +21,16 @@
           {% if modelo and modelo.nombre %}{{ modelo.nombre }}{% endif %}
         </p>
       </div>
-      <div class="col-md-5 mb-3">
+      <div class="col-md-3 mb-3">
         <strong>Input Shape:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.input_shape %}{{ modelo.input_shape }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-2 mb-3">
+        <strong>Dataset:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.devuelve_dataset().nombre %}{{ modelo.devuelve_dataset().nombre }}{% endif %}
         </p>
       </div>
     </div>

@@ -121,6 +121,7 @@ def insert_tabla_modelos(params):
     conn.close()
     return cursor_obj.lastrowid
 
+
 def editar_tabla_modelo(params):
     sql = '''UPDATE MODELOS SET  
     NOMBRE=:nombre,
