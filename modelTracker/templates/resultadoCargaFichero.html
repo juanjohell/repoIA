@@ -24,7 +24,7 @@ Inspección y carga del modelo
                     <div class="row">
                       <div class="col-md-12">
                         <div class="row">
-                          <div class="col-md-6 mb-3">
+                          <div class="col-md-4 mb-3">
                             <label for="nombre" class="form-label">Nombre:</label>
                             <input class="form-control-plaintext" type="text" id="nombre" name="nombre" value="{% if data and data.nombre %}{{ data.nombre }}{% endif %}">
                             <div class="form-text custom-bg-yellow p-2 rounded">Nombre del fichero h5 para recuperarlo cuando lo precise la aplicación.</div>
@@ -35,7 +35,7 @@ Inspección y carga del modelo
                             <div class="invalid-feedback">El formato debe ser (entero, entero, entero).</div>
                             <div class="form-text custom-bg-yellow p-2 rounded">Input Shape recoge el formato que tienen las matrices multidimensionales en que se transforman las imágenes a tratar por el modelo.</div>
                           </div>
-                          <div class="col-md-2 mb-3">
+                          <div class="col-md-1 mb-3">
                             <label for="depth" class="form-label">Depth:</label>
                             <input class="form-control" type="text" id="depth" name="depth" value="{% if data and data.depth %}{{ data.depth }}{% endif %}">
                             <div class="form-text custom-bg-yellow p-2 rounded">Depth (profundidad), es el número de capas que presenta la arquitectura del modelo.</div>
@@ -52,6 +52,18 @@ Inspección y carga del modelo
                               </div>
                             </div>
                           <!--  -->
+                          <!-- desplegable con los usos almacenados -->
+                          <div class="col-md-3 mb-3">
+                              <label for="uso-select" class="form-label">Uso:</label>
+                              <div class="dropdown">
+                                <select class="form-select" id="uso-select" name="uso-select">
+                                  {% for uso in usos %}
+                                  <option value="{{ uso.id_uso }}">{{ uso.nombre }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+                            </div>
+                          <!--  -->
                         </div>
                       </div>
                     </div>
@@ -63,6 +75,18 @@ Inspección y carga del modelo
                             <input class="form-control" type="text" id="descripcion" name="descripcion" value="{% if data and data.descripcion %}{{ data.descripcion }}{% endif %}" required>
                             <div class="form-text custom-bg-yellow p-2 rounded">Introduce una descripción que ayude posteriormente a tener claro el tipo de modelo y para qué se usa.</div>
                           </div>
+                          <!-- desplegable con los usos almacenados -->
+                          <div class="col-md-4 mb-3">
+                              <label for="familia-select" class="form-label">Familia:</label>
+                              <div class="dropdown">
+                                <select class="form-select" id="familia-select" name="familia-select">
+                                  {% for familia in familias %}
+                                  <option value="{{ familia.id_familia }}">{{ familia.nombre }}</option>
+                                  {% endfor %}
+                                </select>
+                              </div>
+                            </div>
+                          <!--  -->
                         </div>
                       </div>
                     </div>

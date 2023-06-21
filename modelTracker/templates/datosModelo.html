@@ -34,9 +34,14 @@
         </p>
       </div>
     </div>
-
     <div class="row">
-      <div class="col-md-10 mb-3">
+      <div class="col-md-2 mb-3">
+        <strong>Uso:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.devuelve_uso().nombre %}{{ modelo.devuelve_uso().nombre }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-8 mb-3">
         <strong>Descripción:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.descripcion %}{{ modelo.descripcion }}{% endif %}
@@ -45,13 +50,19 @@
     </div>
 
     <div class="row">
-      <div class="col-md-3 mb-3">
+      <div class="col-md-4 mb-3">
+        <strong>Familia:</strong>
+        <p class="form-control-plaintext custom-style">
+          {% if modelo and modelo.devuelve_familia().nombre %}{{ modelo.devuelve_familia().nombre }}{% endif %}
+        </p>
+      </div>
+      <div class="col-md-2 mb-3">
         <strong>Depth:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.depth %}{{ modelo.depth }}{% endif %}
         </p>
       </div>
-      <div class="col-md-6 mb-3">
+      <div class="col-md-4 mb-3">
         <strong>Optimizer Type:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.optimizer_type %}{{ modelo.optimizer_type }}{% endif %}

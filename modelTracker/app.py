@@ -14,7 +14,7 @@ import os
 from PIL import Image, ImageDraw
 from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
 from backend.inferencia import clasificar_imagen, obtener_estructura
-from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo, listado_datasets
+from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo, listado_datasets, listado_usos, listado_familia_modelos
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
 from keras.applications.vgg19 import preprocess_input, decode_predictions
@@ -76,7 +76,9 @@ def salvar_fichero():
     archivo.save(ruta_completa)
     session['nombre_fichero'] = nombre_fichero
     datasets = listado_datasets()
-    return render_template('resultadoCargaFichero.html', datasets = datasets)
+    familias = listado_familia_modelos()
+    usos = listado_usos()
+    return render_template('resultadoCargaFichero.html', datasets = datasets, familias=familias, usos=usos)
 
 @app.route('/salvar_y_extraer_config_modelo', methods=['GET', 'POST'])
 def salvar_y_extraer_config_modelo():
@@ -103,7 +105,9 @@ def insertar_modelo():
                     descripcion=request.form.get('descripcion'),
                     depth=request.form.get('depth'),
                     input_shape=request.form.get('input_shape'),
-                    id_dataset=request.form.get('dataset-select')
+                    id_dataset=request.form.get('dataset-select'),
+                    id_uso=request.form.get('uso-select'),
+                    id_familia=request.form.get('familia-select')
                     )
     modelo.guardar()
 
@@ -138,7 +142,9 @@ def editar_modelo():
     modelo_seleccionado = Modelo.devuelve_modelo_por_id(id_modelo)
     session['modelo_seleccionado'] = modelo_seleccionado.to_json()
     datasets = listado_datasets()
-    return render_template('edicionModelo.html', modelo=modelo_seleccionado, datasets=datasets)
+    usos = listado_usos()
+    familias = listado_familia_modelos()
+    return render_template('edicionModelo.html', modelo=modelo_seleccionado, datasets=datasets, usos=usos, familias=familias)
 
 # toma los datos editados y realiza la actualización en bbdd
 @app.route('/editar_modelo_bbdd', methods=['POST'])
@@ -149,7 +155,9 @@ def editar_modelo_bbdd():
                     descripcion=request.form.get('descripcion'),
                     depth=request.form.get('depth'),
                     input_shape=request.form.get('input_shape'),
-                    id_dataset=request.form.get('dataset-select')
+                    id_dataset=request.form.get('dataset-select'),
+                    id_uso=request.form.get('uso-select'),
+                    id_familia=request.form.get('familia-select')
                     )
     modelo.guardar()
     mensaje = 'La actualización se ha realizado de forma correcta'

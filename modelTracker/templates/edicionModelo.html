@@ -14,11 +14,11 @@
               <label for="id_modelo" class="form-label">ID:</label>
               <input class="form-control" type="text" id="id_modelo" name="id_modelo" value="{% if modelo and modelo.id_modelo %}{{ modelo.id_modelo }}{% endif %}" readonly>
             </div>
-            <div class="col-md-4 mb-3">
+            <div class="col-md-5 mb-3">
               <label for="nombre" class="form-label">Nombre:</label>
               <input class="form-control" type="text" id="nombre" name="nombre" value="{% if modelo and modelo.nombre %}{{ modelo.nombre }}{% endif %}">
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
               <label for="input_shape" class="form-label">Input Shape:</label>
               <input class="form-control" type="text" id="input_shape" name="input_shape" value="{% if modelo and modelo.input_shape %}{{ modelo.input_shape }}{% endif %}">
             </div>
@@ -36,17 +36,41 @@
             <!--  -->
           </div>
           <div class="row">
-            <div class="col-md-10 mb-3">
+             <!-- desplegable con los usos almacenados -->
+            <div class="col-md-2 mb-3">
+              <label for="uso-select" class="form-label">Uso:</label>
+              <div class="dropdown">
+                <select class="uso-select" id="uso-select" name="uso-select">
+                  {% for uso in usos %}
+                  <option value="{{ uso.id_uso }}" {% if uso.id_uso == modelo.id_uso %}selected{% endif %}>{{ uso.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-8 mb-3">
               <label for="descripcion" class="form-label">Descripción:</label>
               <input class="form-control" type="text" id="descripcion" name="descripcion" value="{% if modelo and modelo.descripcion %}{{ modelo.descripcion }}{% endif %}">
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3 mb-3">
+            <!-- desplegable familias de modelos -->
+            <div class="col-md-4 mb-3">
+              <label for="familia-select" class="form-label">Familia:</label>
+              <div class="dropdown">
+                <select class="familia-select" id="familia-select" name="familia-select">
+                  {% for familia in familias %}
+                  <option value="{{ familia.id_familia }}" {% if familia.id_familia == modelo.id_familia %}selected{% endif %}>{{ familia.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <!--  -->
+            <div class="col-md-2 mb-3">
               <label for="depth" class="form-label">Depth:</label>
               <input class="form-control" type="text" id="depth" name="depth" value="{% if modelo and modelo.depth %}{{ modelo.depth }}{% endif %}">
             </div>
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
               <label for="optimizer_type" class="form-label">Optimizer Type:</label>
               <input class="form-control" type="text" id="optimizer_type" name="optimizer_type" value="{% if modelo and modelo.optimizer_type %}{{ modelo.optimizer_type }}{% endif %}">
             </div>

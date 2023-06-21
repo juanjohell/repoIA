@@ -15,6 +15,38 @@ def create_connection():
 
     return connection
 
+class FamiliaModelo:
+    def __init__(self, id_familia=None, nombre=None, descripcion=None, depth=None, input_shape=None):
+        self.id_familia = id_familia
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.depth = depth
+        self.input_shape = input_shape
+
+    @staticmethod
+    def from_row(row):
+        return FamiliaModelo(
+            id_familia=row['id_familia'],
+            nombre=row['nombre'],
+            descripcion=row['descripcion'],
+            depth=row['depth'],
+            input_shape=row['input_shape']
+        )
+
+class Uso:
+    def __init__(self, id_uso=None, nombre=None, descripcion=None):
+        self.id_uso = id_uso
+        self.nombre = nombre
+        self.descripcion = descripcion
+
+    @staticmethod
+    def from_row(row):
+        return Uso(
+            id_uso=row['id_uso'],
+            nombre=row['nombre'],
+            descripcion=row['descripcion']
+        )
+
 class Dataset:
     def __init__(self, id_dataset=None, nombre=None, descripcion=None, num_items=None):
         self.id_dataset = id_dataset
@@ -111,6 +143,32 @@ class Modelo:
         if row is not None:
             dataset = Dataset.from_row(row)
             return dataset
+        else:
+            return None
+
+
+    def devuelve_uso(self):
+        conn = create_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.execute('SELECT * FROM Usos WHERE id_uso = ?', (self.id_uso,))
+        row = cursor.fetchone()
+        conn.close()
+        if row is not None:
+            uso = Uso.from_row(row)
+            return uso
+        else:
+            return None
+
+
+    def devuelve_familia(self):
+        conn = create_connection()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.execute('SELECT * FROM FamiliaModelo WHERE id_familia = ?', (self.id_familia,))
+        row = cursor.fetchone()
+        conn.close()
+        if row is not None:
+            familia = FamiliaModelo.from_row(row)
+            return familia
         else:
             return None
 

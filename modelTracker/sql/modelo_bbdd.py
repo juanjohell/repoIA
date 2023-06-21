@@ -187,3 +187,27 @@ def listado_datasets():
     # Cerrar la conexión a la base de datos
     conn.close()
     return datasets
+
+def listado_usos():
+    sql = '''SELECT id_uso, nombre, descripcion FROM Usos'''
+    conn = create_connection()
+     # como objetos de tipo Row, lo que permitirá acceder
+     # a los campos por nombre en lugar de por índice.
+    conn.row_factory = sqlite3.Row
+    cursor = conn.execute(sql)
+    usos = cursor.fetchall()
+    # Cerrar la conexión a la base de datos
+    conn.close()
+    return usos
+
+def listado_familia_modelos():
+    sql = '''SELECT id_familia, nombre, descripcion, depth, input_shape FROM FamiliaModelo'''
+    conn = create_connection()
+     # como objetos de tipo Row, lo que permitirá acceder
+     # a los campos por nombre en lugar de por índice.
+    conn.row_factory = sqlite3.Row
+    cursor = conn.execute(sql)
+    familias = cursor.fetchall()
+    # Cerrar la conexión a la base de datos
+    conn.close()
+    return familias

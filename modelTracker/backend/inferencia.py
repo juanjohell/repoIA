@@ -7,10 +7,11 @@ from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
 from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
-from keras.applications.vgg19 import preprocess_input, decode_predictions
+from keras.applications.vgg19 import preprocess_input, decode_predictions as decode_vgg19
 from keras.models import load_model
 from keras.utils.vis_utils import plot_model
 from werkzeug.utils import secure_filename
+import datasets_labels
 import numpy as np
 
 #CONFIGURACION
@@ -53,10 +54,12 @@ def clasificar_imagen(imagen):
     #CARGA DEL MODELO
     model = load_model(path_fichero_modelo)
     preds = model.predict(x)
+    print(preds)
 
-    # En FUNCION DEL DATASET DEL MODELO SE USA UN DECODE U OTRO
-
-    result = decode_predictions(preds, top=3)[0]
+    if modelo_seleccionado.nombre == "VGG19" and modelo_seleccionado.devuelve_dataset().nombre =="Imagenet":
+        result = decode_vgg19(preds,top=3)
+    else:
+        result = decode_predictions(preds,modelo_seleccionado.devuelve_dataset().nombre)
 
     # Crear una imagen con la clasificación
     img_with_text = pil_img.copy()
@@ -92,3 +95,12 @@ def obtener_estructura():
     os.remove(temp_file)
 
     return (img_str)
+
+# FUNCIÓN GENÉRICA A LA QUE SE PASAN UNAS PREDICCIONES
+# Y LAS ETIQUETAS DEL CONJUNTO DE DATOS EN EL QUE SE HA
+# ENTRENADO
+def decode_predictions(predictions, nombre_dataset):
+    predicted_indices = np.argmax(predictions, axis=1)
+    class_labels = getattr(datasets_labels, nombre_dataset)
+    result = [class_labels[idx] for idx in predicted_indices]
+    return result
