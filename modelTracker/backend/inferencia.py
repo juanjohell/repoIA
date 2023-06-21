@@ -11,7 +11,7 @@ from keras.applications.vgg19 import preprocess_input, decode_predictions as dec
 from keras.models import load_model
 from keras.utils.vis_utils import plot_model
 from werkzeug.utils import secure_filename
-import datasets_labels
+import backend.datasets_labels as datasets_labels
 import numpy as np
 
 #CONFIGURACION
@@ -26,7 +26,7 @@ def clasificar_imagen(imagen):
 
     # Preprocesar la imagen para que sea compatible con el modelo
     # seleccionado actualmente
-    pil_img = Image.open(io.BytesIO(imagen))
+    pil_img_orig = Image.open(io.BytesIO(imagen))
     modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
     # aqui hay que obtener el input_shape del modelo
     input_shape = modelo_seleccionado.input_shape
@@ -43,7 +43,7 @@ def clasificar_imagen(imagen):
     alto = int(dimensiones[1])
 
 
-    pil_img = pil_img.resize((alto, ancho))  # Cambiar dimensiones de la imagen
+    pil_img = pil_img_orig.resize((alto, ancho))  # Cambiar dimensiones de la imagen
     x = image.img_to_array(pil_img)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
@@ -56,13 +56,13 @@ def clasificar_imagen(imagen):
     preds = model.predict(x)
     print(preds)
 
-    if modelo_seleccionado.nombre == "VGG19" and modelo_seleccionado.devuelve_dataset().nombre =="Imagenet":
+    if modelo_seleccionado.devuelve_familia().nombre == "VGG19" and modelo_seleccionado.devuelve_dataset().nombre =="Imagenet":
         result = decode_vgg19(preds,top=3)
     else:
         result = decode_predictions(preds,modelo_seleccionado.devuelve_dataset().nombre)
 
     # Crear una imagen con la clasificación
-    img_with_text = pil_img.copy()
+    img_with_text = pil_img_orig.copy()
     img_draw = ImageDraw.Draw(img_with_text)
     img_draw.text((10, 10), str(result), fill=(255, 0, 0))
 

@@ -11,7 +11,13 @@
           <div class="col-md-6 offset-md-3">
             <h3 class="mt-4 mb-3 text-dark font-weight-bold">Realizar inferencia con modelo {{modelo.nombre}}</h3>
               <p class="text-dark font-italic">{{modelo.descripcion}}</p>
-
+              <!-- barra de progreso mientras se realiza la inferencia -->
+            {% if not ocultar_barra_progreso %}
+            <div id="progress-bar" class="progress mb-4 hidden">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="50" aria-valuemax="100"></div>
+              <span class="progress-text">Analizando la imagen...</span>
+            </div>
+            {% endif %}
             <form method="POST" action="/inferir_con_modelo" enctype="multipart/form-data" class="needs-validation" novalidate>
               <div class="mb-3">
                 <label for="image" class="form-label">Seleccione una imagen:</label>
@@ -21,13 +27,7 @@
               <button id="submit-button" type="submit" class="btn btn-secondary btn-lg btn-block">Presentar al modelo</button>
             </form>
 
-            <!-- barra de progreso mientras se realiza la inferencia -->
-            {% if not ocultar_barra_progreso %}
-            <div id="progress-bar" class="progress mb-4 hidden">
-              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="50" aria-valuemax="100"></div>
-              <span class="progress-text">Analizando la imagen...</span>
-            </div>
-            {% endif %}
+
             <!-- -->
             {% if prediction %}
               <h2 class="mt-4">Resultado de la clasificación:</h2>
