@@ -13,7 +13,7 @@ import logging
 import os
 from PIL import Image, ImageDraw
 from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
-from backend.inferencia import clasificar_imagen, obtener_estructura
+from backend.inferencia import clasificar_imagen, obtener_estructura, detectar_objetos
 from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo, listado_datasets, listado_usos, listado_familia_modelos
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
@@ -181,7 +181,15 @@ def eliminar_modelo():
 def inferir_con_modelo():
     # Obtener la imagen enviada por el usuario
     img = request.files['image'].read()
-    img_str, resultado = clasificar_imagen(img)
+    modelo = Modelo.from_json(session['modelo_seleccionado'])
+    img_str=""
+    resultado=""
+    if modelo.devuelve_uso().nombre == 'Clasificación':
+        img_str, resultado = clasificar_imagen(img)
+        print('clasificación')
+    if modelo.devuelve_uso().nombre == 'Detección':
+        img_str, resultado = detectar_objetos(img)
+        print('detección')
     return render_template('realizarInferencia.html', prediction=img_str, modelo=session['modelo_seleccionado'], mostrar_barra_progreso=False, resultado=resultado)
 
 @app.route('/mostrar_mensaje', methods=['GET'])

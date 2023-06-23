@@ -14,11 +14,15 @@
               <!-- barra de progreso mientras se realiza la inferencia -->
             {% if not ocultar_barra_progreso %}
             <div id="progress-bar" class="progress mb-4 hidden">
-              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="50" aria-valuemax="100"></div>
+              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50" aria-valuemin="50" aria-valuemax="100"></div>
               <span class="progress-text">Analizando la imagen...</span>
             </div>
             {% endif %}
             <form method="POST" action="/inferir_con_modelo" enctype="multipart/form-data" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label for="color-input" class="form-label">Seleccione color para marcar el resultado:</label>
+                <input type="text" id="color-input" name="color-input" class="form-control" value="#FFFFFF">
+              </div>
               <div class="mb-3">
                 <label for="image" class="form-label">Seleccione una imagen:</label>
                   <input type="file" id="image" name="image" class="form-control-file" required>
@@ -26,7 +30,6 @@
               </div>
               <button id="submit-button" type="submit" class="btn btn-secondary btn-lg btn-block">Presentar al modelo</button>
             </form>
-
 
             <!-- -->
             {% if prediction %}
@@ -53,13 +56,11 @@
         progressBar.classList.remove('hidden');
       });
 
-      // Obtener la referencia al enlace de descarga
-    const downloadLink = document.getElementById('download-link');
+    // Control para seleccion de color en la inferencia
+    $(document).ready(function() {
+      $('#color-input').colorpicker();
+  });
 
-    // Agregar un evento de clic al botón
-    downloadLink.addEventListener('click', function() {
-        downloadLink.download = "{{ modelo.nombre }}_resultado.jpg";
-    });
   </script>
 
 {% endblock %}
