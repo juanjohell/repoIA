@@ -110,18 +110,19 @@ def decode_predictions(predictions, nombre_dataset):
 def detectar_objetos(imagen):
     # Preprocesar la imagen para que sea compatible con el modelo seleccionado actualmente
     pil_img_orig = Image.open(io.BytesIO(imagen))
+    w_imagen, h_imagen = pil_img_orig.size
     modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
     input_shape = modelo_seleccionado.input_shape
 
-    # Tratamos las dimensiones de input_shape por separado
+    # Obtenemos las dimensiones de entrada que necesita el modelo
     dimensiones_sin_parentesis = input_shape.strip("()")
     dimensiones = dimensiones_sin_parentesis.split(",")
     canales = int(dimensiones[2])
-    w = int(dimensiones[0])
-    h = int(dimensiones[1])
+    w_modelo = int(dimensiones[0])
+    h_modelo = int(dimensiones[1])
 
-    # Redimensionar la imagen a (h, w)
-    pil_img = pil_img_orig.resize((h, w))
+    # Redimensionar la imagen a (w, h)
+    pil_img = pil_img_orig.resize((w_modelo, h_modelo))
 
     # Convertir la imagen redimensionada a un arreglo numpy
     img_array = np.array(pil_img)
@@ -137,18 +138,23 @@ def detectar_objetos(imagen):
     model = load_model(path_fichero_modelo)
     preds = model.predict(img_preprocessed)[0]
 
-    (startX, startY, endX, endY) = preds
-
-    startX = int(startX * w)
-    startY = int(startY * h)
-    endX = int(endX * w)
-    endY = int(endY * h)
-
     # Convertir la imagen original a un arreglo numpy
     img_orig_array = np.array(pil_img_orig)
 
-    # Dibujar el rectángulo en la imagen original
-    cv2.rectangle(img_orig_array, (startX, startY), (endX, endY), (255, 255, 0), 3)
+    if preds.size % 4 == 0:
+        # Reshape para dividir los valores en grupos de 4
+        boxes = preds.reshape(-1, 4)
+        # Procesar cada caja
+        for box in boxes:
+            startX, startY, endX, endY = box
+
+            startX = int(startX * w_imagen)
+            startY = int(startY * h_imagen)
+            endX = int(endX * w_imagen)
+            endY = int(endY * h_imagen)
+
+            # Dibujar el rectángulo en la imagen original
+            cv2.rectangle(img_orig_array, (startX, startY), (endX, endY), (255, 255, 0), 3)
 
     # Convertir la imagen resultante de vuelta a PIL.Image.Image
     pil_img_resultante = Image.fromarray(img_orig_array)
