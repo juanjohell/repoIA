@@ -9,6 +9,7 @@ from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import img_to_array
 from keras.applications.vgg19 import preprocess_input, decode_predictions as decode_vgg19
+from keras.applications.imagenet_utils import decode_predictions as decode_any_model_imagenet
 from keras.models import load_model
 from keras.utils.vis_utils import plot_model
 from werkzeug.utils import secure_filename
@@ -58,8 +59,11 @@ def clasificar_imagen(imagen):
     preds = model.predict(x)
     print(preds)
 
-    if modelo_seleccionado.devuelve_familia().nombre == "VGG19" and modelo_seleccionado.devuelve_dataset().nombre =="Imagenet":
-        result = decode_vgg19(preds,top=3)
+    if modelo_seleccionado.devuelve_dataset().nombre =="Imagenet":
+        if modelo_seleccionado.devuelve_familia().nombre == "VGG19":
+            result = decode_vgg19(preds,top=3)
+        else:
+            result = decode_any_model_imagenet(preds,top=3)
     else:
         result = decode_predictions(preds,modelo_seleccionado.devuelve_dataset().nombre)
 
@@ -111,6 +115,7 @@ def detectar_objetos(imagen):
     # Preprocesar la imagen para que sea compatible con el modelo seleccionado actualmente
     pil_img_orig = Image.open(io.BytesIO(imagen))
     w_imagen, h_imagen = pil_img_orig.size
+    print(w_imagen,h_imagen)
     modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
     input_shape = modelo_seleccionado.input_shape
 

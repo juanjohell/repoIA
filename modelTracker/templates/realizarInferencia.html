@@ -13,8 +13,9 @@
               <p class="text-dark font-italic">{{modelo.descripcion}}</p>
               <!-- barra de progreso mientras se realiza la inferencia -->
             {% if not ocultar_barra_progreso %}
-            <div id="progress-bar" class="progress mb-4 hidden">
-              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50" aria-valuemin="50" aria-valuemax="100"></div>
+            <div id="progress-container" class="progress mb-4 hidden">
+              <div id="progress-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="60" aria-valuemax="100"></div>
+              <div class="progress-bar-inner"></div>
               <span class="progress-text">Analizando la imagen...</span>
             </div>
             {% endif %}
@@ -40,9 +41,6 @@
               <div class="container">
                 <div class="card mt-4">
                   <img src="data:image/png;base64,{{ prediction }}" class="card-img-top img-fluid rounded mx-auto d-block">
-                  <div class="card-body text-center">
-                    <a id="download-link" href="{{ image_path }}" class="btn btn-secondary btn-lg btn-block" download>Guardar imagen</a>
-                  </div>
                 </div>
               </div>
             {% endif %}

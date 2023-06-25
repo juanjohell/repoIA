@@ -21,18 +21,21 @@
           {% if modelo and modelo.nombre %}{{ modelo.nombre }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Nombre del fichero que contiene el modelo.</div>
       <div class="col-md-3 mb-3">
         <strong>Input Shape:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.input_shape %}{{ modelo.input_shape }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Dimensiones de la matriz de entrada al modelo.</div>
       <div class="col-md-2 mb-3">
         <strong>Dataset:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.devuelve_dataset().nombre %}{{ modelo.devuelve_dataset().nombre }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Conjunto de datos en que ha sido entrenado el modelo.</div>
     </div>
     <div class="row">
       <div class="col-md-2 mb-3">
@@ -41,6 +44,7 @@
           {% if modelo and modelo.devuelve_uso().nombre %}{{ modelo.devuelve_uso().nombre }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Tipo de tarea que realiza el modelo .</div>
       <div class="col-md-8 mb-3">
         <strong>Descripción:</strong>
         <p class="form-control-plaintext custom-style">
@@ -56,12 +60,14 @@
           {% if modelo and modelo.devuelve_familia().nombre %}{{ modelo.devuelve_familia().nombre }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Indica si pertenece a una fiamilia conocida de modelos o deriva de ella.</div>
       <div class="col-md-2 mb-3">
         <strong>Depth:</strong>
         <p class="form-control-plaintext custom-style">
           {% if modelo and modelo.depth %}{{ modelo.depth }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Profundidad en número de capas.</div>
       <div class="col-md-4 mb-3">
         <strong>Optimizer Type:</strong>
         <p class="form-control-plaintext custom-style">
@@ -77,6 +83,7 @@
           {% if modelo and modelo.learning_rate %}{{ modelo.learning_rate }}{% endif %}
         </p>
       </div>
+      <div class="form-text custom-bg-yellow p-2 rounded">Tasa de aprendizaje.</div>
       <div class="col-md-3 mb-3">
         <strong>Beta 1:</strong>
         <p class="form-control-plaintext custom-style">

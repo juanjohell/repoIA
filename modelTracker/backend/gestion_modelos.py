@@ -29,8 +29,10 @@ def extrae_info_de_modelo(nombre_fichero):
 
     # Recuperamos valores que definen el modelo
     depth = len(config['layers'])
+    #input_shape con formato
     input_shape_inic = config['layers'][0]['config']['batch_input_shape']
-    input_shape = '({})'.format(', '.join(str(dim) for dim in input_shape_inic[1:]))
+    input_shape = '({})'.format(','.join(str(dim) for dim in input_shape_inic[1:]))
+
     optimizer = None
     optimizer_type = None
     learning_rate = None

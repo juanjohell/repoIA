@@ -7,7 +7,7 @@ class TestExtraeInfoDeModelo(unittest.TestCase):
 
     def test_extrae_info_de_modelo(self):
         # Simula el nombre del archivo y la configuración
-        nombre_fichero = 'modelo.h5'
+        nombre_fichero = 'model_imagenet_vgg19.h5'
         config = {
             'layers': [
                 {'config': {'batch_input_shape': (None, 32, 32, 3)}},
