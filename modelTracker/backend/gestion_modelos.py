@@ -4,7 +4,6 @@ import sys
 import os
 
 from pathlib import Path
-from tensorflow import keras
 from tensorflow.keras.models import load_model
 from flask import jsonify
 import app

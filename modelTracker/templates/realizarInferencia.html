@@ -20,16 +20,23 @@
             </div>
             {% endif %}
             <form method="POST" action="/inferir_con_modelo" enctype="multipart/form-data" class="needs-validation" novalidate>
-              <div class="mb-3">
-                <label for="color-input" class="form-label">Seleccione color para marcar el resultado:</label>
-                <input type="text" id="color-input" name="color-input" class="form-control" value="#FFFFFF">
+              <div class="row">
+                  <div class="mb-3 col-3">
+                    <input type="color" id="color-input" name="color-input" class="form-control" value="#FFFF00">
+                  </div>
+                  <div class="mb-3 col-9">
+                      <label for="color-input" class="form-label">Seleccione color para marcar el resultado.</label>
               </div>
-              <div class="mb-3">
-                <label for="image" class="form-label">Seleccione una imagen:</label>
-                  <input type="file" id="image" name="image" class="form-control-file" required>
-                  <div class="invalid-feedback">Por favor, seleccione una imagen.</div>
+              <div class="row">
+                  <div class="mb-3">
+                    <label for="image" class="form-label">Seleccione una imagen:</label>
+                      <input type="file" id="image" name="image" class="form-control-file" required>
+                      <div class="invalid-feedback">Por favor, seleccione una imagen.</div>
+                  </div>
               </div>
-              <button id="submit-button" type="submit" class="btn btn-secondary btn-lg btn-block">Presentar al modelo</button>
+              <div class="row justify-content-center">
+                  <button id="submit-button" type="submit" class="btn btn-secondary btn-lg btn-block">Presentar al modelo</button>
+              </div>
             </form>
 
             <!-- -->
@@ -38,17 +45,38 @@
             <div class="form-text custom-bg-yellow p-2 rounded">
               {% if resultado %}{{ resultado }}{% endif %}
             </div>
-              <div class="container">
-                <div class="card mt-4">
-                  <img src="data:image/png;base64,{{ prediction }}" class="card-img-top img-fluid rounded mx-auto d-block">
-                </div>
+              <div class="card mt-4">
+                    <div id="image-container-outer">
+                        <div id="image-container-inner">
+                            <img src="data:image/png;base64,{{ prediction }}" alt="imagen" id="imagen" class="card-img-top rounded mx-auto d-block">
+                        </div>
+                    </div>
               </div>
             {% endif %}
           </div>
         </div>
       </div>
   </div>
+        <!-- Ventana modal -->
+        <div class="modal fade" id="modalError" tabindex="-1" aria-labelledby="modalErrorLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalErrorLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                Debe seleccionar una imagen para inferencia.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
   <script>
+      // configuración del control colorPicker
       document.getElementById('submit-button').addEventListener('click', function() {
         var progressBar = document.getElementById('progress-bar');
         progressBar.classList.remove('hidden');
@@ -59,6 +87,15 @@
       $('#color-input').colorpicker();
   });
 
+      // ventana modal al hacer click en el boton de submit
+      // si no se ha adjuntado imagen
+      document.getElementById('submit-button').addEventListener('click', function(event) {
+        var imagen = document.getElementById('image');
+        if (imagen.files.length === 0) {
+          event.preventDefault(); // Evita el envío del formulario
+          $('#modalError').modal('show'); // Muestra la ventana modal de error
+        }
+      });
   </script>
 
 {% endblock %}

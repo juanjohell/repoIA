@@ -181,14 +181,15 @@ def eliminar_modelo():
 def inferir_con_modelo():
     # Obtener la imagen enviada por el usuario
     img = request.files['image'].read()
+    color = request.form.get('color-input')
     modelo = Modelo.from_json(session['modelo_seleccionado'])
     img_str=""
     resultado=""
     if modelo.devuelve_uso().nombre == 'Clasificación':
-        img_str, resultado = clasificar_imagen(img)
+        img_str, resultado = clasificar_imagen(img,color)
         print('clasificación')
     if modelo.devuelve_uso().nombre == 'Detección':
-        img_str, resultado = detectar_objetos(img)
+        img_str, resultado = detectar_objetos(img,color)
         print('detección')
     return render_template('realizarInferencia.html', prediction=img_str, modelo=session['modelo_seleccionado'], mostrar_barra_progreso=False, resultado=resultado)
 

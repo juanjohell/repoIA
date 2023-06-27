@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 import io
 import os
 import base64
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
 from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
 from sql.persistencia_bbdd import Modelo
@@ -16,17 +16,19 @@ from werkzeug.utils import secure_filename
 import backend.datasets_labels as datasets_labels
 import numpy as np
 import cv2
+import sys
 
 #CONFIGURACION
 # Obtener la ruta absoluta a la carpeta que contiene los ficheros de modelos
 path_modelos = os.path.abspath('modelos')
-
+path_fuente = path = f'{sys.path[0]}/static/fonts/arial.ttf'
 
 # Recibe una imagen en formato de bytes
 # Realiza clasificación y devuelve la imagen con el resultado
 # y el propio resultado como cadena de texto
-def clasificar_imagen(imagen):
+def clasificar_imagen(imagen, hex_color):
 
+    rgb_color = hex_to_rgb(hex_color)
     # Preprocesar la imagen para que sea compatible con el modelo
     # seleccionado actualmente
     pil_img_orig = Image.open(io.BytesIO(imagen))
@@ -70,7 +72,16 @@ def clasificar_imagen(imagen):
     # Crear una imagen con la clasificación
     img_with_text = pil_img_orig.copy()
     img_draw = ImageDraw.Draw(img_with_text)
-    img_draw.text((10, 10), str(result), fill=(255, 0, 0))
+
+    # Configuramos la fuente y su tamaño
+    # Especificar el tamaño de la fuente
+    font_size = 20
+
+    # Cargar una fuente predeterminada del sistema con el tamaño de fuente ajustado
+    font = ImageFont.truetype("C:/Windows/Fonts/Arial.ttf", size=font_size)
+
+    # Escribimos texto con la predicción
+    img_draw.text((10, 10), str(result), fill=rgb_color, font=font)
 
     # Codificar la imagen con la clasificación en formato base64 para mostrarla en la página web
     buffered = io.BytesIO()
@@ -111,8 +122,9 @@ def decode_predictions(predictions, nombre_dataset):
     result = [class_labels[idx] for idx in predicted_indices]
     return result
 
-def detectar_objetos(imagen):
+def detectar_objetos(imagen, hex_color):
     # Preprocesar la imagen para que sea compatible con el modelo seleccionado actualmente
+    rgb_color = hex_to_rgb(hex_color)
     pil_img_orig = Image.open(io.BytesIO(imagen))
     w_imagen, h_imagen = pil_img_orig.size
     print(w_imagen,h_imagen)
@@ -159,7 +171,7 @@ def detectar_objetos(imagen):
             endY = int(endY * h_imagen)
 
             # Dibujar el rectángulo en la imagen original
-            cv2.rectangle(img_orig_array, (startX, startY), (endX, endY), (255, 255, 0), 3)
+            cv2.rectangle(img_orig_array, (startX, startY), (endX, endY), rgb_color, 3)
 
     # Convertir la imagen resultante de vuelta a PIL.Image.Image
     pil_img_resultante = Image.fromarray(img_orig_array)
@@ -170,3 +182,15 @@ def detectar_objetos(imagen):
     img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
 
     return (img_str, "")
+
+def hex_to_rgb(hex_color):
+    # Eliminar el carácter '#' si está presente
+    hex_color = hex_color.lstrip('#')
+
+    # Dividir el valor hexadecimal en componentes R, G y B
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+
+    # Devolver la tupla RGB
+    return (r, g, b)
