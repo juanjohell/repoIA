@@ -2,9 +2,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 from backend.gestion_modelos import extrae_info_de_modelo
 
+
 class TestExtraeInfoDeModelo(unittest.TestCase):
     @patch('tensorflow.keras.models.load_model')  # Mock para la función load_model
-
     def test_extrae_info_de_modelo(self):
         # Simula el nombre del archivo y la configuración
         nombre_fichero = 'model_imagenet_vgg19.h5'

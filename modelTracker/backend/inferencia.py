@@ -3,8 +3,6 @@ import io
 import os
 import base64
 from PIL import Image, ImageDraw, ImageFont
-from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
-from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -12,7 +10,6 @@ from keras.applications.vgg19 import preprocess_input, decode_predictions as dec
 from keras.applications.imagenet_utils import decode_predictions as decode_any_model_imagenet
 from keras.models import load_model
 from keras.utils.vis_utils import plot_model
-from werkzeug.utils import secure_filename
 import backend.datasets_labels as datasets_labels
 import numpy as np
 import cv2

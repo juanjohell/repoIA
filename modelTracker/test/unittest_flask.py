@@ -6,13 +6,14 @@ import os
 
 nombre_fichero = 'vgg19_imagenet.h5'
 
-#ruta al recurso de los modelos
+# ruta al recurso de los modelos
 
 ruta_actual = os.path.abspath(os.path.dirname(__file__))
 ruta_padre = os.path.dirname(ruta_actual)
 ruta_al_archivo = os.path.join(ruta_padre, 'modelos', nombre_fichero)
 ruta_al_archivo = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'modelos', nombre_fichero))
 ruta_al_archivo = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'modelos', nombre_fichero)
+
 
 class AppTestCase(unittest.TestCase):
     def setUp(self):
@@ -71,6 +72,7 @@ class AppTestCase(unittest.TestCase):
             expected_data = {'nombre': nombre_fichero}
             actual_data = response.get_json()
             self.assertEqual(actual_data, expected_data)
+
 
 if __name__ == '__main__':
     unittest.main()

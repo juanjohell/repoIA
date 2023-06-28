@@ -4,25 +4,28 @@ from keras.applications.inception_v3 import InceptionV3, decode_predictions, pre
 from keras.applications.mobilenetv2 import MobileNetV2, decode_predictions, preprocess_input
 from keras.models import load_model
 import numpy as np
-import os
+import os, sys
+
 
 # GENERACIÓN DE FICHEROS H5 DE DIFERENTES MODELOS NEURONALES
 # KERAS PREENTRENADOS EN IMAGENET.
-def get_model(model_file_path, model_name):
+def get_model(nombre_modelo):
     model = None
+    model_file_path = os.path.join(os.path.dirname(sys.path[0]), nombre_modelo + '.h5')
+    print(model_file_path)
     if os.path.exists(model_file_path):
         # Load model from file
         model = load_model(model_file_path)
     else:
         # Create new model with pre-trained weights based on model_name
-        if model_name == 'vgg19':
+        if nombre_modelo == 'vgg19':
             model = VGG19(weights='imagenet', include_top=True)
-        elif model_name == 'inceptionv3':
+        elif nombre_modelo == 'InceptionV3':
             model = InceptionV3(weights='imagenet', include_top=True)
-        elif model_name == 'mobilenetv2':
+        elif nombre_modelo == 'MobileNetV2':
             model = MobileNetV2(weights='imagenet', include_top=True)
         else:
-            raise ValueError(f"Invalid model name: {model_name}")
+            raise ValueError(f"Invalid model name: {nombre_modelo}")
 
         # Save model to file
         model.save(model_file_path)
@@ -32,19 +35,20 @@ def get_model(model_file_path, model_name):
 
 # Esta funcion es solo para predecir por fuera de la aplicación y debuggear
 # los ficheros generados:
-def predecir(img_path):
-    # Importar el modelo pre-entrenado VGG19
+def predecir(img_path, nombre_modelo):
 
-   # model = get_vgg19_model('../vgg19_imagenet.h5')
-   # model = get_inceptionV3('../Inceptionv3_imagenet.h5')
-    model = get_inceptionV3('../MobileNetV2.h5')
+    model = get_model(nombre_modelo)
     # Cargar una imagen y preprocesarla para que sea compatible con el modelo
-    #VGG19
-    #img = image.load_img(img_path, target_size=(224, 224))
-    #InceptionV3
-    #img = image.load_img(img_path, target_size=(139, 139))
-    #MobileNetV2
-    img = image.load_img(img_path, target_size=(224, 224))
+    datos_modelo(model)
+
+    if nombre_modelo == 'vgg19':
+        input_shape = (224, 224, 3)
+    elif nombre_modelo == 'InceptionV3':
+        input_shape = (299, 299, 3)
+    else:
+        input_shape = (299, 299, 3)
+
+    img = image.load_img(img_path, target_size=input_shape)
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
@@ -53,9 +57,8 @@ def predecir(img_path):
     preds = model.predict(x)
     print('Predicción:', decode_predictions(preds, top=3)[0])
 
-
-predecir('../imagenes_test/gato.jpg')
-
 def datos_modelo(model):
     config = model.get_config()
     print 
+
+predecir('../imagenes_test/fruta.jpg', 'MobileNetV2')
