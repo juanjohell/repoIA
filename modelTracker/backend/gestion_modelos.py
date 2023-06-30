@@ -3,26 +3,25 @@
 import sys
 import os
 
-from pathlib import Path
 from tensorflow.keras.models import load_model
-from flask import jsonify
-import app
-from flask import Flask, url_for
 
 # Función para extraccion de metadatos de un modelo h5 pasado por parámetro
 # Los ficheros deben estar en la subcarpeta modelos del proyecto.
-#
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = f'{sys.path[0]}/modelos/'
 
+# Obtener la ruta absoluta del archivo actual
+archivo_actual = os.path.abspath(__file__)
+#Obtener la ruta al nodo padre del archivo actual
+nodo_padre = os.path.dirname(archivo_actual)
+# Obtener la ruta al abuelo del archivo actual
+modelTracker_path = os.path.dirname(nodo_padre)
+modelos_path = os.path.join(modelTracker_path, 'modelos')
 
-def extrae_info_de_modelo(nombre_fichero):
+def extrae_info_de_modelo(config, nombre_fichero):
 
     # Comprobar existencia
-    ruta_fichero = app.config['UPLOAD_FOLDER'] + nombre_fichero
+    ruta_fichero = os.path.join(modelos_path, nombre_fichero)
 
     # Carga el modelo Keras en formato h5
-    #saved_model = keras.models.load_model(ruta_fichero)
     saved_model = load_model(ruta_fichero)
     config = saved_model.get_config()
 
@@ -82,7 +81,7 @@ def extrae_info_de_modelo(nombre_fichero):
     return parametros
 
 # SALVA FICHERO EN SISTEMA DE FICHEROS DE LA APLICACION
-def almacenar_fichero(archivo):
+def almacenar_fichero(config, archivo):
     nombre_fichero = archivo.filename
     ruta_completa = app.config['UPLOAD_FOLDER'] + (nombre_fichero)
     archivo.save(ruta_completa)

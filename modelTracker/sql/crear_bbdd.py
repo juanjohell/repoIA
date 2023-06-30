@@ -64,7 +64,7 @@ def crea_base_de_datos(path):
     insert_tabla_datasets(fila)
 
     # Tabla Modelos, se inserta el modelo de ejemplo de la aplicación
-    fila = ("vgg19_imagenet.h5", "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)",1)
+    fila = ("vgg19_imagenet.h5", "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)",1,1,1)
     insert_tabla_modelos(fila)
 
 if not os.path.exists(path):

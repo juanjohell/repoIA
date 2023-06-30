@@ -1,5 +1,5 @@
 import unittest
-from unittest import TestCase
+from PIL import Image, ImageDraw, ImageFont
 from backend.inferencia import  hex_to_rgb
 
 # PRUEBAS UNITARIAS DE LAS FUNCIONES DE INFERENCIA

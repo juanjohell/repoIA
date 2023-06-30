@@ -33,7 +33,9 @@ app.logger.setLevel(logging.DEBUG)
 #ruta al recurso de los modelos
 # Obtener la ruta absoluta del archivo actual
 archivo_actual = os.path.abspath(__file__)
-path_modelos = os.path.join(archivo_actual,'modelos')
+# Obtener la ruta al nodo padre del archivo actual
+nodo_padre = os.path.dirname(archivo_actual)
+path_modelos = os.path.join(nodo_padre,'modelos')
 app.config['UPLOAD_FOLDER'] = path_modelos
 
 @app.route('/')
@@ -72,7 +74,7 @@ def salvar_fichero():
     # Guardar el archivo cargado en el servidor
     archivo = request.files['file']
     nombre_fichero = archivo.filename
-    ruta_completa = path_modelos+nombre_fichero
+    ruta_completa = os.path.join(path_modelos,nombre_fichero)
     archivo.save(ruta_completa)
     session['nombre_fichero'] = nombre_fichero
     datasets = listado_datasets()

@@ -110,8 +110,8 @@ def insert_tabla_optimizador(params):
 # RETORNA EL ID ASIGNADO AL REGISTRO.
 
 def insert_tabla_modelos(params):
-    sql = '''INSERT OR IGNORE INTO MODELOS (NOMBRE, DESCRIPCION, DEPTH, INPUT_SHAPE, ID_DATASET)
-             VALUES (?, ?, ?, ?, ?)'''
+    sql = '''INSERT OR IGNORE INTO MODELOS (NOMBRE, DESCRIPCION, DEPTH, INPUT_SHAPE, ID_DATASET, ID_USO, ID_FAMILIA)
+             VALUES (?, ?, ?, ?, ?, ?, ?)'''
     # Conectar a la base de datos SQLite3
     conn = create_connection()
     cursor_obj = conn.cursor()
