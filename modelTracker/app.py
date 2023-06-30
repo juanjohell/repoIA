@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Feb 22 18:01:38 2023
-
 @author: jjhb01
 """
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
@@ -31,10 +30,11 @@ app.secret_key = 'XJ9s&3u$er7M*?3Hv!Rt@3y^Z6#jGq2'
 # Configuración de los logs en la consola
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
-
-
 #ruta al recurso de los modelos
-path_modelos = f'{sys.path[0]}/modelos/'
+# Obtener la ruta absoluta del archivo actual
+archivo_actual = os.path.abspath(__file__)
+path_modelos = os.path.join(archivo_actual,'modelos')
+app.config['UPLOAD_FOLDER'] = path_modelos
 
 @app.route('/')
 def index():
@@ -82,7 +82,7 @@ def salvar_fichero():
 
 @app.route('/salvar_y_extraer_config_modelo', methods=['GET', 'POST'])
 def salvar_y_extraer_config_modelo():
-    datos_modelo = extrae_info_de_modelo(session['nombre_fichero'])
+    datos_modelo = extrae_info_de_modelo(app, session['nombre_fichero'])
     #datos_json = json.dumps(datos_modelo)  # Convertir a cadena JSON
     #print(datos_json)
 
