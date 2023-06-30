@@ -48,15 +48,23 @@ def crea_base_de_datos(path):
     # Tabla familia_modelo
     fila = ("VGG19","Modelo vgg19", 26, "(224,224,3)")
     insert_tabla_familia_modelo(fila)
+    fila = ("InceptionV3","Modelo InceptionV3", 26, "(299,299,3)")
+    insert_tabla_familia_modelo(fila)
+    fila = ("Sin determinar","Modelo específico", 0, "(0,0,0)")
+    insert_tabla_familia_modelo(fila)
 
     #Tabla datasets
     fila = ("Imagenet","dataset imagenet", 1000)
     insert_tabla_datasets(fila)
     fila = ("Cifar10","dataset cifar10", 10)
     insert_tabla_datasets(fila)
+    fila = ("PascalVOC","dataset pascalVOC", 80)
+    insert_tabla_datasets(fila)
+    fila = ("Específico","dataset específico", 0)
+    insert_tabla_datasets(fila)
 
     # Tabla Modelos, se inserta el modelo de ejemplo de la aplicación
-    fila = ("vgg19_imagenet.h5", "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)")
+    fila = ("vgg19_imagenet.h5", "Modelo VGG9 de Keras entrenado en Imagenet", 26, "(224,224,3)",1)
     insert_tabla_modelos(fila)
 
 if not os.path.exists(path):
