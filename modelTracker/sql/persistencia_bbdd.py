@@ -1,13 +1,23 @@
 import sqlite3
 import sys
 import json
+from sqlite3 import Error, connect, Row
 
 #ruta a la base de datos de aplicación
-path = f'{sys.path[0]}/bbdd/gestion_modelos.sqlite'
+import os
+# Obtener la ruta absoluta del archivo actual
+archivo_actual = os.path.abspath(__file__)
+# Obtener la ruta al nodo padre del archivo actual
+nodo_padre = os.path.dirname(archivo_actual)
+# Obtener la ruta al abuelo del archivo actual
+modelTracker_path = os.path.dirname(nodo_padre)
+# Combinar la ruta absoluta de la carpeta con el nombre del archivo de base de datos
+path = os.path.join(modelTracker_path, 'bbdd', 'gestion_modelos.sqlite')
 
 def create_connection():
     connection = None
     try:
+        print("connection "+path)
         connection = sqlite3.connect(path)
         print("Conectado a la base de datos SQLite3")
     except Error as e:
