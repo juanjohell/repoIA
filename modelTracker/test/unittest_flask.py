@@ -15,6 +15,7 @@ ruta_al_archivo = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 
 ruta_al_archivo = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'modelos', nombre_fichero)
 
 
+
 class AppTestCase(unittest.TestCase):
     def setUp(self):
         app.testing = True
@@ -73,6 +74,6 @@ class AppTestCase(unittest.TestCase):
             actual_data = response.get_json()
             self.assertEqual(actual_data, expected_data)
 
-
+#Para que las funciones se ejecuten sólo desde aquí
 if __name__ == '__main__':
     unittest.main()

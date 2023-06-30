@@ -2,26 +2,17 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
-import os
-
-# Obtener la ruta absoluta del directorio de la aplicación
-app_dir = os.path.abspath(os.path.dirname(__file__))
 
 # Configurar el servicio del controlador de Chrome
 s = Service(ChromeDriverManager().install())
-
 # Configurar las opciones del navegador
 options = webdriver.ChromeOptions()
-# Aquí puedes añadir opciones adicionales si es necesario
-
 # Crear la instancia del navegador
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
 
 def configuracion_basica():
     options = webdriver.ChromeOptions()
     options.headless = False  # Cambia a True para ejecutar en modo headless
-
 
 def abre_aplicacion():
     driver.get('http://127.0.0.1:5000/')
@@ -33,5 +24,7 @@ def abre_aplicacion():
 
 
 # SECUENCIA DE ACCIONES
-#configuracion_basica()
-#abre_aplicacion()
+#Para que las funciones se ejecuten sólo desde aquí
+if __name__ == '__main__':
+    configuracion_basica()
+    abre_aplicacion()

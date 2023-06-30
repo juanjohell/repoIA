@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock, patch
 from backend.gestion_modelos import extrae_info_de_modelo
 
-
 class TestExtraeInfoDeModelo(unittest.TestCase):
     @patch('tensorflow.keras.models.load_model')  # Mock para la función load_model
     def test_extrae_info_de_modelo(self):
@@ -29,3 +28,7 @@ class TestExtraeInfoDeModelo(unittest.TestCase):
         # Verifica las llamadas a load_model
         load_model.assert_called_once_with('UPLOAD_FOLDERmodelo.h5')
         load_model.return_value.get_config.assert_called_once()
+
+#Para que las funciones se ejecuten sólo desde aquí
+if __name__ == '__main__':
+    unittest.main()

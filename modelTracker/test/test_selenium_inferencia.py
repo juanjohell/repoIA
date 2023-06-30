@@ -1,5 +1,5 @@
 from test_selenium_abrir_app import *
-
+import os
 # Obtener la ruta absoluta del directorio de la aplicación
 app_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -74,7 +74,6 @@ def inferencia_vgg19():
     link = driver.find_element_by_id('submit-button')
     time.sleep(1)
     link.click()
-
 
 # SECUENCIA DE ACCIONES PARA INFERENCIA CON
 # UN MODELO

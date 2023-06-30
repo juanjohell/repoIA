@@ -15,7 +15,7 @@ import numpy as np
 import cv2
 import sys
 
-#CONFIGURACION
+# CONFIGURACION
 # Obtener la ruta absoluta a la carpeta que contiene los ficheros de modelos
 path_modelos = os.path.abspath('modelos')
 path_fuente = path = f'{sys.path[0]}/static/fonts/arial.ttf'
@@ -32,7 +32,7 @@ def clasificar_imagen(imagen, hex_color):
     modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
     # aqui hay que obtener el input_shape del modelo
     input_shape = modelo_seleccionado.input_shape
-    print (input_shape)
+    print(input_shape)
     #TRATAMOS LAS DIMENSIONES DE INPUT_SHAPE POR SEPARADO:
     # Eliminar los paréntesis del texto
     dimensiones_sin_parentesis = input_shape.strip("()")
