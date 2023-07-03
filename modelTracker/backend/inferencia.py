@@ -10,7 +10,7 @@ from keras.applications.vgg19 import preprocess_input, decode_predictions as dec
 from keras.applications.imagenet_utils import decode_predictions as decode_any_model_imagenet
 from keras.models import load_model
 from keras.utils.vis_utils import plot_model
-import backend.datasets_labels as datasets_labels
+from backend.datasets_labels import *
 import numpy as np
 import cv2
 import sys
@@ -115,11 +115,11 @@ def obtener_estructura():
 # ENTRENADO
 def decode_predictions(predictions, nombre_dataset):
     predicted_indices = np.argmax(predictions, axis=1)
-    class_labels = getattr(datasets_labels, nombre_dataset)
+    class_labels = getattr(nombre_dataset)
     result = [class_labels[idx] for idx in predicted_indices]
     return result
 
-def detectar_objetos(imagen, hex_color):
+def detectar_objetos_h5(imagen, hex_color):
     # Preprocesar la imagen para que sea compatible con el modelo seleccionado actualmente
     rgb_color = hex_to_rgb(hex_color)
     pil_img_orig = Image.open(io.BytesIO(imagen))
@@ -179,6 +179,54 @@ def detectar_objetos(imagen, hex_color):
     img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
 
     return (img_str, "")
+
+def detectar_objetos_pb(imagen, hex_color):
+    # Decodificar los bytes y convertirlos en una imagen en formato OpenCV
+    nparr = np.frombuffer(imagen, np.uint8)
+    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+    # Verificar si la imagen se cargó correctamente
+    if image is None:
+        print("Error al cargar la imagen")
+    else:
+
+        rgb_color = hex_to_rgb(hex_color)
+        modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
+        path_fichero_modelo = os.path.join(path_modelos, modelo_seleccionado.nombre)
+        path_fichero_clases = os.path.join(path_modelos, modelo_seleccionado.nombre+'txt')
+        input_shape = modelo_seleccionado.input_shape
+
+        # carga del modelo con openCV
+        net = cv2.dnn.readNetFromTensorflow(path_fichero_modelo, path_fichero_clases)
+        # establecemos shape de entrada
+        blobimg = cv2.dnn.blobFromImage(image, 1.0, (input_shape[0], input_shape[1]), (0, 0, 0), True)
+        net.setInput(blobimg)
+        detection = net.forward('detection_out')
+        detectionMat = np.array(detection[0, 0, :, :])
+
+        confidence_threshold = 0.25
+        for i in range(detectionMat.shape[0]):
+            detect_confidence = detectionMat[i, 2]
+
+            if detect_confidence > confidence_threshold:
+                det_index = int(detectionMat[i, 1])
+                x1 = detectionMat[i, 3] * image.shape[1]
+                y1 = detectionMat[i, 4] * image.shape[0]
+                x2 = detectionMat[i, 5] * image.shape[1]
+                y2 = detectionMat[i, 6] * image.shape[0]
+                rec = (int(x1), int(y1), int(x2 - x1), int(y2 - y1))
+                cv2.rectangle(image, rec, (0, 0, 255), 1, 8, 0)
+                cv2.putText(image, f'{coco[det_index]}', (int(x1), int(y1 - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, rgb_color, 1, 8, 0)
+
+        # Convertir la imagen resultante de vuelta a PIL.Image.Image
+        pil_img_resultante = Image.fromarray(image)
+
+        # Codificar la imagen con la clasificación en formato base64 para mostrarla en la página web
+        buffered = io.BytesIO()
+        pil_img_resultante.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('ascii')
+
+        return (img_str, "")
 
 def hex_to_rgb(hex_color):
     # Eliminar el carácter '#' si está presente

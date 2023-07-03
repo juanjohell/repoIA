@@ -12,7 +12,7 @@ import logging
 import os
 from PIL import Image, ImageDraw
 from backend.gestion_modelos import extrae_info_de_modelo, almacenar_fichero
-from backend.inferencia import clasificar_imagen, obtener_estructura, detectar_objetos
+from backend.inferencia import clasificar_imagen, obtener_estructura, detectar_objetos_h5, detectar_objetos_pb
 from sql.modelo_bbdd import insert_tabla_modelos, listado_modelos, editar_tabla_modelo, listado_datasets, listado_usos, listado_familia_modelos
 from sql.persistencia_bbdd import Modelo
 from keras.preprocessing import image
@@ -185,13 +185,20 @@ def inferir_con_modelo():
     img = request.files['image'].read()
     color = request.form.get('color-input')
     modelo = Modelo.from_json(session['modelo_seleccionado'])
+    # Extraer la extensión del archivo
+    nombre, extension = os.path.splitext(modelo.nombre)
+
     img_str=""
     resultado=""
     if modelo.devuelve_uso().nombre == 'Clasificación':
-        img_str, resultado = clasificar_imagen(img,color)
+        if extension == ".h5":
+            img_str, resultado = clasificar_imagen(img,color)
         print('clasificación')
     if modelo.devuelve_uso().nombre == 'Detección':
-        img_str, resultado = detectar_objetos(img,color)
+        if extension == ".h5":
+            img_str, resultado = detectar_objetos(img,color)
+        if extension == ".pb":
+            img_str, resultado = detectar_objetos_pb(img,color)
         print('detección')
     return render_template('realizarInferencia.html', prediction=img_str, modelo=session['modelo_seleccionado'], mostrar_barra_progreso=False, resultado=resultado)
 
