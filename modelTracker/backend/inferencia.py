@@ -190,12 +190,14 @@ def detectar_objetos_pb(imagen, hex_color):
         print("Error al cargar la imagen")
     else:
 
-        rgb_color = hex_to_rgb(hex_color)
+        rgb_color = rgb_to_bgr(hex_to_rgb(hex_color))
         modelo_seleccionado = Modelo.from_json(session.get('modelo_seleccionado'))
         path_fichero_modelo = os.path.join(path_modelos, modelo_seleccionado.nombre)
         path_fichero_clases = os.path.join(path_modelos, modelo_seleccionado.nombre+'txt')
         input_shape = modelo_seleccionado.input_shape
-
+        print('input_shape '+input_shape)
+        # convertimos input_shape que viene como cadena a array
+        input_shape = tuple(map(int, input_shape.strip('()').split(',')))
         # carga del modelo con openCV
         net = cv2.dnn.readNetFromTensorflow(path_fichero_modelo, path_fichero_clases)
         # establecemos shape de entrada
@@ -215,11 +217,15 @@ def detectar_objetos_pb(imagen, hex_color):
                 x2 = detectionMat[i, 5] * image.shape[1]
                 y2 = detectionMat[i, 6] * image.shape[0]
                 rec = (int(x1), int(y1), int(x2 - x1), int(y2 - y1))
-                cv2.rectangle(image, rec, (0, 0, 255), 1, 8, 0)
+                cv2.rectangle(image, rec, rgb_color, 2, 8, 0)
                 cv2.putText(image, f'{coco[det_index]}', (int(x1), int(y1 - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, rgb_color, 1, 8, 0)
 
+        # Después de dibujar las cajas y antes de convertir la imagen a PIL.Image.Image
+        # Cambiar el orden de los canales de color de BGR a RGB
+        # ya que en en PIL se utiliza el orden RGB (rojo, verde, azul), en OpenCV se utiliza el orden BGR (azul, verde, rojo)
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # Convertir la imagen resultante de vuelta a PIL.Image.Image
-        pil_img_resultante = Image.fromarray(image)
+        pil_img_resultante = Image.fromarray(image_rgb)
 
         # Codificar la imagen con la clasificación en formato base64 para mostrarla en la página web
         buffered = io.BytesIO()
@@ -239,3 +245,15 @@ def hex_to_rgb(hex_color):
 
     # Devolver la tupla RGB
     return (r, g, b)
+
+def rgb_to_bgr(rgb_color):
+    # Convertir la cadena a una lista de enteros
+    rgb_list = list(map(int, rgb_color))
+
+    # Obtener los componentes R, G y B
+    r = rgb_list[0]
+    g = rgb_list[1]
+    b = rgb_list[2]
+
+    # Devolver la tupla BGR
+    return (b, g, r)

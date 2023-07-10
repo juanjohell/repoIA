@@ -2,7 +2,7 @@
 # FUNCIONALIDAD:  funciones de gestión de los modelos neuronales
 import sys
 import os
-
+import requests
 from tensorflow.keras.models import load_model
 
 # Función para extraccion de metadatos de un modelo h5 pasado por parámetro
@@ -16,14 +16,41 @@ nodo_padre = os.path.dirname(archivo_actual)
 modelTracker_path = os.path.dirname(nodo_padre)
 modelos_path = os.path.join(modelTracker_path, 'modelos')
 
-def extrae_info_de_modelo(config, nombre_fichero):
+def extrae_info_de_modelo(app, nombre_fichero):
+    #Inicializamos datos
+    optimizer = None
+    input_shape = None
+    optimizer_type = None
+    learning_rate = None
+    depth = None
+    b1 = None
+    b2 = None
+    epsilon = None
+    amsgrad = None
+    decay = None
+    layer_config = None
+    parametros = {'nombre': nombre_fichero, 'depth': depth, 'input_shape': input_shape,
+                  'optimizer_type': optimizer_type, 'optimizer_id': None,
+                  'lc_id': None, 'decay': decay,
+                  'learning_rate': learning_rate, 'b1': b1, 'b2': b2, 'epsilon': epsilon,
+                  'amsgrad': amsgrad, 'lc_config': layer_config}
 
-    # Comprobar existencia
+    # Comprobar existencia de fichero
     ruta_fichero = os.path.join(modelos_path, nombre_fichero)
-
-    # Carga el modelo Keras en formato h5
-    saved_model = load_model(ruta_fichero)
-    config = saved_model.get_config()
+    # Comprobar existencia del fichero
+    if not os.path.exists(ruta_fichero):
+        mensaje_error = "El fichero {} no existe".format(ruta_fichero)
+        invocar_mostrar_mensaje(app, mensaje_error)
+        return parametros
+    try:
+        # Carga el modelo Keras en formato h5
+        saved_model = load_model(ruta_fichero)
+        # traemos configuracion
+        config = saved_model.get_config()
+    except Exception as e:
+        mensaje_error = "Error al cargar el modelo o extraer su configuración: {}".format(str(e))
+        invocar_mostrar_mensaje(app, mensaje_error)
+        return parametros
 
     # Recuperamos valores que definen el modelo
     depth = len(config['layers'])
@@ -31,15 +58,6 @@ def extrae_info_de_modelo(config, nombre_fichero):
     input_shape_inic = config['layers'][0]['config']['batch_input_shape']
     input_shape = '({})'.format(','.join(str(dim) for dim in input_shape_inic[1:]))
 
-    optimizer = None
-    optimizer_type = None
-    learning_rate = None
-    b1 = None
-    b2 = None
-    epsilon = None
-    amsgrad = None
-    decay = None
-    layer_config = None
     if saved_model.optimizer:
         optimizer = saved_model.optimizer.get_config()
         optimizer_type = optimizer['name']
@@ -97,3 +115,6 @@ def almacenar_fichero(config, archivo):
         archivo.save(ruta_completa)
         return True
 
+def invocar_mostrar_mensaje(app, mensaje):
+    with app.test_client() as client:
+        client.get('/mostrar_mensaje?mensaje={}'.format(mensaje))
