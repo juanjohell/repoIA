@@ -165,7 +165,7 @@ def insert_tabla_datasets(params):
 
 # DEVUELVE UN LISTADO DE TODOS LOS MODELOS
 def listado_modelos():
-    sql = '''SELECT id_modelo, nombre, descripcion FROM Modelos'''
+    sql = '''SELECT id_modelo, nombre, descripcion, id_uso FROM Modelos'''
     conn = create_connection()
      # como objetos de tipo Row, lo que permitirá acceder
      # a los campos por nombre en lugar de por índice.

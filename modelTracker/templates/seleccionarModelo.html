@@ -13,6 +13,7 @@
                   <th>Id</th>
                   <th>Nombre</th>
                   <th>Descripción</th>
+                  <th>Uso</th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -25,17 +26,25 @@
                   <td>{{ modelo['nombre'] }}</td>
                   <td>{{ modelo['descripcion'] }}</td>
                   <td>
-                      <a href="/realizar_inferencia?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                    {% if modelo['id_uso'] == 1 %}
+                        <i class="material-icons" style="background-color: white; color: gray;" title="Clasificación de imágenes">image</i>
+                    {% endif %}
+                    {% if modelo['id_uso'] == 2 %}
+                        <i class="material-icons" style="background-color: white; color: gray;" title="Detección de objetos">search</i>
+                    {% endif %}
+                  </td>
+                  <td>
+                      <a href="/realizar_inferencia?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm" title="Realizar inferencia">
                           <i class="material-icons">play_arrow</i>
                       </a>
                   </td>
                   <td>
-                      <a href="/ver_estructura?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                      <a href="/ver_estructura?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm" title="Ver arquitectura">
                           <i class="material-icons">layers</i>
                       </a>
                   </td>
                   <td>
-                      <a href="/datos_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm">
+                      <a href="/datos_modelo?id_modelo={{ modelo['id_modelo'] }}" class="btn btn-secondary btn-sm" title="Ver configuración">
                           <i class="material-icons">visibility</i>
                       </a>
                   </td>
