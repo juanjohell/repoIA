@@ -1,0 +1,17 @@
+name: deteccion_fichero_ssd_pb
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - flask
+  - flatbuffers
+  - frozenlist
+  - h5py
+  - hdf5
+  - jinja2
+  - jpeg
+  - keras
+  - numpy
+    - pip:
+        - tensorflow==1.2
+        - opencv

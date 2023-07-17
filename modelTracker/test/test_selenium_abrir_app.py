@@ -7,14 +7,11 @@ import time
 s = Service(ChromeDriverManager().install())
 # Configurar las opciones del navegador
 options = webdriver.ChromeOptions()
+options.headless = False  # Cambia a True para ejecutar en modo headless
 # Crear la instancia del navegador
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-def configuracion_basica():
-    options = webdriver.ChromeOptions()
-    options.headless = False  # Cambia a True para ejecutar en modo headless
-
-def abre_aplicacion():
+def test_abre_aplicacion():
     driver.get('http://127.0.0.1:5000/')
     # Encontrar el enlace con el texto "Comenzar" y hacer clic en él
     link = driver.find_element_by_link_text('Comenzar')
@@ -26,5 +23,4 @@ def abre_aplicacion():
 # SECUENCIA DE ACCIONES
 #Para que las funciones se ejecuten sólo desde aquí
 if __name__ == '__main__':
-    configuracion_basica()
-    abre_aplicacion()
+    test_abre_aplicacion()

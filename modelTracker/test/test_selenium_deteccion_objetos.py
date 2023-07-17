@@ -8,16 +8,10 @@ s = Service(ChromeDriverManager().install())
 
 # Configurar las opciones del navegador
 options = webdriver.ChromeOptions()
-# Aquí puedes añadir opciones adicionales si es necesario
+options.headless = False  # Cambia a True para ejecutar en modo headless
 
 # Crear la instancia del navegador
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
-
-def configuracion_basica():
-    options = webdriver.ChromeOptions()
-    options.headless = False  # Cambia a True para ejecutar en modo headless
-
 
 def abre_aplicacion():
     driver.get('http://127.0.0.1:5000/')
@@ -28,7 +22,8 @@ def abre_aplicacion():
     link.click()
 
 
-def inferencia_mobilenet_SSD():
+def test_inferencia_mobilenet_SSD():
+    abre_aplicacion()
     # Se pulsa boton realizar inferencia
     link = driver.find_element_by_link_text('Realizar inferencia')
     # Pausar la ejecución durante 1 segundo
@@ -77,6 +72,4 @@ def inferencia_mobilenet_SSD():
 
 # SECUENCIA DE ACCIONES PARA INFERENCIA CON
 # UN MODELO
-configuracion_basica()
-abre_aplicacion()
-inferencia_mobilenet_SSD()
+test_inferencia_mobilenet_SSD()
