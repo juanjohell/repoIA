@@ -1,3 +1,15 @@
 cd C:\Users\jjhb01\git\repoIA\modelTracker
 set FLASK_APP=app.py
 python -m flask run
+
+
+conda activate nombre_entorno
+
+--ejecucion desde cmd
+C:\Users\jjhb01\AppData\Local\anaconda3\envs\entorno_deteecion\Scripts\activate.bat
+pip install tensorflow==2.5.0
+
+python --version
+
+conda env export --name <nombre_entorno> --file entorno.yaml
+webdriver-manager==3.7.1
